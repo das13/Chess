@@ -31,22 +31,22 @@ public class Castle extends Figure {
         for (int x = a - 1; x >= 0; x--) {
             do {
                 validCells.add(Game.getCell(x, b));
-            } while (Game.getCell(x, b).getFigure() = null);
+            } while (Game.getCell(x, b).getFigure() == null);
         }
         for (int x = a + 1; x <= 7; x++) {
             do {
                 validCells.add(Game.getCell(x, b));
-            } while (Game.getCell(x, b).getFigure() = null);
+            } while (Game.getCell(x, b).getFigure() == null);
         }
         for (int y = b - 1; y >= 0; y--) {
             do {
                 validCells.add(Game.getCell(a, y));
-            } while (Game.getCell(a, y).getFigure() = null);
+            } while (Game.getCell(a, y).getFigure() == null);
         }
         for (int y = b + 1; y <= 7; y++) {
             do {
                 validCells.add(Game.getCell(a, y));
-            } while (Game.getCell(a, y).getFigure() = null);
+            } while (Game.getCell(a, y).getFigure() == null);
         }
 
         /* all cells that have figures of the same Type as this are removed here*/

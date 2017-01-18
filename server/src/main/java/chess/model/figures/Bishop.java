@@ -36,13 +36,13 @@ public class Bishop extends Figure {
                     validCells.add(Game.getCell(x, y));
                     y--;
                 }
-                while (Game.getCell(x, y + 1).getFigure() = null);
+                while (Game.getCell(x, y + 1).getFigure() == null);
             }
             if (y2 <= 7) {
                 do {
                     validCells.add(Game.getCell(x, y2));
                     y2++;
-                } while (Game.getCell(x, y2 - 1).getFigure() = null);
+                } while (Game.getCell(x, y2 - 1).getFigure() == null);
             }
         }
         for (int x = cell.getX() + 1; x <= 7; x++) {
@@ -50,13 +50,13 @@ public class Bishop extends Figure {
                 do {
                     validCells.add(Game.getCell(x, y3));
                     y3--;
-                } while (Game.getCell(x, y3 + 1).getFigure() = null);
+                } while (Game.getCell(x, y3 + 1).getFigure() == null);
             }
             if (y4 <= 7) {
                 do {
                     validCells.add(Game.getCell(x, y4));
                     y4++;
-                } while (Game.getCell(x, y4).getFigure() = null);
+                } while (Game.getCell(x, y4).getFigure() == null);
             }
         }
 
