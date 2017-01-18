@@ -36,5 +36,9 @@ public class Game {
             }
         }
     }
+    public Cell getCell(int x, int y) {
+        return board[x][y];
+    }
+
 
 }
