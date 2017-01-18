@@ -8,7 +8,7 @@ import chess.model.figures.*;
 public class Game {
     private Player whitePlayer;
     private Player blackPlayer;
-    private Cell[][] board = new Cell[8][8];
+    private static Cell[][] board = new Cell[8][8];
     public Game(){
         board[0][0]= new Cell(new Castle(Type.WHITE),0, 0);
         board[1][0]= new Cell(new Knight(Type.WHITE),1, 0);
@@ -36,7 +36,7 @@ public class Game {
             }
         }
     }
-    public Cell getCell(int x, int y) {
+    public static Cell getCell(int x, int y) {
         return board[x][y];
     }
 
