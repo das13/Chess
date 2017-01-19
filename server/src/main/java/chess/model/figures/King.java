@@ -33,8 +33,8 @@ public class King extends Figure {
         * and as we have a cell with a figure we add it and check another direction */
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b -1; y <= b + 1; y++) {
-                if (Game.getCell(x,y).getFigure() == this) continue;
-                validCells.add(Game.getCell(x, y));
+                if (getCell().getParentBoard()[x][y].getFigure() == this) continue;
+                validCells.add(getCell().getParentBoard()[x][y]);
             }
         }
 

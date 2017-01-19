@@ -36,30 +36,30 @@ public class Bishop extends Figure {
         for (int x = cell.getX() - 1; x >= 0; x--) {
             if (y >= 0) {
                 do {
-                    validCells.add(Game.getCell(x, y));
+                    validCells.add(getCell().getParentBoard()[x][y]);
                     y--;
                 }
-                while (Game.getCell(x, y + 1).getFigure() == null);
+                while (getCell().getParentBoard()[x][y + 1].getFigure() == null);
             }
             if (y2 <= 7) {
                 do {
-                    validCells.add(Game.getCell(x, y2));
+                    validCells.add(getCell().getParentBoard()[x][y2]);
                     y2++;
-                } while (Game.getCell(x, y2 - 1).getFigure() == null);
+                } while (getCell().getParentBoard()[x][y2 - 1].getFigure() == null);
             }
         }
         for (int x = cell.getX() + 1; x <= 7; x++) {
             if (y3 > 0) {
                 do {
-                    validCells.add(Game.getCell(x, y3));
+                    validCells.add(getCell().getParentBoard()[x][y3]);
                     y3--;
-                } while (Game.getCell(x, y3 + 1).getFigure() == null);
+                } while (getCell().getParentBoard()[x][y3 + 1].getFigure() == null);
             }
             if (y4 <= 7) {
                 do {
-                    validCells.add(Game.getCell(x, y4));
+                    validCells.add(getCell().getParentBoard()[x][y4]);
                     y4++;
-                } while (Game.getCell(x, y4).getFigure() == null);
+                } while (getCell().getParentBoard()[x][y4].getFigure() == null);
             }
         }
 
