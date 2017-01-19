@@ -13,6 +13,9 @@ public class Pawn extends Figure {
     public Pawn(Type type) {
         super(type);
     }
+    public Pawn(Type type, Cell cell) {
+        super(type, cell);
+    }
 
     public boolean hasMove() {
         return false;

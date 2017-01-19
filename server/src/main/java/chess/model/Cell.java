@@ -7,10 +7,11 @@ public class Cell {
     private Figure figure;
     private int x;
     private int y;
-    public Cell(Figure figure, int x, int y){
-        this.figure=figure;
+    private Cell[][] board;
+    public Cell( int x, int y, Cell[][] board){
         this.x=x;
         this.y=y;
+        this.board=board;
     }
 
     public int getX() {
@@ -31,5 +32,9 @@ public class Cell {
 
     public boolean isFriendlyCell(Figure figure) {
         return this.getFigure().getType() == figure.getType();
+    }
+
+    public Cell[][] getParentBoard() {
+        return board;
     }
 }

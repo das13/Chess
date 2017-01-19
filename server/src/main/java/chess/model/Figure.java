@@ -9,6 +9,7 @@ public abstract class Figure {
     public Figure(Type type){
         this.type=type;
     }
+    private int id;
     private Type type;
     protected Cell cell;
     private boolean firstMove = true;
@@ -31,5 +32,9 @@ public abstract class Figure {
 
     public Type getType() {
         return this.type;
+    }
+
+    public Cell getCell() {
+        return cell;
     }
 }

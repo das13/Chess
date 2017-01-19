@@ -15,6 +15,9 @@ public class Bishop extends Figure {
     public Bishop(Type type) {
         super(type);
     }
+    public Bishop(Type type, Cell cell) {
+        super(type, cell);
+    }
 
     public boolean hasMove() {
         return false;

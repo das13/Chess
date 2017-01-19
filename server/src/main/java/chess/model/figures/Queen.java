@@ -13,6 +13,9 @@ public class Queen extends Figure {
     public Queen(Type type) {
         super(type);
     }
+    public Queen(Type type, Cell cell) {
+        super(type, cell);
+    }
 
     public boolean hasMove() {
         return false;

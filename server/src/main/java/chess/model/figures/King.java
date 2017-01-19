@@ -13,6 +13,9 @@ public class King extends Figure {
     public King(Type type) {
         super(type);
     }
+    public King(Type type, Cell cell) {
+        super(type, cell);
+    }
 
     public boolean hasMove() {
         return false;

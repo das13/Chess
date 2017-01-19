@@ -13,6 +13,9 @@ public class Castle extends Figure {
     public Castle(Type type) {
         super(type);
     }
+    public Castle(Type type, Cell cell) {
+        super(type, cell);
+    }
 
     public boolean hasMove() {
         return false;
