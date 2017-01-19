@@ -7,11 +7,11 @@ public class Cell {
     private Figure figure;
     private int x;
     private int y;
-    private Cell[][] board;
-    public Cell( int x, int y, Cell[][] board){
+    private Game game;
+    public Cell( int x, int y, Game game){
         this.x=x;
         this.y=y;
-        this.board=board;
+        this.game=game;
     }
 
     public int getX() {
@@ -34,7 +34,7 @@ public class Cell {
         return this.getFigure().getType() == figure.getType();
     }
 
-    public Cell[][] getParentBoard() {
-        return board;
+    public Game getParentGame() {
+        return game;
     }
 }

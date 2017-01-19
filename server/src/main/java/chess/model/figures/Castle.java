@@ -32,26 +32,26 @@ public class Castle extends Figure {
         * and as we have a cell with a figure we add it and check another direction */
         for (int x = a - 1; x >= 0; x--) {
             do {
-                validCells.add(getCell().getParentBoard()[x][b]);
-            } while (getCell().getParentBoard()[x][b].getFigure() == null);
+                validCells.add(getCell().getParentGame().getBoard()[x][b]);
+            } while (getCell().getParentGame().getBoard()[x][b].getFigure() == null);
         }
         for (int x = a + 1; x <= 7; x++) {
             do {
-                validCells.add(getCell().getParentBoard()[x][b]);
-            } while (getCell().getParentBoard()[x][b].getFigure() == null);
+                validCells.add(getCell().getParentGame().getBoard()[x][b]);
+            } while (getCell().getParentGame().getBoard()[x][b].getFigure() == null);
         }
         for (int y = b - 1; y >= 0; y--) {
             do {
-                validCells.add(getCell().getParentBoard()[a][y]);
-            } while (getCell().getParentBoard()[a][y].getFigure() == null);
+                validCells.add(getCell().getParentGame().getBoard()[a][y]);
+            } while (getCell().getParentGame().getBoard()[a][y].getFigure() == null);
         }
         for (int y = b + 1; y <= 7; y++) {
             do {
-                validCells.add(getCell().getParentBoard()[a][y]);
-            } while (getCell().getParentBoard()[a][y].getFigure() == null);
+                validCells.add(getCell().getParentGame().getBoard()[a][y]);
+            } while (getCell().getParentGame().getBoard()[a][y].getFigure() == null);
         }
 
-        /* all cells that have figures of the same Type as this are removed here*/
+         //all cells that have figures of the same Type as this are removed here
         for (int i = 0; i < validCells.size(); i++) {
             if (validCells.get(i).isFriendlyCell(this)) {
                 validCells.remove(i);

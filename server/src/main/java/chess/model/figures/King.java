@@ -2,7 +2,6 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
-import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ public class King extends Figure {
         * and as we have a cell with a figure we add it and check another direction */
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b -1; y <= b + 1; y++) {
-                if (getCell().getParentBoard()[x][y].getFigure() == this) continue;
-                validCells.add(getCell().getParentBoard()[x][y]);
+                if (getCell().getParentGame().getBoard()[x][y].getFigure() == this) continue;
+                validCells.add(getCell().getParentGame().getBoard()[x][y]);
             }
         }
 

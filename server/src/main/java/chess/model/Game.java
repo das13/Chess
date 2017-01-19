@@ -14,7 +14,7 @@ public class Game {
         this.blackPlayer=blackPlayer;
         for(int i=0; i<7; i++) {
             for(int j=0; j<7; j++) {
-                board[0][0] = new Cell(0, 0, board);
+                board[0][0] = new Cell(0, 0, this);
             }
         }
         board[0][0].setFigure(new Castle(Type.WHITE, board[0][0]));
@@ -37,15 +37,18 @@ public class Game {
             board[i][1].setFigure(new Pawn(Type.WHITE, board[i][1]));
             board[i][6].setFigure(new Pawn(Type.BLACK, board[i][6]));
         }
-        for(int i = 0; i<8; i++){
-            for(int j=2;j<6; j++){
-                board[i][j].setFigure(null);
-            }
-        }
     }
     public Cell getCell(int x, int y) {
-        return board[x][y];
+        Cell cell=null;
+        try {
+            cell = board[x][y];
+        }catch(ArrayIndexOutOfBoundsException e){
+            System.out.println("This cell is not on the board");
+        }
+        return cell;
     }
 
-
+    public Cell[][] getBoard() {
+        return board;
+    }
 }

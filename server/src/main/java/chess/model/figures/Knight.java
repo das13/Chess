@@ -2,6 +2,7 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
+import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -14,23 +15,27 @@ public class Knight extends Figure {
     public Knight(Type type) {
         super(type);
     }
+
     public Knight(Type type, Cell cell) {
         super(type, cell);
     }
 
-    public boolean hasMove() {
-        return false;
-    }
-
-    public List<Cell> allAccessibleMove() {
-        List<Cell> validCells=new ArrayList<Cell>();
-        Cell[][] board = getCell().getParentBoard();
-        if(getCell().getX()+3<board.length && getCell().getY()+1<board[0].length &&
-                (board[getCell().getX()+3][getCell().getY()+1].getFigure()==null ||
-                        !getCell().isFriendlyCell(board[getCell().getX()+3][getCell().getY()+1].getFigure()))){
-            validCells.add(board[getCell().getX()+3][getCell().getY()+1]);
-
+    public List<Cell> allAccessibleMove() throws ArrayIndexOutOfBoundsException{
+        List<Cell> validCells = new ArrayList<Cell>();
+        Game game = getCell().getParentGame();
+        validCells.add(game.getCell(getCell().getX() + 2, getCell().getY() + 1));
+        validCells.add(game.getCell(getCell().getX() + 2, getCell().getY() - 1));
+        validCells.add(game.getCell(getCell().getX() - 2, getCell().getY() + 1));
+        validCells.add(game.getCell(getCell().getX() - 2, getCell().getY() - 1));
+        validCells.add(game.getCell(getCell().getX() + 1, getCell().getY() + 2));
+        validCells.add(game.getCell(getCell().getX() + 1, getCell().getY() - 2));
+        validCells.add(game.getCell(getCell().getX() - 1, getCell().getY() + 2));
+        validCells.add(game.getCell(getCell().getX() - 1, getCell().getY() - 2));
+        for (int i = 0; i < validCells.size(); i++) {
+            if (validCells.get(i)==null || getCell().isFriendlyCell(validCells.get(i).getFigure())){
+                validCells.remove(i);
+            }
         }
-        return null;
+        return validCells;
     }
 }

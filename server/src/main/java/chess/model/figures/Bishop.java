@@ -2,7 +2,6 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
-import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -36,34 +35,34 @@ public class Bishop extends Figure {
         for (int x = cell.getX() - 1; x >= 0; x--) {
             if (y >= 0) {
                 do {
-                    validCells.add(getCell().getParentBoard()[x][y]);
+                    validCells.add(getCell().getParentGame().getBoard()[x][y]);
                     y--;
                 }
-                while (getCell().getParentBoard()[x][y + 1].getFigure() == null);
+                while (getCell().getParentGame().getBoard()[x][y + 1].getFigure() == null);
             }
             if (y2 <= 7) {
                 do {
-                    validCells.add(getCell().getParentBoard()[x][y2]);
+                    validCells.add(getCell().getParentGame().getBoard()[x][y2]);
                     y2++;
-                } while (getCell().getParentBoard()[x][y2 - 1].getFigure() == null);
+                } while (getCell().getParentGame().getBoard()[x][y2 - 1].getFigure() == null);
             }
         }
         for (int x = cell.getX() + 1; x <= 7; x++) {
             if (y3 > 0) {
                 do {
-                    validCells.add(getCell().getParentBoard()[x][y3]);
+                    validCells.add(getCell().getParentGame().getBoard()[x][y3]);
                     y3--;
-                } while (getCell().getParentBoard()[x][y3 + 1].getFigure() == null);
+                } while (getCell().getParentGame().getBoard()[x][y3 + 1].getFigure() == null);
             }
             if (y4 <= 7) {
                 do {
-                    validCells.add(getCell().getParentBoard()[x][y4]);
+                    validCells.add(getCell().getParentGame().getBoard()[x][y4]);
                     y4++;
-                } while (getCell().getParentBoard()[x][y4].getFigure() == null);
+                } while (getCell().getParentGame().getBoard()[x][y4].getFigure() == null);
             }
         }
 
-        /* all cells that have figures of the same Type as this are removed here*/
+         //all cells that have figures of the same Type as this are removed here
         for (int i = 0; i < validCells.size(); i++) {
             if (validCells.get(i).isFriendlyCell(this)) {
                 validCells.remove(i);
