@@ -2,7 +2,6 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
-import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -26,30 +25,30 @@ public class Castle extends Figure {
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
 
-        int a = cell.getX();
-        int b = cell.getY();
+        int a = getCell().getX();
+        int b = getCell().getY();
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
         for (int x = a - 1; x >= 0; x--) {
             do {
-                validCells.add(Game.getCell(x, b));
-            } while (Game.getCell(x, b).getFigure() == null);
+                validCells.add(getCell().getParentBoard()[x][b]);
+            } while (getCell().getParentBoard()[x][b].getFigure() == null);
         }
         for (int x = a + 1; x <= 7; x++) {
             do {
-                validCells.add(Game.getCell(x, b));
-            } while (Game.getCell(x, b).getFigure() == null);
+                validCells.add(getCell().getParentBoard()[x][b]);
+            } while (getCell().getParentBoard()[x][b].getFigure() == null);
         }
         for (int y = b - 1; y >= 0; y--) {
             do {
-                validCells.add(Game.getCell(a, y));
-            } while (Game.getCell(a, y).getFigure() == null);
+                validCells.add(getCell().getParentBoard()[a][y]);
+            } while (getCell().getParentBoard()[a][y].getFigure() == null);
         }
         for (int y = b + 1; y <= 7; y++) {
             do {
-                validCells.add(Game.getCell(a, y));
-            } while (Game.getCell(a, y).getFigure() == null);
+                validCells.add(getCell().getParentBoard()[a][y]);
+            } while (getCell().getParentBoard()[a][y].getFigure() == null);
         }
 
         /* all cells that have figures of the same Type as this are removed here*/
