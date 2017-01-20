@@ -2,6 +2,7 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
+import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -25,44 +26,43 @@ public class Bishop extends Figure {
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
 
-        int y = cell.getY() - 1;
-        int y2 = cell.getY() + 1;
-        int y3 = cell.getY() - 1;
-        int y4 = cell.getY() + 1;
+        Game game = getCell().getParentGame();
+        int y = getCell().getY() - 1;
+        int y2 = getCell().getY() + 1;
+        int y3 = getCell().getY() - 1;
+        int y4 = getCell().getY() + 1;
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
-        for (int x = cell.getX() - 1; x >= 0; x--) {
+        for (int x = getCell().getX() - 1; x >= 0; x--) {
+            if (x < 0) break;
             if (y >= 0) {
-                do {
-                    validCells.add(getCell().getParentGame().getBoard()[x][y]);
-                    y--;
-                }
-                while (getCell().getParentGame().getBoard()[x][y + 1].getFigure() == null);
+                validCells.add(game.getCell(x,y));
+                y--;
+                if (game.getCell(x,y+1).getFigure() != null) break;
             }
             if (y2 <= 7) {
-                do {
-                    validCells.add(getCell().getParentGame().getBoard()[x][y2]);
-                    y2++;
-                } while (getCell().getParentGame().getBoard()[x][y2 - 1].getFigure() == null);
-            }
-        }
-        for (int x = cell.getX() + 1; x <= 7; x++) {
-            if (y3 > 0) {
-                do {
-                    validCells.add(getCell().getParentGame().getBoard()[x][y3]);
-                    y3--;
-                } while (getCell().getParentGame().getBoard()[x][y3 + 1].getFigure() == null);
-            }
-            if (y4 <= 7) {
-                do {
-                    validCells.add(getCell().getParentGame().getBoard()[x][y4]);
-                    y4++;
-                } while (getCell().getParentGame().getBoard()[x][y4].getFigure() == null);
+                validCells.add(game.getCell(x,y2));
+                y2++;
+                if(game.getCell(x,y2-1).getFigure() != null) break;
             }
         }
 
-         //all cells that have figures of the same Type as this are removed here
+        for (int x = getCell().getX() + 1; x <= 7; x++) {
+            if(x > 7) break;
+            if (y3 >= 0) {
+                    validCells.add(game.getCell(x,y3));
+                    y3--;
+                if (game.getCell(x,y3+1).getFigure() != null) break;
+            }
+            if (y4 <= 7) {
+                    validCells.add(game.getCell(x,y4));
+                    y4++;
+                if (game.getCell(x,y4-1).getFigure() != null) break;
+            }
+        }
+
+        //all cells that have figures of the same Type as this are removed here
         for (int i = 0; i < validCells.size(); i++) {
             if (validCells.get(i).isFriendlyCell(this)) {
                 validCells.remove(i);

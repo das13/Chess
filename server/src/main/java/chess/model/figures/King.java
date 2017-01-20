@@ -2,6 +2,7 @@ package chess.model.figures;
 
 import chess.model.Cell;
 import chess.model.Figure;
+import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
@@ -25,15 +26,20 @@ public class King extends Figure {
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
 
-        int a = cell.getX();
-        int b = cell.getY();
+        Game game = getCell().getParentGame();
+        int a = getCell().getX();
+        int b = getCell().getY();
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
+
+
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b -1; y <= b + 1; y++) {
-                if (getCell().getParentGame().getBoard()[x][y].getFigure() == this) continue;
-                validCells.add(getCell().getParentGame().getBoard()[x][y]);
+                if (x < 0 || x > 7) continue;
+                if (y < 0 || y > 7) continue;
+                if (game.getCell(x,y).getFigure() == this) continue;
+                validCells.add(game.getCell(x,y));
             }
         }
 
@@ -47,20 +53,20 @@ public class King extends Figure {
     }
 
     // overriding method to specialize castling both sides
-    @Override
-    public void move(Cell destination) {
-        if ((allAccessibleMove().contains(destination)) && hasMove()) {
-            this.cell.setFigure(null);
-            this.cell = destination;
-            this.cell.setFigure(this);
-        } else if ((allAccessibleMove().contains(destination))
-        && (true /*destination is castling Kingside cell*/)) {
-            castlingKingside();
-        } else if ((allAccessibleMove().contains(destination))
-                && (true /*destination is castling Queenside cell*/)) {
-            castlingQueenside();
-        }
-    }
+//    @Override
+//    public void move(Cell destination) {
+//        if ((allAccessibleMove().contains(destination)) && hasMove()) {
+//            this.getCell().setFigure(null);
+//            this.cell = destination;
+//            this.getCell().setFigure(this);
+//        } else if ((allAccessibleMove().contains(destination))
+//                && (true /*destination is castling Kingside cell*/)) {
+//            castlingKingside();
+//        } else if ((allAccessibleMove().contains(destination))
+//                && (true /*destination is castling Queenside cell*/)) {
+//            castlingQueenside();
+//        }
+//    }
 
     public boolean castlingKingsideAllowed() {
         return ((true /*king never moved*/)
