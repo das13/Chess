@@ -31,6 +31,7 @@ public class Cell {
     }
 
     public boolean isFriendlyCell(Figure figure) {
+        if(figure==null) return false;
         return this.getFigure().getType() == figure.getType();
     }
 

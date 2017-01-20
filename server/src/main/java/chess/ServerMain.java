@@ -1,31 +1,25 @@
 package chess;
 
-import chess.model.MiniServer;
+import chess.model.Cell;
+import chess.model.Game;
+import chess.model.Player;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ServerMain {
+    public static List<Player> freePlayers =
+            Collections.synchronizedList(new ArrayList<Player>());
+    public static List<Game> games =
+            Collections.synchronizedList(new ArrayList<Game>());
+    public static List<Game> waitingGames =
+            Collections.synchronizedList(new ArrayList<Game>());
     public static void main(String[] args) {
-       String a=null;
-       ServerSocket serverSocket = null;
-        boolean listeningSocket = true;
-        try {
-            serverSocket = new ServerSocket(2543);
-        } catch (IOException e) {
-            System.err.println("Could not listen on port: 2543");
-        }
-        try {
-            while (listeningSocket) {
-                Socket clientSocket = serverSocket.accept();
-                MiniServer mini = new MiniServer(clientSocket);
-                mini.start();
-            }
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Game game = new Game();
+        List<Cell> cells = game.getBoard()[1][1].getFigure().allAccessibleMove();
+        for(Cell c: cells)
+        System.out.println(c.getX()+" "+c.getY());
+       new Server();
     }
 }
