@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.exceptions.ReplacePawnException;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
@@ -87,14 +88,22 @@ public class King extends Figure {
 
     public void castlingKingside() {
         if (castlingKingsideAllowed()) {
-            this.move(null /*Cell destination*/);
+            try {
+                this.move(null /*Cell destination*/);
+            } catch (ReplacePawnException e) {
+                //ignore
+            }
             /*and castle (by it's unique number) moves too*/
         }
     }
 
     public void castlingQueenside() {
         if (castlingQueensideAllowed()) {
-            this.move(null /*Cell destination*/);
+            try {
+                this.move(null /*Cell destination*/);
+            } catch (ReplacePawnException e) {
+                //ignore
+            }
             /*and castle (by it's unique number) moves too*/
         }
     }

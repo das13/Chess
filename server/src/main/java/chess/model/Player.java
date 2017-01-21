@@ -1,5 +1,6 @@
 package chess.model;
 
+import chess.exceptions.RivalFigureException;
 import chess.services.GameService;
 import chess.services.PlayerService;
 
@@ -12,7 +13,7 @@ import java.net.Socket;
 /**
  * Created by Admin on 17.01.2017.
  */
-public class Player extends Thread{
+public class Player extends Thread {
     private String login;
     private String password;
     private String nickname;
@@ -22,6 +23,7 @@ public class Player extends Thread{
     private BufferedReader in;
     private PrintWriter out;
     private Game currentGame;
+
     public Player(Socket socket) {
         this.socket = socket;
 
@@ -51,35 +53,57 @@ public class Player extends Thread{
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
+
     @Override
     public void run() {
         try {
             String str = "";
             while (true) {
                 str = in.readLine();
-                if(str.equals("exit")) break;
-                if(str.equals("reg")){
+                if (str.equals("exit")) break;
+                if (str.equals("reg")) {
                     PlayerService.reg(this, in, out);
                 }
-                if(str.equals("auth")){
+                if (str.equals("auth")) {
                     PlayerService.auth(this);
                 }
-                if(str.equals("callPlayer")){
+                if (str.equals("callPlayer")) {
                     out.println("enter nickname your rival");
                     Player player = GameService.callPlayer(this, in.readLine());
-                    PrintWriter otherOut  = new PrintWriter(player.getSocket().getOutputStream(), true);
+                    PrintWriter otherOut = new PrintWriter(player.getSocket().getOutputStream(), true);
                     otherOut.println("confirm");
                 }
-                if(str.equals("confirm")){
+                if (str.equals("confirm")) {
                     out.println("You are invited. enter Ok or No");
                     currentGame = GameService.confirmGame(this, in.readLine());
                 }
-                if(str.equals("drag")){
+                if (str.equals("drag")) {
                     out.println("enter coordinates of figure - x and y");
-                    int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
-                    out.println("steps");
-                    for(int i: steps) {
-                        out.println(i);
+                    try {
+                        int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
+                        out.println("steps");
+                        for (int i : steps) {
+                            out.println(i);
+                        }
+                    } catch (RivalFigureException e) {
+                        out.println("you try taking rivals figure");
+                        e.printStackTrace();
+                    }
+                }
+                if (str.equals("move")) {
+                    int[] steps = new int[0];
+                    try {
+                        steps = GameService.move(currentGame, in, out);
+                    } catch (RivalFigureException e) {
+                        out.println("you try taking rivals figure");
+                        e.printStackTrace();
+                    }
+                    Player otherPlayer = currentGame.getOtherPlayer(this);
+                    System.out.println(otherPlayer.getNickname());
+                    PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
+                    outOther.println("step");
+                    for (int i : steps) {
+                        outOther.println(i);
                     }
                 }
             }
@@ -90,6 +114,7 @@ public class Player extends Thread{
             close();
         }
     }
+
     public void close() {
         try {
             in.close();
