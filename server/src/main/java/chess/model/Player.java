@@ -1,5 +1,6 @@
 package chess.model;
 
+import chess.controller.Controller;
 import chess.exceptions.RivalFigureException;
 import chess.services.GameService;
 import chess.services.PlayerService;
@@ -24,20 +25,25 @@ public class Player extends Thread {
     private PrintWriter out;
     private OutputStream output;
     private Game currentGame;
+    private Controller controller;
 
-    public Player(Socket socket) {
-        this.socket = socket;
+//    public Player(Socket socket) {
+//        this.socket = socket;
+//
+//        try {
+//            in = new BufferedReader(new InputStreamReader(
+//                    socket.getInputStream()));
+//            out = new PrintWriter(socket.getOutputStream(), true);
+//            output = new DataOutputStream(socket.getOutputStream());
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            close();
+//        }
+//    }
 
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
-            output = new DataOutputStream(socket.getOutputStream());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            close();
-        }
+    public Player(Controller controller) {
+        this.controller = controller;
     }
 
     public Game getCurrentGame() {
@@ -56,86 +62,86 @@ public class Player extends Thread {
         this.socket = socket;
     }
 
-    @Override
-    public void run() {
-        try {
-            String str = "";
-            while (true) {
-                str = in.readLine();
-                if (str.equals("exit")) break;
-                if (str.equals("reg")) {
-                    PlayerService.reg(this, in, out);
-                }
-                if (str.equals("auth")) {
-                    PlayerService.auth(this);
-                }
-                if (str.equals("callPlayer")) {
-                    out.println("enter nickname your rival");
-                    Player player = GameService.callPlayer(this, in.readLine());
-                    PrintWriter otherOut = new PrintWriter(player.getSocket().getOutputStream(), true);
-                    otherOut.println("confirm");
-                }
-                if (str.equals("confirm")) {
-                    out.println("You are invited. enter Ok or No");
-                    currentGame = GameService.confirmGame(this, in.readLine());
-                }
-                if (str.equals("drag")) {
-                    out.println("enter coordinates of figure - x and y");
-                    try {
-                        int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
-                        out.println("steps");
-                        for (int i : steps) {
-                            out.println(i);
-                        }
-                    } catch (RivalFigureException e) {
-                        out.println("you try taking rivals figure");
-                        e.printStackTrace();
-                    }
-                }
-                if (str.equals("move")) {
-                    int[] steps = new int[0];
-                    try {
-                        steps = GameService.move(currentGame, in, out);
-                    } catch (RivalFigureException e) {
-                        out.println("you try taking rivals figure");
-                        e.printStackTrace();
-                    }
-                    Player otherPlayer = currentGame.getOtherPlayer(this);
-                    System.out.println(otherPlayer.getNickname());
-                    PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
-                    outOther.println("step");
-                    for (int i : steps) {
-                        outOther.println(i);
-                    }
-                }
-                if(str.equals("FREEPLAYERS")) {
-                    XMLSender test = new XMLSender();
-                    try {
-                        test.sendFreePlayers(output);
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                    } catch (TransformerConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            close();
-        }
-    }
-
-    public void close() {
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (Exception e) {
-            System.err.println("Thread did not close!");
-        }
-    }
+//    @Override
+//    public void run() {
+//        try {
+//            String str = "";
+//            while (true) {
+//                str = in.readLine();
+//                if (str.equals("exit")) break;
+//                if (str.equals("reg")) {
+//                    PlayerService.reg(this, in, out);
+//                }
+//                if (str.equals("auth")) {
+//                    PlayerService.auth(this);
+//                }
+//                if (str.equals("callPlayer")) {
+//                    out.println("enter nickname your rival");
+//                    Player player = GameService.callPlayer(this, in.readLine());
+//                    PrintWriter otherOut = new PrintWriter(player.getSocket().getOutputStream(), true);
+//                    otherOut.println("confirm");
+//                }
+//                if (str.equals("confirm")) {
+//                    out.println("You are invited. enter Ok or No");
+//                    currentGame = GameService.confirmGame(this, in.readLine());
+//                }
+//                if (str.equals("drag")) {
+//                    out.println("enter coordinates of figure - x and y");
+//                    try {
+//                        int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
+//                        out.println("steps");
+//                        for (int i : steps) {
+//                            out.println(i);
+//                        }
+//                    } catch (RivalFigureException e) {
+//                        out.println("you try taking rivals figure");
+//                        e.printStackTrace();
+//                    }
+//                }
+//                if (str.equals("move")) {
+//                    int[] steps = new int[0];
+//                    try {
+//                        steps = GameService.move(currentGame, in, out);
+//                    } catch (RivalFigureException e) {
+//                        out.println("you try taking rivals figure");
+//                        e.printStackTrace();
+//                    }
+//                    Player otherPlayer = currentGame.getOtherPlayer(this);
+//                    System.out.println(otherPlayer.getNickname());
+//                    PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
+//                    outOther.println("step");
+//                    for (int i : steps) {
+//                        outOther.println(i);
+//                    }
+//                }
+//                if(str.equals("FREEPLAYERS")) {
+//                    XMLSender test = new XMLSender();
+//                    try {
+//                        test.sendFreePlayers(output);
+//                    } catch (ParserConfigurationException e) {
+//                        e.printStackTrace();
+//                    } catch (TransformerConfigurationException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            close();
+//        }
+//    }
+//
+//    public void close() {
+//        try {
+//            in.close();
+//            out.close();
+//            socket.close();
+//        } catch (Exception e) {
+//            System.err.println("Thread did not close!");
+//        }
+//    }
 
     public String getLogin() {
         return login;
@@ -175,6 +181,10 @@ public class Player extends Thread {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 
     @Override
