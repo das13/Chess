@@ -27,4 +27,7 @@ public class ServerMain {
         System.out.println(c.getX()+" "+c.getY());
        // new Server();
     }
+    public static List<Player> getFreePlayers() {
+        return freePlayers;
+    }
 }

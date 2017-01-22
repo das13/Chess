@@ -3,11 +3,11 @@ package chess.model;
 import chess.exceptions.RivalFigureException;
 import chess.services.GameService;
 import chess.services.PlayerService;
+import chess.services.xmlService.XMLSender;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -22,6 +22,7 @@ public class Player extends Thread {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private OutputStream output;
     private Game currentGame;
 
     public Player(Socket socket) {
@@ -31,6 +32,7 @@ public class Player extends Thread {
             in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
+            output = new DataOutputStream(socket.getOutputStream());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,6 +108,16 @@ public class Player extends Thread {
                         outOther.println(i);
                     }
                 }
+                if(str.equals("FREEPLAYERS")) {
+                    XMLSender test = new XMLSender();
+                    try {
+                        test.sendFreePlayers(output);
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    } catch (TransformerConfigurationException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
         } catch (IOException e) {
@@ -155,6 +167,14 @@ public class Player extends Thread {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
     @Override
