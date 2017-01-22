@@ -38,4 +38,8 @@ public class Cell {
     public Game getParentGame() {
         return game;
     }
+    public boolean isFigure(){
+        if(figure==null) return false;
+        return true;
+    }
 }

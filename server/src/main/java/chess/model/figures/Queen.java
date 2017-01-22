@@ -22,19 +22,20 @@ public class Queen extends Figure {
 
     public void checkPath(List<Cell> validCells, int x, int y, int stepX, int stepY) {
         Game game = getCell().getParentGame();
-        int j = y;
-        int i = x;
-        while (i < getCell().getParentGame().getBoard().length || j < getCell().getParentGame().getBoard()[0].length || i >= 0 || j >= 0) {
-            i+=stepX;
-            j+=stepY;
+        int i = x + stepX;
+        int j = y + stepY;
+        while (i < 8 && j < 8 && i >= 0 && j >= 0) {
             if (game.getCell(i, j) != null) {
                 if (!getCell().isFriendlyCell(game.getCell(i, j).getFigure())) {
                     validCells.add(game.getCell(i, j));
+                    if (game.getCell(i, j).isFigure()) {
+                        System.out.println(game.getCell(i, j).getFigure().getClass().getName());
+                        break;
+                    }
                 }
-                break;
-            } else {
-                validCells.add(game.getCell(i, j));
             }
+            i += stepX;
+            j += stepY;
         }
     }
 

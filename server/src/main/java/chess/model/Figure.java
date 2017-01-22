@@ -1,5 +1,7 @@
 package chess.model;
 
+import chess.exceptions.ReplacePawnException;
+
 import java.util.List;
 
 /**
@@ -23,12 +25,13 @@ public abstract class Figure {
         return allAccessibleMove().size()==0 ? false:true;
     }
     // method checks if destination cell is available and moves a figure to it if so
-    public void move(Cell destination) {
-        if (allAccessibleMove().contains(destination)) {
+    public void move(Cell destination) throws ReplacePawnException {
+        if (this.getType()==cell.getParentGame().getCurrentStep() && allAccessibleMove().contains(destination)) {
             this.cell.setFigure(null);
             this.cell = destination;
             this.cell.setFigure(this);
             firstMove = false;
+            cell.getParentGame().changeCurrentStep();
         }
     }
 

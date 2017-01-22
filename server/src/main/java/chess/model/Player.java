@@ -1,19 +1,19 @@
 package chess.model;
 
-import chess.Server;
+import chess.exceptions.RivalFigureException;
 import chess.services.GameService;
 import chess.services.PlayerService;
-import chess.services.xmlService.XMLSender;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
  * Created by Admin on 17.01.2017.
  */
-public class Player extends Thread{
+public class Player extends Thread {
     private String login;
     private String password;
     private String nickname;
@@ -22,8 +22,8 @@ public class Player extends Thread{
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private OutputStream output;
     private Game currentGame;
+
     public Player(Socket socket) {
         this.socket = socket;
 
@@ -31,7 +31,6 @@ public class Player extends Thread{
             in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            output = new DataOutputStream(socket.getOutputStream());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,45 +53,57 @@ public class Player extends Thread{
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
+
     @Override
     public void run() {
         try {
             String str = "";
             while (true) {
                 str = in.readLine();
-                if(str.equals("exit")) break;
-                if(str.equals("reg")){
+                if (str.equals("exit")) break;
+                if (str.equals("reg")) {
                     PlayerService.reg(this, in, out);
                 }
-                if(str.equals("auth")){
+                if (str.equals("auth")) {
                     PlayerService.auth(this);
                 }
-                if(str.equals("callPlayer")){
+                if (str.equals("callPlayer")) {
                     out.println("enter nickname your rival");
                     Player player = GameService.callPlayer(this, in.readLine());
-                    PrintWriter otherOut  = new PrintWriter(player.getSocket().getOutputStream(), true);
+                    PrintWriter otherOut = new PrintWriter(player.getSocket().getOutputStream(), true);
                     otherOut.println("confirm");
                 }
-                if(str.equals("confirm")){
+                if (str.equals("confirm")) {
                     out.println("You are invited. enter Ok or No");
                     currentGame = GameService.confirmGame(this, in.readLine());
                 }
-                if(str.equals("drag")){
+                if (str.equals("drag")) {
                     out.println("enter coordinates of figure - x and y");
-                    int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
-                    out.println("steps");
-                    for(int i: steps) {
-                        out.println(i);
+                    try {
+                        int[] steps = GameService.steps(currentGame, Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
+                        out.println("steps");
+                        for (int i : steps) {
+                            out.println(i);
+                        }
+                    } catch (RivalFigureException e) {
+                        out.println("you try taking rivals figure");
+                        e.printStackTrace();
                     }
                 }
-                if(str.equals("FREEPLAYERS")) {
-                    XMLSender test = new XMLSender();
+                if (str.equals("move")) {
+                    int[] steps = new int[0];
                     try {
-                        test.sendFreePlayers(output);
-                    } catch (ParserConfigurationException e) {
+                        steps = GameService.move(currentGame, in, out);
+                    } catch (RivalFigureException e) {
+                        out.println("you try taking rivals figure");
                         e.printStackTrace();
-                    } catch (TransformerConfigurationException e) {
-                        e.printStackTrace();
+                    }
+                    Player otherPlayer = currentGame.getOtherPlayer(this);
+                    System.out.println(otherPlayer.getNickname());
+                    PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
+                    outOther.println("step");
+                    for (int i : steps) {
+                        outOther.println(i);
                     }
                 }
             }
@@ -103,6 +114,7 @@ public class Player extends Thread{
             close();
         }
     }
+
     public void close() {
         try {
             in.close();
@@ -145,14 +157,6 @@ public class Player extends Thread{
         this.status = status;
     }
 
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -170,13 +174,4 @@ public class Player extends Thread{
         result = 31 * result + nickname.hashCode();
         return result;
     }
-
-//    public String getLogin() {
-//        return login;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-
 }
