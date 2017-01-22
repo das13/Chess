@@ -17,9 +17,13 @@ public class ServerMain {
             Collections.synchronizedList(new ArrayList<Game>());
     public static void main(String[] args) {
         Game game = new Game();
-        List<Cell> cells = game.getBoard()[1][1].getFigure().allAccessibleMove();
+        List<Cell> cells = game.getBoard()[1][0].getFigure().allAccessibleMove();
         for(Cell c: cells)
         System.out.println(c.getX()+" "+c.getY());
        new Server();
+    }
+
+    public static List<Player> getFreePlayers() {
+        return freePlayers;
     }
 }
