@@ -14,7 +14,7 @@ import java.net.Socket;
 /**
  * Created by Admin on 17.01.2017.
  */
-public class Player extends Thread {
+public class Player {
     private String login;
     private String password;
     private String nickname;
@@ -26,6 +26,14 @@ public class Player extends Thread {
     private OutputStream output;
     private Game currentGame;
     private Controller controller;
+
+    /*
+    * Убрал "extends Thread", остальное закомментил на всякий случай.
+    *
+    * bobnewmark 22.01
+    *
+    * */
+
 
 //    public Player(Socket socket) {
 //        this.socket = socket;

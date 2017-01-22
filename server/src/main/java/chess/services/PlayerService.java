@@ -18,6 +18,8 @@ public class PlayerService {
         /*
         * Изменил аргументы метода, вместо Player теперь Controller
         *
+        * bobnewmark 22.01
+        *
         * */
 
         out.println("enter your nickname");
