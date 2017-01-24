@@ -13,7 +13,7 @@ public abstract class Figure {
     }
     private int id;
     private Type type;
-    protected Cell cell;
+    private Cell cell;
     private boolean firstMove = true;
     public abstract List<Cell> allAccessibleMove();
 
@@ -22,7 +22,7 @@ public abstract class Figure {
         this.cell = cell;
     }
     public boolean hasMove() {
-        return allAccessibleMove().size()==0 ? false:true;
+        return allAccessibleMove().size() > 0;
     }
     // method checks if destination cell is available and moves a figure to it if so
     public void move(Cell destination) throws ReplacePawnException {

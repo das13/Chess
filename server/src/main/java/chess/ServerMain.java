@@ -25,7 +25,7 @@ public class ServerMain {
         }
         for(Cell c: cells)
         System.out.println(c.getX()+" "+c.getY());
-       // new Server();
+       new Server();
     }
     public static List<Player> getFreePlayers() {
         return freePlayers;

@@ -1,6 +1,7 @@
 package chess;
 
 
+import chess.controller.Controller;
 import chess.model.Player;
 
 import java.io.IOException;
@@ -23,8 +24,10 @@ public class Server {
 
             while (true) {
                 Socket socket = server.accept();
-                Player player = new Player(socket);
-                player.start();
+                Controller controller = new Controller(socket);
+                controller.start();
+//                Player player = new Player(socket);
+//                player.start();
 
             }
         } catch (IOException e) {
@@ -37,12 +40,12 @@ public class Server {
     private void closeAll() {
         try {
             server.close();
-            synchronized(players) {
-                Iterator<Player> iter = players.iterator();
-                while(iter.hasNext()) {
-                    ((Player) iter.next()).close();
-                }
-            }
+//            synchronized(players) {
+//                Iterator<Player> iter = players.iterator();
+//                while(iter.hasNext()) {
+//                    ((Player) iter.next()).close();
+//                }
+//            }
         } catch (Exception e) {
             System.err.println("Threads did not close!");
         }

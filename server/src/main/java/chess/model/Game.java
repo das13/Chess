@@ -69,6 +69,13 @@ public class Game extends Thread{
             board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
             //board[i][6].setFigure(new Pawn(Type.BLACK, board[i][6]));
         }
+        for (Cell[] cells: board) {
+            for (Cell cell: cells) {
+                System.out.print(cell.getX() + "." + cell.getY() + " ");
+            }
+            System.out.println();
+        }
+
     }
     public Cell getCell(int x, int y) {
         return board[x][y];
@@ -85,6 +92,8 @@ public class Game extends Thread{
             this.currentStep = Type.WHITE;
         }
     }
+
+
 
     public Cell[][] getBoard() {
         return board;
