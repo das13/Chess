@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Created by Admin on 20.01.2017.
+ * Created by viacheslav koshchii on 20.01.2017.
  */
 public class PlayerService {
     public static void reg(Controller controller, BufferedReader in, PrintWriter out) throws IOException {
@@ -31,7 +31,11 @@ public class PlayerService {
         out.println("You are offline. Get auth");
         controller.getPlayer().setStatus(Status.OFFLINE);
     }
-    public static void auth(Player player){
+    public static void auth(Player player, BufferedReader in, PrintWriter out) throws IOException {
+        player.setLogin(in.readLine());
+        player.setPassword(in.readLine());
+        System.out.println(player.getLogin()+" "+player.getPassword());
+        out.println("Ok");
         player.setStatus(Status.FREE);
         synchronized(ServerMain.freePlayers) {
             ServerMain.freePlayers.add(player);

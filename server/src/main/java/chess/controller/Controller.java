@@ -53,7 +53,7 @@ public class Controller extends Thread {
                     PlayerService.reg(this, in, out);
                 }
                 if (str.equals("auth")) {
-                    PlayerService.auth(this.player);
+                    PlayerService.auth(this.player, in, out);
                 }
                 if (str.equals("callPlayer")) {
                     out.println("enter nickname your rival");
@@ -74,6 +74,7 @@ public class Controller extends Thread {
                     setCurrentGame(thisGame);
                 }
                 if (str.equals("drag")) {
+                    System.out.println("oooooooooooooooooooooooooooo");
                     out.println("enter coordinates of figure - x and y");
                     try {
                         int[] steps = GameService.steps(getCurrentGame(), Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
