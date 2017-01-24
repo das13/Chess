@@ -1,6 +1,7 @@
 package chess;
 
 import chess.services.xmlService.XMLin;
+import chess.services.xmlService.XMLout;
 import org.w3c.dom.Document;
 
 import java.io.*;
@@ -11,7 +12,10 @@ public class Client {
     private BufferedReader in;
     private PrintWriter out;
     private Socket socket;
-    private InputStream input;
+    private DataInputStream input;
+    private DataOutputStream output;
+    private XMLin xmLin;
+    private XMLout xmLout;
 
     public Client() {
         Scanner scan = new Scanner(System.in);
@@ -22,7 +26,9 @@ public class Client {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             input = new DataInputStream(socket.getInputStream());
-            XMLin xmLin = new XMLin();
+            output = new DataOutputStream(socket.getOutputStream());
+            xmLin = new XMLin(this);
+            xmLout = new XMLout(this);
             out.println(scan.nextLine());
             Resender resend = new Resender();
             resend.start();
@@ -31,7 +37,7 @@ public class Client {
                 str = scan.nextLine();
                 out.println(str);
                 if ("FREEPLAYERS".equals(str)) {
-                    Document doc = xmLin.receive(input);
+                    Document doc = xmLin.receive();
                 }
             }
             resend.setStop();
@@ -73,4 +79,11 @@ public class Client {
         }
     }
 
+    public DataInputStream getInput() {
+        return input;
+    }
+
+    public DataOutputStream getOutput() {
+        return output;
+    }
 }

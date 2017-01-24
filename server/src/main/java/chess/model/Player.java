@@ -19,6 +19,7 @@ public class Player {
     private String password;
     private String nickname;
     private int rank;
+    private String ipadress;
     private Status status;
     private Socket socket;
     private BufferedReader in;
@@ -50,6 +51,16 @@ public class Player {
 //        }
 //    }
 
+
+    public Player(String login, String password, int rank, Status status, String ipadress) {
+        this.login = login;
+        this.password = password;
+        this.rank = rank;
+        this.status = status;
+        this.ipadress = ipadress;
+
+    }
+
     public Player(Controller controller) {
         this.controller = controller;
     }
@@ -70,7 +81,15 @@ public class Player {
         this.socket = socket;
     }
 
-//    @Override
+    public String getIpadress() {
+        return ipadress;
+    }
+
+    public void setIpadress(String ipadress) {
+        this.ipadress = ipadress;
+    }
+
+    //    @Override
 //    public void run() {
 //        try {
 //            String str = "";

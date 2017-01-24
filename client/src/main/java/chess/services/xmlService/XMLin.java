@@ -1,5 +1,6 @@
 package chess.services.xmlService;
 
+import chess.Client;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,18 +19,25 @@ import java.io.InputStream;
  */
 public class XMLin {
 
-    public Document receive(InputStream input) throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
+    private Client host;
+
+    public XMLin(Client client) {
+        host = client;
+    }
+
+    public Document receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
 
         DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         Document doc;
 
-        XMLInputStream xmlin = new XMLInputStream(input);
+        XMLInputStream xmlin = new XMLInputStream();
         xmlin.recive();
         doc = docBuilder.parse(xmlin);
 
         // get the first element
         Element element = doc.getDocumentElement();
+        element.getTextContent();
 
         // get all child nodes
         NodeList nodes = element.getChildNodes();
@@ -38,17 +46,16 @@ public class XMLin {
         for (int i = 0; i < nodes.getLength(); i++) {
             System.out.println("" + nodes.item(i).getTextContent());
         }
-
         return doc;
     }
 
-    class XMLInputStream extends ByteArrayInputStream {
+    private class XMLInputStream extends ByteArrayInputStream {
 
         private DataInputStream in;
 
-        public XMLInputStream(InputStream in) {
+        public XMLInputStream() {
             super(new byte[2]);
-            this.in = new DataInputStream(in);
+            this.in = host.getInput();
         }
 
         public void recive() throws IOException {

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Server {
 
-    private List<Player> players =
+    private static List<Player> players =
             Collections.synchronizedList(new ArrayList<Player>());
     private ServerSocket server;
 
@@ -51,7 +51,7 @@ public class Server {
         }
     }
 
-
-
-
+    public static List<Player> getPlayers() {
+        return players;
+    }
 }

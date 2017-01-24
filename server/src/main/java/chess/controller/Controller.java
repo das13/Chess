@@ -3,6 +3,7 @@ package chess.controller;
 import chess.exceptions.RivalFigureException;
 import chess.model.Game;
 import chess.model.Player;
+import chess.model.Status;
 import chess.services.GameService;
 import chess.services.PlayerService;
 import chess.services.xmlService.XMLReciever;
@@ -21,7 +22,8 @@ public class Controller extends Thread {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private OutputStream output;
+    private DataInputStream input;
+    private DataOutputStream output;
     private Player player;
     private XMLSender sender;
     private XMLReciever reciever;
@@ -34,7 +36,9 @@ public class Controller extends Thread {
             in = new BufferedReader(new InputStreamReader(
                     socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
+            input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,7 +54,7 @@ public class Controller extends Thread {
                 str = in.readLine();
                 if (str.equals("exit")) break;
                 if (str.equals("reg")) {
-                    PlayerService.reg(this, in, out);
+                    //PlayerService.reg(this, in, out);
                 }
                 if (str.equals("auth")) {
                     PlayerService.auth(this.player);
@@ -159,7 +163,23 @@ public class Controller extends Thread {
         player.setNickname(nickname);
     }
 
+    public void setPlayerIpadress(String ipadress) {
+        player.setIpadress(ipadress);
+    }
+
+    public void setPlayerStatus(Status status) {
+        player.setStatus(status);
+    }
+
     public Socket getSocket() {
         return socket;
+    }
+
+    public DataInputStream getInput() {
+        return input;
+    }
+
+    public DataOutputStream getOutput() {
+        return output;
     }
 }
