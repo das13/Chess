@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
- * Created by Admin on 20.01.2017.
+ * Created by viacheslav koshchii on 20.01.2017.
  */
 public class GameService {
     public static Player callPlayer(Player playerWhite, String nickName) {
