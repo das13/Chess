@@ -89,27 +89,27 @@ public class XMLSender {
         send(doc);
     }
 
-    public void sendFreePlayers() throws ParserConfigurationException, IOException, TransformerConfigurationException {
-        db = dbf.newDocumentBuilder();
-        doc = db.newDocument();
-        Element root = doc.createElement("freePlayers");
-        doc.appendChild(root);
-        Element memberList = doc.createElement("players");
-        root.appendChild(memberList);
-        List<Player> temp = ServerMain.getFreePlayers();
-        for (int i = 0; i < temp.size(); i++) {
-            Player player = temp.get(i);
-            if (player.getStatus() == Status.FREE) {
-                Element member = doc.createElement("player");
-                memberList.appendChild(member);
-                Element nickname = doc.createElement("nickname");
-                nickname.appendChild(doc.createTextNode(player.getNickname()));
-                member.appendChild(nickname);
-                Element rank = doc.createElement("rank");
-                rank.appendChild(doc.createTextNode(String.valueOf(player.getRank())));
-                member.appendChild(rank);
-            }
-        }
-        send(doc);
-    }
+//    public void sendFreePlayers() throws ParserConfigurationException, IOException, TransformerConfigurationException {
+//        db = dbf.newDocumentBuilder();
+//        doc = db.newDocument();
+//        Element root = doc.createElement("freePlayers");
+//        doc.appendChild(root);
+//        Element memberList = doc.createElement("players");
+//        root.appendChild(memberList);
+//        List<Player> temp = ServerMain.getFreePlayers();
+//        for (int i = 0; i < temp.size(); i++) {
+//            Player player = temp.get(i);
+//            if (player.getStatus() == Status.FREE) {
+//                Element member = doc.createElement("player");
+//                memberList.appendChild(member);
+//                Element nickname = doc.createElement("nickname");
+//                nickname.appendChild(doc.createTextNode(player.getNickname()));
+//                member.appendChild(nickname);
+//                Element rank = doc.createElement("rank");
+//                rank.appendChild(doc.createTextNode(String.valueOf(player.getRank())));
+//                member.appendChild(rank);
+//            }
+//        }
+//        send(doc);
+//    }
 }
