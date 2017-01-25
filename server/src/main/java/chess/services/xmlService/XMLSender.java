@@ -2,6 +2,7 @@ package chess.services.xmlService;
 
 import chess.Server;
 import chess.ServerMain;
+import chess.controller.Controller;
 import chess.model.Player;
 import chess.model.Status;
 import org.w3c.dom.Document;
@@ -20,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,15 +29,36 @@ import java.util.List;
  */
 public class XMLSender {
 
+    private Controller host;
     private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private DocumentBuilder db;
     private Document doc;
 
+    public XMLSender(Controller controller) {
+        host = controller;
+    }
+    private class XMLOutputStream extends ByteArrayOutputStream {
+
+        private DataOutputStream out;
+
+        XMLOutputStream() {
+            super();
+            this.out = host.getOutput();
+        }
+
+        void send() throws IOException {
+            byte[] data = toByteArray();
+            out.writeInt(data.length);
+            out.write(data);
+            reset();
+        }
+    }
+
 
     //sends Document to the OutputStream
-    public void send(Document doc, OutputStream channel) throws TransformerConfigurationException, IOException {
+    private void send(Document doc) throws TransformerConfigurationException, IOException {
 
-        XMLOutputStream out = new XMLOutputStream(channel);
+        XMLOutputStream out = new XMLOutputStream();
         StreamResult sr = new StreamResult(out);
         DOMSource ds = new DOMSource(doc);
         Transformer tf = TransformerFactory.newInstance().newTransformer();
@@ -48,24 +71,25 @@ public class XMLSender {
         out.send();
     }
 
-    private class XMLOutputStream extends ByteArrayOutputStream {
+    public void send(List<String> message) throws ParserConfigurationException, IOException, TransformerConfigurationException {
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.newDocument();
+        List<String> list = message;
 
-        private DataOutputStream out;
-
-        public XMLOutputStream(OutputStream out) {
-            super();
-            this.out = new DataOutputStream(out);
+        Element root = doc.createElement("root");
+        root.setAttribute("function", list.get(0));
+        doc.appendChild(root);
+        Element args1 = doc.createElement("args");
+        root.appendChild(args1);
+        for (int i = 1; i < list.size(); i++) {
+            Element el = doc.createElement("arg");
+            el.appendChild(doc.createTextNode(list.get(i)));
+            args1.appendChild(el);
         }
-
-        public void send() throws IOException {
-            byte[] data = toByteArray();
-            out.writeInt(data.length);
-            out.write(data);
-            reset();
-        }
+        send(doc);
     }
 
-    public void sendFreePlayers(OutputStream outputStream) throws ParserConfigurationException, IOException, TransformerConfigurationException {
+    public void sendFreePlayers() throws ParserConfigurationException, IOException, TransformerConfigurationException {
         db = dbf.newDocumentBuilder();
         doc = db.newDocument();
         Element root = doc.createElement("freePlayers");
@@ -86,6 +110,6 @@ public class XMLSender {
                 member.appendChild(rank);
             }
         }
-        send(doc, outputStream);
+        send(doc);
     }
 }

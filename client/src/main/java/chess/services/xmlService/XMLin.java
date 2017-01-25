@@ -13,11 +13,17 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bobnewmark on 22.01.2017
  */
 public class XMLin {
+
+    private DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
+    private DocumentBuilder docBuilder;
+    private Document doc;
 
     private Client host;
 
@@ -25,40 +31,16 @@ public class XMLin {
         host = client;
     }
 
-    public Document receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
-
-        DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
-        Document doc;
-
-        XMLInputStream xmlin = new XMLInputStream();
-        xmlin.recive();
-        doc = docBuilder.parse(xmlin);
-
-        // get the first element
-        Element element = doc.getDocumentElement();
-        element.getTextContent();
-
-        // get all child nodes
-        NodeList nodes = element.getChildNodes();
-
-        // print the text content of each child
-        for (int i = 0; i < nodes.getLength(); i++) {
-            System.out.println("" + nodes.item(i).getTextContent());
-        }
-        return doc;
-    }
-
     private class XMLInputStream extends ByteArrayInputStream {
 
         private DataInputStream in;
 
-        public XMLInputStream() {
+        XMLInputStream() {
             super(new byte[2]);
             this.in = host.getInput();
         }
 
-        public void recive() throws IOException {
+        void recive() throws IOException {
             int i = in.readInt();
             byte[] data = new byte[i];
             in.read(data, 0, i);
@@ -67,5 +49,32 @@ public class XMLin {
             this.mark = 0;
             this.pos = 0;
         }
+    }
+
+    public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
+
+        docBuilder = docBuilderFact.newDocumentBuilder();
+        XMLInputStream xmlin = new XMLInputStream();
+        xmlin.recive();
+        doc = docBuilder.parse(xmlin);
+
+        List<String> list = new ArrayList<String>();
+
+        Element element = doc.getDocumentElement();
+        String root = element.getAttribute("function");
+        list.add(root);
+
+        NodeList nodes = element.getChildNodes();
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if ("args".equals(nodes.item(i).getNodeName())) {
+                Element el = (Element) nodes.item(i);
+                for (int j = 0; j < el.getElementsByTagName("arg").getLength(); j++) {
+                    String str = el.getElementsByTagName("arg").item(j).getTextContent();
+                    list.add(str);
+                }
+            }
+        }
+        return list;
     }
 }

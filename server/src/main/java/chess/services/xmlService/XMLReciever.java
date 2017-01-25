@@ -15,6 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bobnewmark on 21.01.2017
@@ -22,9 +24,8 @@ import java.io.InputStream;
 public class XMLReciever {
 
     private DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder;
-    Document doc;
-    private DataInputStream in;
+    private DocumentBuilder docBuilder;
+    private Document doc;
     private Controller host;
 
     public XMLReciever(Controller controller) {
@@ -32,14 +33,13 @@ public class XMLReciever {
     }
 
     private class XMLInputStream extends ByteArrayInputStream {
+        private DataInputStream in;
 
-        public XMLInputStream() {
+        XMLInputStream() {
             super(new byte[2]);
-//            host = controller;
-//            this.in = host.getInput();
+            this.in = host.getInput();
         }
-
-        public void recive() throws IOException {
+        void recive() throws IOException {
             int i = in.readInt();
             byte[] data = new byte[i];
             in.read(data, 0, i);
@@ -51,42 +51,30 @@ public class XMLReciever {
     }
 
     // method returns Document that is built from InputStream
-    public Document receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
+    public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
 
         docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.recive();
         doc = docBuilder.parse(xmlin);
         doc.getDocumentElement().normalize();
+        List<String> list = new ArrayList<String>();
 
         Element element = doc.getDocumentElement();
-        String tag = element.getNodeName();
+        String root = element.getAttribute("function");
+        list.add(root);
+
         NodeList nodes = element.getChildNodes();
 
-        if ("reg".equals(tag)) {
-            // РЕГИСТРАЦИЯ НОВОГО ИГРОКА
-            for (int i = 0; i < nodes.getLength(); i++) {
-                if ("args".equals(nodes.item(i).getNodeName())) {
-                    Element el = (Element) nodes.item(i);
-                    String login = el.getElementsByTagName("login").item(0).getTextContent();
-                    String password = el.getElementsByTagName("password").item(0).getTextContent();
-                    String ipadress = el.getElementsByTagName("ipadress").item(0).getTextContent();
-                    PlayerService.reg(host, login, password, ipadress);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if ("args".equals(nodes.item(i).getNodeName())) {
+                Element el = (Element) nodes.item(i);
+                for (int j = 0; j < el.getElementsByTagName("arg").getLength(); j++) {
+                    String str = el.getElementsByTagName("arg").item(j).getTextContent();
+                    list.add(str);
                 }
             }
-
-
-
         }
-
-        // print the text content of each child
-
-
-
-
-        return doc;
+        return list;
     }
-
-
-
 }

@@ -17,6 +17,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bobnewmark on 22.01.2017
@@ -51,12 +55,12 @@ public class XMLout {
 
         private DataOutputStream out;
 
-        public XMLOutputStream() {
+        XMLOutputStream() {
             super();
             this.out = host.getOutput();
         }
 
-        public void send() throws IOException {
+        void send() throws IOException {
             byte[] data = toByteArray();
             out.writeInt(data.length);
             out.write(data);
@@ -65,116 +69,21 @@ public class XMLout {
         }
     }
 
-    public void sendMessage(String... arguments) throws ParserConfigurationException, IOException, TransformerConfigurationException {
+    public void sendMessage(List<String> message) throws ParserConfigurationException, IOException, TransformerConfigurationException {
         db = dbf.newDocumentBuilder();
         doc = db.newDocument();
-        String arg0 = arguments[0];
-        if ("reg".equals(arg0)) {
-            if (arguments.length != 4) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element login = doc.createElement("login");
-                login.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(login);
-                Element password = doc.createElement("password");
-                password.appendChild(doc.createTextNode(arguments[2]));
-                args.appendChild(password);
-                Element ipadress = doc.createElement("ipadress");
-                ipadress.appendChild(doc.createTextNode(arguments[3]));
-                args.appendChild(ipadress);
-            }
 
-        } else if ("profile".equals(arg0)) {
-            if (arguments.length != 4) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element login = doc.createElement("login");
-                login.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(login);
-                Element password = doc.createElement("password");
-                password.appendChild(doc.createTextNode(arguments[2]));
-                args.appendChild(password);
-                Element ipadress = doc.createElement("ipadress");
-                ipadress.appendChild(doc.createTextNode(arguments[3]));
-                args.appendChild(ipadress);
-            }
-        } else if ("auth".equals(arg0)) {
-            if (arguments.length != 4) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element login = doc.createElement("login");
-                login.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(login);
-                Element password = doc.createElement("password");
-                password.appendChild(doc.createTextNode(arguments[2]));
-                args.appendChild(password);
-                Element ipadress = doc.createElement("ipadress");
-                ipadress.appendChild(doc.createTextNode(arguments[3]));
-                args.appendChild(ipadress);
-            }
-        } else if ("move".equals(arg0)) {
-            if (arguments.length != 4) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element fromCell = doc.createElement("fromCell");
-                fromCell.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(fromCell);
-                Element toCell = doc.createElement("toCell");
-                toCell.appendChild(doc.createTextNode(arguments[2]));
-                args.appendChild(toCell);
-                Element timer = doc.createElement("timer");
-                timer.appendChild(doc.createTextNode(arguments[3]));
-                args.appendChild(timer);
-            }
-        } else if ("gameOver".equals(arg0)) {
-            if (arguments.length != 3) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element reason = doc.createElement("reason");
-                reason.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(reason);
-                Element timer = doc.createElement("timer");
-                timer.appendChild(doc.createTextNode(arguments[2]));
-                args.appendChild(timer);
-            }
-        } else if ("offerDraw".equals(arg0)) {
-            if (arguments.length != 2) {
-                System.out.println("WRONG INPUT!");
-                // когда будет view, необходимость этой проверки, скорее всего отпадет
-            } else {
-                Element root = doc.createElement(arg0);
-                doc.appendChild(root);
-                Element args = doc.createElement("args");
-                root.appendChild(args);
-                Element timer = doc.createElement("timer");
-                timer.appendChild(doc.createTextNode(arguments[1]));
-                args.appendChild(timer);
-            }
+        ArrayList<String> list = (ArrayList<String>) message;
+
+        Element root = doc.createElement("root");
+        root.setAttribute("function", list.get(0));
+        doc.appendChild(root);
+        Element args = doc.createElement("args");
+        root.appendChild(args);
+        for (int i = 1; i < list.size(); i++) {
+            Element el = doc.createElement(String.valueOf(i));
+            el.appendChild(doc.createTextNode(list.get(i)));
+            args.appendChild(el);
         }
         send(doc);
     }

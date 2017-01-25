@@ -37,7 +37,7 @@ public class Client {
                 str = scan.nextLine();
                 out.println(str);
                 if ("FREEPLAYERS".equals(str)) {
-                    Document doc = xmLin.receive();
+                    //Document doc = xmLin.receive();
                 }
             }
             resend.setStop();

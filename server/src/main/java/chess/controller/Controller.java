@@ -57,7 +57,7 @@ public class Controller extends Thread {
                     //PlayerService.reg(this, in, out);
                 }
                 if (str.equals("auth")) {
-                    PlayerService.auth(this.player, in, out);
+                    PlayerService.auth(this.player);
                 }
                 if (str.equals("callPlayer")) {
                     out.println("enter nickname your rival");
@@ -108,9 +108,9 @@ public class Controller extends Thread {
                     }
                 }
                 if (str.equals("FREEPLAYERS")) {
-                    XMLSender test = new XMLSender();
+                    XMLSender test = new XMLSender(this);
                     try {
-                        test.sendFreePlayers(output);
+                        test.sendFreePlayers();
                     } catch (ParserConfigurationException e) {
                         e.printStackTrace();
                     } catch (TransformerConfigurationException e) {
