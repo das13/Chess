@@ -1,27 +1,15 @@
 package chess.services.xmlService;
 
-import chess.Server;
-import chess.ServerMain;
-import chess.controller.Controller;
-import chess.model.Player;
-import chess.model.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -29,13 +17,13 @@ import java.util.List;
  */
 public class XMLSender {
 
-    private Controller host;
+    private OutputStream output;
     private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private DocumentBuilder db;
     private Document doc;
 
-    public XMLSender(Controller controller) {
-        host = controller;
+    public XMLSender(OutputStream output) {
+        this.output = output;
     }
     private class XMLOutputStream extends ByteArrayOutputStream {
 
@@ -43,7 +31,7 @@ public class XMLSender {
 
         XMLOutputStream() {
             super();
-            this.out = host.getOutput();
+            this.out = new DataOutputStream(output);
         }
 
         void send() throws IOException {
@@ -67,6 +55,14 @@ public class XMLSender {
             tf.transform(ds, sr);
         } catch (TransformerException ex) {
             ex.printStackTrace();
+        }
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File("outputserver.xml"));
+        Source input = new DOMSource(doc);
+        try {
+            transformer.transform(input, output);
+        } catch (TransformerException e) {
+            e.printStackTrace();
         }
         out.send();
     }

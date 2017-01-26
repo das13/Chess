@@ -5,7 +5,7 @@ import chess.exceptions.ReplacePawnException;
 import java.util.List;
 
 /**
- * Created by Admin on 17.01.2017.
+ * Created by viacheslav koshchii on 17.01.2017.
  */
 public abstract class Figure {
     public Figure(Type type){

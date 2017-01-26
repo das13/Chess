@@ -5,12 +5,11 @@ import chess.controller.Controller;
 import chess.model.Player;
 import chess.model.Status;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.List;
 
 /**
- * Created by Admin on 20.01.2017.
+ * Created by viacheslav koshchii on 20.01.2017.
  */
 public class PlayerService {
     public static void reg(Controller controller, String login, String password, String ipadress) throws IOException {
@@ -35,9 +34,17 @@ public class PlayerService {
 //        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
-    public static void auth(Player player){
+    public static void auth(Player player, String login, String password, List<String> out) {
+        out.add("Ok");
+        for (Player p : ServerMain.freePlayers) {
+            System.out.println("user" +p.getNickname());
+            out.add(p.getNickname());
+        }
+        player.setLogin(login);
+        player.setNickname(login);
+        player.setPassword(password);
         player.setStatus(Status.FREE);
-        synchronized(ServerMain.freePlayers) {
+        synchronized (ServerMain.freePlayers) {
             ServerMain.freePlayers.add(player);
         }
     }

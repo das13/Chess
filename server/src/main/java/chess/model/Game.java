@@ -3,7 +3,7 @@ package chess.model;
 import chess.model.figures.*;
 
 /**
- * Created by Admin on 17.01.2017.
+ * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Game extends Thread{
     private Player whitePlayer;

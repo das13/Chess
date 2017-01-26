@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Admin on 17.01.2017.
+ * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Pawn extends Figure {
 

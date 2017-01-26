@@ -1,18 +1,14 @@
 package chess.model;
 
 import chess.controller.Controller;
-import chess.exceptions.RivalFigureException;
-import chess.services.GameService;
-import chess.services.PlayerService;
-import chess.services.xmlService.XMLSender;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- * Created by Admin on 17.01.2017.
+ * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Player {
     private String login;

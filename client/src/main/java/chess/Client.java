@@ -2,7 +2,6 @@ package chess;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
-import org.w3c.dom.Document;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,15 +19,12 @@ public class Client {
     public Client() {
         Scanner scan = new Scanner(System.in);
         String ip = "localhost";
-
         try {
             socket = new Socket(ip, 2543);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
-            xmLin = new XMLin(this);
-            xmLout = new XMLout(this);
             out.println(scan.nextLine());
             Resender resend = new Resender();
             resend.start();

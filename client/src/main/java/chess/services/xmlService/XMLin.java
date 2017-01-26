@@ -1,10 +1,10 @@
 package chess.services.xmlService;
 
-import chess.Client;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,10 +25,10 @@ public class XMLin {
     private DocumentBuilder docBuilder;
     private Document doc;
 
-    private Client host;
+    private InputStream input;
 
-    public XMLin(Client client) {
-        host = client;
+    public XMLin(InputStream input) {
+        this.input = input;
     }
 
     private class XMLInputStream extends ByteArrayInputStream {
@@ -37,7 +37,7 @@ public class XMLin {
 
         XMLInputStream() {
             super(new byte[2]);
-            this.in = host.getInput();
+            this.in = new DataInputStream(input);
         }
 
         void recive() throws IOException {
@@ -69,8 +69,8 @@ public class XMLin {
         for (int i = 0; i < nodes.getLength(); i++) {
             if ("args".equals(nodes.item(i).getNodeName())) {
                 Element el = (Element) nodes.item(i);
-                for (int j = 0; j < el.getElementsByTagName("arg").getLength(); j++) {
-                    String str = el.getElementsByTagName("arg").item(j).getTextContent();
+                for (int j = 0; j < el.getChildNodes().getLength(); j++) {
+                    String str = el.getChildNodes().item(j).getTextContent();
                     list.add(str);
                 }
             }

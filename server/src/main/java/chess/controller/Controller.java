@@ -8,11 +8,15 @@ import chess.services.GameService;
 import chess.services.PlayerService;
 import chess.services.xmlService.XMLReciever;
 import chess.services.xmlService.XMLSender;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bobnewmark on 22.01.2017
@@ -20,8 +24,8 @@ import java.net.Socket;
 public class Controller extends Thread {
 
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private InputStream in;
+    private OutputStream out;
     private DataInputStream input;
     private DataOutputStream output;
     private Player player;
@@ -31,14 +35,13 @@ public class Controller extends Thread {
     public Controller(Socket socket) {
         this.socket = socket;
         player = new Player(this);
-
         try {
-            in = new BufferedReader(new InputStreamReader(
-                    socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            in = socket.getInputStream();
+            out = socket.getOutputStream();
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
-
+            sender = new XMLSender(out);
+            reciever=new XMLReciever(in);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -49,54 +52,66 @@ public class Controller extends Thread {
     @Override
     public void run() {
         try {
-            String str = "";
+            List<String> str = null;
+            List<String> strOut = new ArrayList();
             while (true) {
-                str = in.readLine();
-                if (str.equals("exit")) break;
-                if (str.equals("reg")) {
+                try {
+                    str = reciever.receive();
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (TransformerConfigurationException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                }catch(SocketException e){
+                    break;
+                }
+                if (str.get(0).equals("exit")) break;
+                if (str.get(0).equals("reg")) {
                     //PlayerService.reg(this, in, out);
                 }
-                if (str.equals("auth")) {
-                    PlayerService.auth(this.player);
+                if (str.get(0).equals("auth")) {
+                    strOut.add("auth");
+                    PlayerService.auth(player, str.get(1), str.get(2), strOut);
+                    sender.send(strOut);
                 }
-                if (str.equals("callPlayer")) {
-                    out.println("enter nickname your rival");
+                if (str.get(0).equals("callPlayer")) {
+                    //out.println("enter nickname your rival");
 
-                    Player player = GameService.callPlayer(getPlayer(), in.readLine());
+                    Player player = GameService.callPlayer(getPlayer(), str.get(1));
                     if (player != null) {
                         Controller otherController = player.getController();
                         PrintWriter otherOut = new PrintWriter(otherController.getSocket().getOutputStream(), true);
                         otherOut.println("confirm");
                     } else {
-                        out.println("This player is out of reach ");
+                        //out.println("This player is out of reach ");
                     }
 
                 }
-                if (str.equals("confirm")) {
-                    out.println("You are invited. enter Ok or No");
-                    Game thisGame = GameService.confirmGame(getPlayer(), in.readLine());
+                if (str.get(0).equals("confirm")) {
+                    //out.println("You are invited. enter Ok or No");
+                    Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
                     setCurrentGame(thisGame);
                 }
-                if (str.equals("drag")) {
-                    System.out.println("oooooooooooooooooooooooooooo");
-                    out.println("enter coordinates of figure - x and y");
+                if (str.get(0).equals("drag")) {
+                    //out.println("enter coordinates of figure - x and y");
                     try {
-                        int[] steps = GameService.steps(getCurrentGame(), Integer.parseInt(in.readLine()), Integer.parseInt(in.readLine()));
-                        out.println("steps");
+                        int[] steps = GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2)));
+                        //out.println("steps");
                         for (int i : steps) {
-                            out.println(i);
+                            //out.println(i);
                         }
                     } catch (RivalFigureException e) {
-                        out.println("you try taking rivals figure");
+                        //out.println("you try taking rivals figure");
                         e.printStackTrace();
                     }
                 }
-                if (str.equals("move")) {
+                if (str.get(0).equals("move")) {
                     int[] steps = new int[0];
                     try {
-                        steps = GameService.move(getCurrentGame(), in, out);
+                        steps = GameService.move(getCurrentGame(), str);
                     } catch (RivalFigureException e) {
-                        out.println("you try taking rivals figure");
+                        //out.println("you try taking rivals figure");
                         e.printStackTrace();
                     }
                     Player otherPlayer = getCurrentGame().getOtherPlayer(getPlayer());
@@ -108,18 +123,22 @@ public class Controller extends Thread {
                     }
                 }
                 if (str.equals("FREEPLAYERS")) {
-                    XMLSender test = new XMLSender(this);
-                    try {
+                    XMLSender test = new XMLSender(out);
+                   /* try {
                         test.sendFreePlayers();
                     } catch (ParserConfigurationException e) {
                         e.printStackTrace();
                     } catch (TransformerConfigurationException e) {
                         e.printStackTrace();
-                    }
+                    }*/
                 }
             }
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
             e.printStackTrace();
         } finally {
             close();

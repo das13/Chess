@@ -1,7 +1,5 @@
 package chess.services.xmlService;
 
-import chess.controller.Controller;
-import chess.services.PlayerService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -10,11 +8,10 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +23,10 @@ public class XMLReciever {
     private DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
     private DocumentBuilder docBuilder;
     private Document doc;
-    private Controller host;
+    private InputStream input;
 
-    public XMLReciever(Controller controller) {
-        host = controller;
+    public XMLReciever(InputStream input) {
+        this.input = input;
     }
 
     private class XMLInputStream extends ByteArrayInputStream {
@@ -37,7 +34,7 @@ public class XMLReciever {
 
         XMLInputStream() {
             super(new byte[2]);
-            this.in = host.getInput();
+            this.in = new DataInputStream(input);
         }
         void recive() throws IOException {
             int i = in.readInt();
@@ -57,6 +54,14 @@ public class XMLReciever {
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.recive();
         doc = docBuilder.parse(xmlin);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File("input.xml"));
+        Source input = new DOMSource(doc);
+        try {
+            transformer.transform(input, output);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
         doc.getDocumentElement().normalize();
         List<String> list = new ArrayList<String>();
 
@@ -69,8 +74,8 @@ public class XMLReciever {
         for (int i = 0; i < nodes.getLength(); i++) {
             if ("args".equals(nodes.item(i).getNodeName())) {
                 Element el = (Element) nodes.item(i);
-                for (int j = 0; j < el.getElementsByTagName("arg").getLength(); j++) {
-                    String str = el.getElementsByTagName("arg").item(j).getTextContent();
+                for (int j = 0; j < el.getChildNodes().getLength(); j++) {
+                   String str = el.getChildNodes().item(j).getTextContent();
                     list.add(str);
                 }
             }

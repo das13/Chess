@@ -1,39 +1,30 @@
 package chess.services.xmlService;
 
-import chess.Client;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by bobnewmark on 22.01.2017
  */
 public class XMLout {
 
-    private Client host;
+    private DataOutputStream host;
     private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private DocumentBuilder db;
     private Document doc;
 
-    public XMLout(Client client) {
-        host = client;
+    public XMLout(OutputStream out) {
+        host = new DataOutputStream(out);
     }
 
     public void send(Document tosend) throws TransformerConfigurationException, IOException {
@@ -57,7 +48,7 @@ public class XMLout {
 
         XMLOutputStream() {
             super();
-            this.out = host.getOutput();
+            this.out = host;
         }
 
         void send() throws IOException {
@@ -81,9 +72,18 @@ public class XMLout {
         Element args = doc.createElement("args");
         root.appendChild(args);
         for (int i = 1; i < list.size(); i++) {
-            Element el = doc.createElement(String.valueOf(i));
+            System.out.println(list.get(i));
+            Element el = doc.createElement("arg");
             el.appendChild(doc.createTextNode(list.get(i)));
             args.appendChild(el);
+        }
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(new File("output.xml"));
+        Source input = new DOMSource(doc);
+        try {
+            transformer.transform(input, output);
+        } catch (TransformerException e) {
+            e.printStackTrace();
         }
         send(doc);
     }
