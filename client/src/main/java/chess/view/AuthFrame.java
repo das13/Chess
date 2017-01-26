@@ -56,6 +56,15 @@ public class AuthFrame extends Stage {
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
+        Button btnReg = new Button("Создать");
+        HBox hbBtnReg = new HBox(10);
+        hbBtnReg.setAlignment(Pos.BOTTOM_LEFT);
+        hbBtnReg.getChildren().add(btnReg);
+        btnReg.setOnAction((e) -> {
+            stage.close();
+            new RegFrame();
+        });
+        grid.add(hbBtnReg, 1, 4);
         final Text actiontarget = new Text();
         grid.add(actiontarget, 0, 4, 2, 1);
         btn.setOnAction(new EventHandler<ActionEvent>() {
