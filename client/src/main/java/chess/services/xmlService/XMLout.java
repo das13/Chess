@@ -72,7 +72,7 @@ public class XMLout {
         Element args = doc.createElement("args");
         root.appendChild(args);
         for (int i = 1; i < list.size(); i++) {
-            System.out.println(list.get(i));
+            //System.out.println(list.get(i));
             Element el = doc.createElement("arg");
             el.appendChild(doc.createTextNode(list.get(i)));
             args.appendChild(el);

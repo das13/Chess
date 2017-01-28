@@ -1,0 +1,24 @@
+.root {
+    -fx-background-color: #372e29;
+    -fx-font-size: 9pt;
+}
+
+.button {
+    -fx-background-color: #ecb939;
+    -fx-pref-width: 70pt;
+}
+
+.label {
+    -fx-text-fill: #f0c75e;
+    -fx-font-size: 10pt;
+}
+
+#scenetitle {
+    -fx-fill: #f0c75e;
+}
+
+.text-field {
+    -fx-background-color: honeydew;
+}
+
+

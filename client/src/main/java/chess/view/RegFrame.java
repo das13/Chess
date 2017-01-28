@@ -10,10 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -41,11 +38,12 @@ public class RegFrame extends Stage {
         vBox.setAlignment(Pos.CENTER);
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.setPadding(new Insets(10, 10, 10, 10));
-        grid.setVgap(8);
+        grid.setPadding(new Insets(20, 10, 20, 10));
+        grid.setVgap(15);
         grid.setHgap(10);
 
         Text scenetitle = new Text("Новый игрок");
+        scenetitle.setId("scenetitle");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 
         Label loginLabel = new Label("Логин:");
@@ -66,32 +64,52 @@ public class RegFrame extends Stage {
         GridPane.setConstraints(passInput, 1, 1);
 
         HBox hBox = new HBox();
-        hBox.setSpacing(30);
+        hBox.setSpacing(40);
         hBox.setAlignment(Pos.CENTER);
         Button yesButton = new Button("Создать");
         yesButton.setOnAction(e -> {
-            List<String> list = new ArrayList<String>();
-            list.add("reg");
-            list.add(loginInput.getText());
-            list.add(passInput.getText());
-            System.out.println("creating palyer");
-            try {
-                xmlOut.sendMessage(list);
-            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                e1.printStackTrace();
+            if (loginInput.getText().isEmpty() || passInput.getText().isEmpty()) {
+
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().getStylesheets().add("Skin.css");
+                alert.setTitle("Ошибка");
+                alert.setHeaderText(null);
+                alert.setContentText("Заполните поля логин/пароль");
+                alert.showAndWait();
+
+            } else {
+                List<String> list = new ArrayList<String>();
+                list.add("reg");
+                list.add(loginInput.getText());
+                list.add(passInput.getText());
+                System.out.println("creating palyer");
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                List<String> listIn = null;
+                try {
+                    listIn = xmLin.receive();
+                    if("accepted".equals(listIn.get(1))){
+                        this.close();
+                        new AuthFrame(xmLin, xmlOut);
+                    } else if ("denied".equals(listIn.get(1))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Пользователь с таким логином уже существует");
+                        alert.showAndWait();
+                        System.out.println("Server cannot register such user, reason: " + listIn.get(2));
+                    }
+
+                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                    e1.printStackTrace();
+                }
+
             }
-            List<String> listIn = null;
-            try {
-                listIn = xmLin.receive();
-            } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
-                e1.printStackTrace();
-            }
-            if("accepted".equals(listIn.get(1))){
-                this.close();
-                new AuthFrame(xmLin, xmlOut);
-            } else if ("denied".equals(list.get(1))) {
-                System.out.println("Server cannot register such user, reason: " + list.get(2));
-            }
+
             //xmlOut.sendMessage();
         });
         Button noButton = new Button("Отмена");
@@ -108,6 +126,7 @@ public class RegFrame extends Stage {
         //Scene scene = new Scene(grid, 300, 200);
         vBox.getChildren().addAll(scenetitle, grid, hBox);
         Scene scene = new Scene(vBox, 300, 200);
+        scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.setResizable(false);
         this.show();

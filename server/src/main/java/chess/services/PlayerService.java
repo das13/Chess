@@ -57,10 +57,12 @@ public class PlayerService {
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        System.out.println("inside reg method");
         Player player;
         List<String> list = new ArrayList<String>();
         list.add("reg");
-        if ((player = findPlayer(login)) != null) {
+        if ((findPlayer(login)) != null) {
+            System.out.println("such player found");
             list.add("denied");
             list.add("exists");
         } else {
@@ -85,7 +87,9 @@ public class PlayerService {
                 return p;
             }
         }
+        System.out.println("was looking for player login " + login + ", result is FALSE");
         return null;
+
     }
 
 }
