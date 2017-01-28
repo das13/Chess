@@ -48,10 +48,10 @@ public class Player {
 //    }
 
 
-    public Player(String login, String password, int rank, Status status, String ipadress) {
+    public Player(String login, String password, Status status, String ipadress) {
         this.login = login;
         this.password = password;
-        this.rank = rank;
+        this.rank = 50; // MAGIC NUMBER
         this.status = status;
         this.ipadress = ipadress;
 

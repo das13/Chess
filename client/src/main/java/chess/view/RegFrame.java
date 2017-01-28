@@ -1,5 +1,7 @@
 package chess.view;
 
+import chess.services.xmlService.XMLin;
+import chess.services.xmlService.XMLout;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,17 +19,22 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bobnewmark on 26.01.2017
  */
 public class RegFrame extends Stage {
     //Stage stage = this;
-    public RegFrame() {
+    public RegFrame(final XMLin xmLin, final XMLout xmlOut) {
         this.setTitle("Регистрация нового пользователя");
 
         VBox vBox = new VBox();
@@ -40,9 +47,6 @@ public class RegFrame extends Stage {
 
         Text scenetitle = new Text("Новый игрок");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-
-
-
 
         Label loginLabel = new Label("Логин:");
         GridPane.setConstraints(loginLabel, 0, 0);
@@ -65,7 +69,35 @@ public class RegFrame extends Stage {
         hBox.setSpacing(30);
         hBox.setAlignment(Pos.CENTER);
         Button yesButton = new Button("Создать");
+        yesButton.setOnAction(e -> {
+            List<String> list = new ArrayList<String>();
+            list.add("reg");
+            list.add(loginInput.getText());
+            list.add(passInput.getText());
+            try {
+                xmlOut.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                e1.printStackTrace();
+            }
+            List<String> listIn = null;
+            try {
+                listIn = xmLin.receive();
+            } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                e1.printStackTrace();
+            }
+            if("accepted".equals(listIn.get(1))){
+                this.close();
+                new AuthFrame(xmLin, xmlOut);
+            } else if ("denied".equals(list.get(1))) {
+                System.out.println("Server cannot register such user, reason: " + list.get(2));
+            }
+            //xmlOut.sendMessage();
+        });
         Button noButton = new Button("Отмена");
+        noButton.setOnAction(e -> {
+            this.close();
+            new AuthFrame(xmLin, xmlOut);
+        });
         hBox.getChildren().addAll(yesButton, noButton);
 
 

@@ -89,7 +89,7 @@ public class XMLsaveLoad {
                     int rank = Integer.parseInt(el.getElementsByTagName("rank").item(0).getTextContent());
                     Status status = Status.valueOf(el.getElementsByTagName("status").item(0).getTextContent());
                     String ipadress = el.getElementsByTagName("ipadress").item(0).getTextContent();
-                    Player player = new Player(login, password, rank, status, ipadress);
+                    Player player = new Player(login, password, status, ipadress);
                     players.add(player);
                 }
             }

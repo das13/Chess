@@ -1,6 +1,9 @@
 package chess.view;
 
+import chess.services.xmlService.XMLin;
+import chess.services.xmlService.XMLout;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
@@ -25,26 +28,29 @@ import javafx.stage.Stage;
  * Created by bobnewmark on 26.01.2017
  */
 public class AdminFrame extends Stage {
+    TableView<PlayerRow> table;
 
-    public AdminFrame() {
+    public AdminFrame(final XMLin xmLin, final XMLout xmlOut) {
         this.setTitle("Admin access");
 
-        TableColumn<String, String> loginColumn = new TableColumn<>("Login");
-        loginColumn.setMinWidth(200);
-        loginColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<PlayerRow, String> loginColumn = new TableColumn<>("Login");
+        loginColumn.setMinWidth(100);
+        loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
 
-        TableColumn<String, Integer> rankColumn = new TableColumn<>("Rank");
-        rankColumn.setMinWidth(50);
+        TableColumn<PlayerRow, Integer> rankColumn = new TableColumn<>("Rank");
+        rankColumn.setMinWidth(100);
         rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
 
-        TableColumn<String, String> statusColumn = new TableColumn<>("Status");
+        TableColumn<PlayerRow, String> statusColumn = new TableColumn<>("Status");
         statusColumn.setMinWidth(100);
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-        TableColumn<String, String> ipColumn = new TableColumn<>("IP");
-        ipColumn.setMinWidth(50);
+        TableColumn<PlayerRow, String> ipColumn = new TableColumn<>("IP");
+        ipColumn.setMinWidth(100);
         ipColumn.setCellValueFactory(new PropertyValueFactory<>("ip"));
 
+        Button refreshButton = new Button("Обновить");
+        refreshButton.setOnAction(e -> refreshButtonClicked());
         Button banButton = new Button("Забанить/разбанить");
         banButton.setOnAction(e -> banButtonClicked());
         Button offerButton = new Button("Играть");
@@ -55,10 +61,12 @@ public class AdminFrame extends Stage {
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10,10,10,10));
         hBox.setSpacing(10);
-        hBox.getChildren().addAll(banButton, offerButton, exitButton);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().addAll(refreshButton, banButton, offerButton, exitButton);
 
-        TableView table = new TableView<>();
-        //TODO table.getPlayers();
+
+        table = new TableView<>();
+        table.setItems(getPlayers());
         table.getColumns().addAll(loginColumn, rankColumn, statusColumn, ipColumn);
 
         VBox vBox = new VBox();
@@ -67,6 +75,77 @@ public class AdminFrame extends Stage {
         Scene scene = new Scene(vBox);
         this.setScene(scene);
         this.show();
+
+
+
+
+    }
+    public ObservableList<PlayerRow> getPlayers() {
+        ObservableList<PlayerRow> players = FXCollections.observableArrayList();
+        players.add(new PlayerRow("Test", 10, "offline", "125"));
+        players.add(new PlayerRow("Test2", 20, "offline", "525"));
+        players.add(new PlayerRow("Test3", 30, "offline", "1525"));
+        return players;
+    }
+
+    public class PlayerRow {
+
+        private String login;
+        private int rank;
+        private String status;
+        private String ip;
+
+        public PlayerRow() {
+            login = "empty";
+            rank = 0;
+            status = "offline";
+            ip = "127...";
+        }
+
+        public PlayerRow(String login, int rank, String status, String ip) {
+            this.login = login;
+            this.rank = rank;
+            this.status = status;
+            this.ip = ip;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public int getRank() {
+            return rank;
+        }
+
+        public void setRank(int rank) {
+            this.rank = rank;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
+        }
+    }
+
+
+    public void refreshButtonClicked() {
+        table.getItems().add(new PlayerRow("login", 40, "offline", "127.0.0.1"));
+        System.out.println("REFRESH");
     }
 
     public void banButtonClicked(){

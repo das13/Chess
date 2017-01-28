@@ -1,11 +1,16 @@
 package chess.services;
 
+import chess.Server;
 import chess.ServerMain;
 import chess.controller.Controller;
 import chess.model.Player;
 import chess.model.Status;
+import chess.services.xmlService.XMLSender;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,6 +52,31 @@ public class PlayerService {
         synchronized (ServerMain.freePlayers) {
             ServerMain.freePlayers.add(player);
         }
+    }
+
+    public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        Player player;
+        List<String> list = new ArrayList<String>();
+        list.add("reg");
+        if ((player = findPlayer(login)) != null) {
+            list.add("denied");
+            list.add("exists");
+        } else {
+            player = new Player(login, password, Status.OFFLINE, ipadress);
+            ServerMain.getFreePlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
+            list.add("accepted");
+        }
+        sender.send(list);
+    }
+
+    // дополнительный метод для поиска, стоит использовать при авторизации, регистрации и т.д.
+    public static Player findPlayer(String login) {
+        for (Player p : ServerMain.freePlayers) {
+            if (p.getLogin().equals(login)) {
+                return p;
+            }
+        }
+        return null;
     }
 
 }

@@ -68,7 +68,8 @@ public class Controller extends Thread {
                 }
                 if (str.get(0).equals("exit")) break;
                 if (str.get(0).equals("reg")) {
-                    //PlayerService.reg(this, in, out);
+                    String ip = socket.getInetAddress().toString();
+                    PlayerService.reg(str.get(1), str.get(2), ip, sender);
                 }
                 if (str.get(0).equals("auth")) {
                     strOut.add("auth");
