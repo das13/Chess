@@ -74,6 +74,7 @@ public class RegFrame extends Stage {
             list.add("reg");
             list.add(loginInput.getText());
             list.add(passInput.getText());
+            System.out.println("creating palyer");
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {

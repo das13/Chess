@@ -1,6 +1,7 @@
 package chess.services.xmlService;
 
 import chess.Server;
+import chess.ServerMain;
 import chess.model.Player;
 import chess.model.Status;
 import org.w3c.dom.Document;
@@ -18,7 +19,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +30,7 @@ import java.util.List;
  */
 public class XMLsaveLoad {
 
-    private static List<Player> players = Server.getPlayers();
+    private static List<Player> players = new ArrayList<Player>();
     static volatile File filePlayers = new File("server/src/main/java/chess/services/savedPlayers.xml");
     static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -35,13 +39,15 @@ public class XMLsaveLoad {
     public XMLsaveLoad() throws ParserConfigurationException {
     }
 
-    public static void savePlayers() throws ParserConfigurationException, TransformerException {
+    public static void savePlayers() throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
+        PrintWriter pw = new PrintWriter(filePlayers);
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
 
         Element root = doc.createElement("savedPlayers");
         doc.appendChild(root);
+        players = ServerMain.getFreePlayers();
 
         for (Player player: players) {
             Element el = doc.createElement("player");
@@ -93,5 +99,11 @@ public class XMLsaveLoad {
                     players.add(player);
                 }
             }
+            if (players.size() > 0) {
+                ServerMain.setFreePlayers(players);
+            } else {
+                System.out.println("No players read from file");
+            }
+
     }
 }

@@ -6,9 +6,11 @@ import chess.controller.Controller;
 import chess.model.Player;
 import chess.model.Status;
 import chess.services.xmlService.XMLSender;
+import chess.services.xmlService.XMLsaveLoad;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +67,13 @@ public class PlayerService {
             player = new Player(login, password, Status.OFFLINE, ipadress);
             ServerMain.getFreePlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
+            System.out.println("Player " + login + " " + password + " " + ipadress + " created");
+            try {
+                XMLsaveLoad.savePlayers();
+                System.out.println("Players saved succsessfully");
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            }
         }
         sender.send(list);
     }

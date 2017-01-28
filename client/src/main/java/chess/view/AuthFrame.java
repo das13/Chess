@@ -62,7 +62,7 @@ public class AuthFrame extends Stage {
         hbBtnReg.getChildren().add(btnReg);
         btnReg.setOnAction((e) -> {
             stage.close();
-            new AdminFrame(xmLin, xmlOut);
+            new RegFrame(xmLin, xmlOut);
         });
         grid.add(hbBtnReg, 1, 4);
         final Text actiontarget = new Text();
