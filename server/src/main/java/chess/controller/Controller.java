@@ -72,7 +72,10 @@ public class Controller extends Thread {
                     PlayerService.reg(str.get(1), str.get(2), ip, sender);
                 }
                 if (str.get(0).equals("auth")) {
-                    PlayerService.auth(player, str.get(1), str.get(2), sender);
+                    strOut.add("auth");
+                    PlayerService.auth(player, str.get(1), str.get(2), strOut);
+                    System.out.println(strOut.size());
+                    sender.send(strOut);
                 }
                 if (str.get(0).equals("callPlayer")) {
                     //out.println("enter nickname your rival");
@@ -85,6 +88,7 @@ public class Controller extends Thread {
                     } else {
                         //out.println("This player is out of reach ");
                     }
+
                 }
                 if (str.get(0).equals("confirm")) {
                     //out.println("You are invited. enter Ok or No");

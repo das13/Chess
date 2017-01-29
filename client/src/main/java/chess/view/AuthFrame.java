@@ -2,15 +2,12 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -56,22 +53,14 @@ public class AuthFrame extends Stage {
 
         Button btnReg = new Button("Создать");
         btnReg.setMinWidth(70);
-//        HBox hbBtnReg = new HBox(10);
-//        hbBtnReg.setAlignment(Pos.BOTTOM_LEFT);
-//        hbBtnReg.getChildren().add(btnReg);
         hbBtn.getChildren().addAll(btnReg, btn);
         grid.add(hbBtn, 1, 4);
         btnReg.setOnAction((e) -> {
             stage.close();
             new RegFrame(xmLin, xmlOut);
         });
-        //grid.add(hbBtnReg, 1, 4);
-        //final Text actiontarget = new Text();
-        //grid.add(actiontarget, 0, 4, 2, 1);
         btn.setOnAction(e -> {
                 if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
-//                    actiontarget.setFill(Color.FIREBRICK);
-//                    actiontarget.setText("Enter login and password");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
                     alert.setTitle("Ошибка");
@@ -79,7 +68,6 @@ public class AuthFrame extends Stage {
                     alert.setContentText("Заполните поля логин/пароль");
                     alert.showAndWait();
                 } else {
-                    //actiontarget.setText("");
                     try {
                         List<String> list = new ArrayList<String>();
                         list.add("auth");
@@ -112,37 +100,6 @@ public class AuthFrame extends Stage {
                     }
                 }
         });
-//        ОСТАВИЛ ТВОЙ ОБРАБОТЧИК КНОПКИ
-//        btn.setOnAction(new EventHandler<ActionEvent>() {
-//            public void handle(ActionEvent e) {
-//                if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
-//                    actiontarget.setFill(Color.FIREBRICK);
-//                    actiontarget.setText("Enter login and password");
-//                } else {
-//                    actiontarget.setText("");
-//                    try {
-//                        List<String> list = new ArrayList<String>();
-//                        list.add("auth");
-//                        list.add(userTextField.getText());
-//                        list.add(pwBox.getText());
-//                        xmlOut.sendMessage(list);
-//                        List<String> listIn = xmLin.receive();
-//                        if(listIn.get(1).equals("Ok")){
-//                            stage.close();
-//                            ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
-//                        }
-//                    } catch (IOException e1) {
-//                        e1.printStackTrace();
-//                    } catch (ParserConfigurationException e1) {
-//                        e1.printStackTrace();
-//                    } catch (TransformerConfigurationException e1) {
-//                        e1.printStackTrace();
-//                    } catch (SAXException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
         this.show();
     }
 }

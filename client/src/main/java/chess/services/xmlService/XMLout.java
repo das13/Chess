@@ -77,14 +77,6 @@ public class XMLout {
             el.appendChild(doc.createTextNode(list.get(i)));
             args.appendChild(el);
         }
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Result output = new StreamResult(new File("output.xml"));
-        Source input = new DOMSource(doc);
-        try {
-            transformer.transform(input, output);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }
         send(doc);
     }
 }

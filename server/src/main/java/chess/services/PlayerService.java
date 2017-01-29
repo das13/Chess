@@ -1,6 +1,5 @@
 package chess.services;
 
-import chess.Server;
 import chess.ServerMain;
 import chess.controller.Controller;
 import chess.model.Player;
@@ -41,35 +40,32 @@ public class PlayerService {
 //        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
-    public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
-        List<String> out = new ArrayList<String>();
-        out.add("auth");
+    public static void auth(Player player, String login, String password, List<String> out) {
+        boolean check=false;
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
-        } else {
+        }else {
             for (Player p : ServerMain.freePlayers) {
-                if(login.equals(p.getLogin()) && password.equals(p.getPassword())) {
-                    player = p;
-                    player.setStatus(Status.FREE);
+                if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
+                    check = true;
                     out.add("Ok");
+                    out.add(login);
+                    out.add(password);
+                    out.add(String.valueOf(p.getRank()));
+                    p.setStatus(Status.FREE);
+                    break;
                 }
             }
-        }
-        if (out.size() == 1) out.add("No");
-        sender.send(out);
+            if (!check) {
+                out.add("error");
+            } else {
+                for (Player p : ServerMain.freePlayers) {
+                    out.add(p.getLogin());
+                    out.add(String.valueOf(p.getRank()));
+                }
+            }
 
-        // ОСТАВИЛ ТВОЙ КОД
-//        for (Player p : ServerMain.freePlayers) {
-//            System.out.println("user" +p.getNickname());
-//            out.add(p.getNickname());
-//        }
-//        player.setLogin(login);
-//        player.setNickname(login);
-//        player.setPassword(password);
-//        player.setStatus(Status.FREE);
-//        synchronized (ServerMain.freePlayers) {
-//            ServerMain.freePlayers.add(player);
-//        }
+        }
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {

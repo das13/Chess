@@ -45,7 +45,6 @@ public class XMLSender {
 
     //sends Document to the OutputStream
     private void send(Document doc) throws TransformerConfigurationException, IOException {
-
         XMLOutputStream out = new XMLOutputStream();
         StreamResult sr = new StreamResult(out);
         DOMSource ds = new DOMSource(doc);
@@ -56,14 +55,14 @@ public class XMLSender {
         } catch (TransformerException ex) {
             ex.printStackTrace();
         }
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+       /* Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Result output = new StreamResult(new File("outputserver.xml"));
         Source input = new DOMSource(doc);
         try {
             transformer.transform(input, output);
         } catch (TransformerException e) {
             e.printStackTrace();
-        }
+        }*/
         out.send();
     }
 
