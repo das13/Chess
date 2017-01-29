@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <savedPlayers>
-<player>
-<login>test</login>
-<password>111</password>
-<rank>50</rank>
-<status>OFFLINE</status>
-<ipadress>/127.0.0.1</ipadress>
-</player>
+    <player>
+        <login>test</login>
+        <password>111</password>
+        <rank>50</rank>
+        <status>OFFLINE</status>
+        <ipadress>/127.0.0.1</ipadress>
+    </player>
+    <player>
+        <login>superuser</login>
+        <password>3141592</password>
+        <rank>50</rank>
+        <status>OFFLINE</status>
+        <ipadress>/127.0.0.1</ipadress>
+    </player>
 </savedPlayers>

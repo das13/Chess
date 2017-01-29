@@ -23,21 +23,34 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by bobnewmark on 26.01.2017
  */
 public class AdminFrame extends Stage {
     TableView<PlayerRow> table;
+    XMLin xmLin;
+    XMLout xmLout;
+    ObservableList<PlayerRow> players;
 
     public AdminFrame(final XMLin xmLin, final XMLout xmlOut) {
+        this.xmLin = xmLin;
+        this.xmLout = xmlOut;
         this.setTitle("Admin access");
+        players = FXCollections.observableArrayList();
 
         TableColumn<PlayerRow, String> loginColumn = new TableColumn<>("Login");
         loginColumn.setMinWidth(100);
         loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
 
-        TableColumn<PlayerRow, Integer> rankColumn = new TableColumn<>("Rank");
+        TableColumn<PlayerRow, String> rankColumn = new TableColumn<>("Rank");
         rankColumn.setMinWidth(100);
         rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
 
@@ -81,28 +94,44 @@ public class AdminFrame extends Stage {
 
     }
     public ObservableList<PlayerRow> getPlayers() {
-        ObservableList<PlayerRow> players = FXCollections.observableArrayList();
-        players.add(new PlayerRow("Test", 10, "offline", "125"));
-        players.add(new PlayerRow("Test2", 20, "offline", "525"));
-        players.add(new PlayerRow("Test3", 30, "offline", "1525"));
+        players.clear();
+        List<String> list = new ArrayList<String>();
+        list.add("admin_getPlayers");
+        try {
+            xmLout.sendMessage(list);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+            e.printStackTrace();
+        }
+        List<String> listIn = null;
+        try {
+            listIn = xmLin.receive();
+        } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
+            e.printStackTrace();
+        }
+        if ("admin_getPlayers".equals(listIn.get(0))) {
+            for (int i = 1; i < listIn.size(); i+=4) {
+                players.add(new PlayerRow(listIn.get(i), listIn.get(i+1), listIn.get(i+2), listIn.get(i+3)));
+            }
+        }
+
         return players;
     }
 
     public class PlayerRow {
 
         private String login;
-        private int rank;
+        private String rank;
         private String status;
         private String ip;
 
         public PlayerRow() {
             login = "empty";
-            rank = 0;
+            rank = "0";
             status = "offline";
             ip = "127...";
         }
 
-        public PlayerRow(String login, int rank, String status, String ip) {
+        public PlayerRow(String login, String rank, String status, String ip) {
             this.login = login;
             this.rank = rank;
             this.status = status;
@@ -117,11 +146,11 @@ public class AdminFrame extends Stage {
             this.login = login;
         }
 
-        public int getRank() {
+        public String getRank() {
             return rank;
         }
 
-        public void setRank(int rank) {
+        public void setRank(String rank) {
             this.rank = rank;
         }
 
@@ -144,8 +173,7 @@ public class AdminFrame extends Stage {
 
 
     public void refreshButtonClicked() {
-        table.getItems().add(new PlayerRow("login", 40, "offline", "127.0.0.1"));
-        System.out.println("REFRESH");
+        players.clear();
     }
 
     public void banButtonClicked(){

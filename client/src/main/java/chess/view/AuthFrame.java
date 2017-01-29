@@ -7,10 +7,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -52,38 +49,57 @@ public class AuthFrame extends Stage {
         final PasswordField pwBox = new PasswordField();
         grid.add(pwBox, 1, 2);
         Button btn = new Button("Войти");
+        btn.setMinWidth(70);
         HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
+        hbBtn.setAlignment(Pos.CENTER);
+
+
         Button btnReg = new Button("Создать");
-        HBox hbBtnReg = new HBox(10);
-        hbBtnReg.setAlignment(Pos.BOTTOM_LEFT);
-        hbBtnReg.getChildren().add(btnReg);
+        btnReg.setMinWidth(70);
+//        HBox hbBtnReg = new HBox(10);
+//        hbBtnReg.setAlignment(Pos.BOTTOM_LEFT);
+//        hbBtnReg.getChildren().add(btnReg);
+        hbBtn.getChildren().addAll(btnReg, btn);
+        grid.add(hbBtn, 1, 4);
         btnReg.setOnAction((e) -> {
             stage.close();
             new RegFrame(xmLin, xmlOut);
         });
-        grid.add(hbBtnReg, 1, 4);
-        final Text actiontarget = new Text();
-        grid.add(actiontarget, 0, 4, 2, 1);
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
+        //grid.add(hbBtnReg, 1, 4);
+        //final Text actiontarget = new Text();
+        //grid.add(actiontarget, 0, 4, 2, 1);
+        btn.setOnAction(e -> {
                 if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
-                    actiontarget.setFill(Color.FIREBRICK);
-                    actiontarget.setText("Enter login and password");
+//                    actiontarget.setFill(Color.FIREBRICK);
+//                    actiontarget.setText("Enter login and password");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ошибка");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Заполните поля логин/пароль");
+                    alert.showAndWait();
                 } else {
-                    actiontarget.setText("");
+                    //actiontarget.setText("");
                     try {
                         List<String> list = new ArrayList<String>();
                         list.add("auth");
                         list.add(userTextField.getText());
                         list.add(pwBox.getText());
                         xmlOut.sendMessage(list);
-                        List<String> listOut = xmLin.receive();
-                        if(listOut.get(1).equals("Ok")){
+                        List<String> listIn = xmLin.receive();
+                        if("Ok".equals(listIn.get(1))){
                             stage.close();
-                            ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listOut);
+                            ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
+                        } else if ("admin".equals(listIn.get(1))) {
+                            stage.close();
+                            new AdminFrame(xmLin, xmlOut);
+                        } else if ("No".equals(listIn.get(1))) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.getDialogPane().getStylesheets().add("Skin.css");
+                            alert.setTitle("Ошибка");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Такой пользователь не зарегистрирован");
+                            alert.showAndWait();
                         }
                     } catch (IOException e1) {
                         e1.printStackTrace();
@@ -95,8 +111,38 @@ public class AuthFrame extends Stage {
                         e1.printStackTrace();
                     }
                 }
-            }
         });
+//        ОСТАВИЛ ТВОЙ ОБРАБОТЧИК КНОПКИ
+//        btn.setOnAction(new EventHandler<ActionEvent>() {
+//            public void handle(ActionEvent e) {
+//                if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
+//                    actiontarget.setFill(Color.FIREBRICK);
+//                    actiontarget.setText("Enter login and password");
+//                } else {
+//                    actiontarget.setText("");
+//                    try {
+//                        List<String> list = new ArrayList<String>();
+//                        list.add("auth");
+//                        list.add(userTextField.getText());
+//                        list.add(pwBox.getText());
+//                        xmlOut.sendMessage(list);
+//                        List<String> listIn = xmLin.receive();
+//                        if(listIn.get(1).equals("Ok")){
+//                            stage.close();
+//                            ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
+//                        }
+//                    } catch (IOException e1) {
+//                        e1.printStackTrace();
+//                    } catch (ParserConfigurationException e1) {
+//                        e1.printStackTrace();
+//                    } catch (TransformerConfigurationException e1) {
+//                        e1.printStackTrace();
+//                    } catch (SAXException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
         this.show();
     }
 }

@@ -72,9 +72,7 @@ public class Controller extends Thread {
                     PlayerService.reg(str.get(1), str.get(2), ip, sender);
                 }
                 if (str.get(0).equals("auth")) {
-                    strOut.add("auth");
-                    PlayerService.auth(player, str.get(1), str.get(2), strOut);
-                    sender.send(strOut);
+                    PlayerService.auth(player, str.get(1), str.get(2), sender);
                 }
                 if (str.get(0).equals("callPlayer")) {
                     //out.println("enter nickname your rival");
@@ -87,7 +85,6 @@ public class Controller extends Thread {
                     } else {
                         //out.println("This player is out of reach ");
                     }
-
                 }
                 if (str.get(0).equals("confirm")) {
                     //out.println("You are invited. enter Ok or No");
@@ -132,6 +129,9 @@ public class Controller extends Thread {
                     } catch (TransformerConfigurationException e) {
                         e.printStackTrace();
                     }*/
+                }
+                if ("admin_getPlayers".equals(str.get(0))) {
+                    PlayerService.adminGetPlayers(sender);
                 }
             }
 

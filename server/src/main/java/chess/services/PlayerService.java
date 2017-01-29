@@ -41,19 +41,35 @@ public class PlayerService {
 //        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
-    public static void auth(Player player, String login, String password, List<String> out) {
-        out.add("Ok");
-        for (Player p : ServerMain.freePlayers) {
-            System.out.println("user" +p.getNickname());
-            out.add(p.getNickname());
+    public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        List<String> out = new ArrayList<String>();
+        out.add("auth");
+        if (login.equals("superuser") && password.equals("3141592")) {
+            out.add("admin");
+        } else {
+            for (Player p : ServerMain.freePlayers) {
+                if(login.equals(p.getLogin()) && password.equals(p.getPassword())) {
+                    player = p;
+                    player.setStatus(Status.FREE);
+                    out.add("Ok");
+                }
+            }
         }
-        player.setLogin(login);
-        player.setNickname(login);
-        player.setPassword(password);
-        player.setStatus(Status.FREE);
-        synchronized (ServerMain.freePlayers) {
-            ServerMain.freePlayers.add(player);
-        }
+        if (out.size() == 1) out.add("No");
+        sender.send(out);
+
+        // ОСТАВИЛ ТВОЙ КОД
+//        for (Player p : ServerMain.freePlayers) {
+//            System.out.println("user" +p.getNickname());
+//            out.add(p.getNickname());
+//        }
+//        player.setLogin(login);
+//        player.setNickname(login);
+//        player.setPassword(password);
+//        player.setStatus(Status.FREE);
+//        synchronized (ServerMain.freePlayers) {
+//            ServerMain.freePlayers.add(player);
+//        }
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -89,7 +105,18 @@ public class PlayerService {
         }
         System.out.println("was looking for player login " + login + ", result is FALSE");
         return null;
-
+    }
+    public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        List<String> list = new ArrayList<String>();
+        list.add("admin_getPlayers");
+        for (Player p: ServerMain.getFreePlayers()) {
+            list.add(p.getLogin());
+            list.add(String.valueOf(p.getRank()));
+            list.add(String.valueOf(p.getStatus()));
+            list.add(p.getIpadress());
+        }
+        System.out.println("list of players sent for admin");
+        sender.send(list);
     }
 
 }
