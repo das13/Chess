@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -187,6 +188,9 @@ public class ProfileFrame extends Stage {
                 alert.setHeaderText(null);
                 alert.setContentText("Вас приглашает " + secondConf);
                 alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES) {
+                    //do stuff
+                }
             }
         });
 
