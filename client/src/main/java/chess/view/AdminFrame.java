@@ -181,6 +181,12 @@ public class AdminFrame extends Stage {
     }
 
     public void offerButtonClicked(){
+        this.close();
+        try {
+            new GameFrame();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println("OFFER GAME");
     }
 
