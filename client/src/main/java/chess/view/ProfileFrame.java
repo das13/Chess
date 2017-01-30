@@ -162,19 +162,20 @@ public class ProfileFrame extends Stage {
         Task<Void> task = new Task<Void>() {
             @Override
             public Void call() throws Exception {
-                try {
-                     List<String> listIn= xmLin.receive();
-                     firstConf =listIn.get(0);
-                     secondConf=listIn.get(1);
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (TransformerConfigurationException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        List<String> listIn = xmLin.receive();
+                        firstConf = listIn.get(0);
+                        secondConf = listIn.get(1);
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    } catch (TransformerConfigurationException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (SAXException e) {
+                        e.printStackTrace();
+                    }
+
                 return null ;
             }
         };
@@ -188,14 +189,23 @@ public class ProfileFrame extends Stage {
                 alert.setHeaderText(null);
                 alert.setContentText("Вас приглашает " + secondConf);
                 alert.showAndWait();
-                if (alert.getResult() == ButtonType.YES) {
-                    //do stuff
+                if(alert.getResult()==ButtonType.OK){
+                    System.out.println("ok");
+                    try {
+                        stage.close();
+                        new GameFrame();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+                if(alert.getResult()==ButtonType.CANCEL){
+                    System.out.println("cancel");
+                    new Thread(task).start();
+                }
+
             }
         });
-
         new Thread(task).start();
-
     }
 
 }
