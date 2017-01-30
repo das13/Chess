@@ -48,8 +48,10 @@ public class GameService {
                     synchronized (ServerMain.waitingGames) {
                         iter.remove();
                     }
+                    return game;
                 }
             }
+
         }
         return null;
     }

@@ -188,9 +188,16 @@ public class ProfileFrame extends Stage {
                 alert.setTitle("Приглашение");
                 alert.setHeaderText(null);
                 alert.setContentText("Вас приглашает " + secondConf);
+                List<String> list = new ArrayList<String>();
+                list.add("confirm");
                 alert.showAndWait();
                 if(alert.getResult()==ButtonType.OK){
-                    System.out.println("ok");
+                    list.add("Ok");
+                    try {
+                        xmlOut.sendMessage(list);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                        e1.printStackTrace();
+                    }
                     try {
                         stage.close();
                         new GameFrame();
@@ -199,13 +206,33 @@ public class ProfileFrame extends Stage {
                     }
                 }
                 if(alert.getResult()==ButtonType.CANCEL){
-                    System.out.println("cancel");
+                    list.add("No");
                     new Thread(task).start();
                 }
 
             }
+            if ("confirmresponse".equals(firstConf)) {
+                if("Ok".equals(secondConf)) {
+                    try {
+                        stage.close();
+                        new GameFrame();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Отказ");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Вам отказали");
+                    alert.showAndWait();
+                }
+            }
         });
-        new Thread(task).start();
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
 }

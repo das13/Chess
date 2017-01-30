@@ -1,5 +1,6 @@
 package chess.controller;
 
+import chess.ServerMain;
 import chess.exceptions.RivalFigureException;
 import chess.model.Game;
 import chess.model.Player;
@@ -99,8 +100,19 @@ public class Controller extends Thread {
                 if (str.get(0).equals("confirm")) {
                     //out.println("You are invited. enter Ok or No");
                     Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
-                    setCurrentGame(thisGame);
-                    thisGame.getOtherPlayer(getPlayer()).getController().setCurrentGame(thisGame);
+                    List<String> out = new ArrayList<String>();
+                    out.add("confirmresponse");
+                    Controller otherController = thisGame.getOtherPlayer(player).getController();
+                    XMLSender otherSender = otherController.getSender();
+                    if("Ok".equals(str.get(1)) && thisGame!=null) {
+                        out.add("Ok");
+                        setCurrentGame(thisGame);
+                        thisGame.getOtherPlayer(getPlayer()).getController().setCurrentGame(thisGame);
+                    }
+                    if("No".equals(str.get(1)) && thisGame!=null) {
+                        out.add("No");
+                    }
+                    otherSender.send(out);
                 }
                 if (str.get(0).equals("drag")) {
                     //out.println("enter coordinates of figure - x and y");
@@ -170,7 +182,15 @@ public class Controller extends Thread {
             in.close();
             out.close();
             socket.close();
+            synchronized (ServerMain.freePlayers) {
+                for (int i = 0; i <ServerMain.freePlayers.size(); i++){
+                    if(ServerMain.freePlayers.get(i).equals(this.getPlayer())){
+                        ServerMain.freePlayers.remove(i);
+                    }
+                }
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Thread did not close!");
         }
     }
