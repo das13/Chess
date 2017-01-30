@@ -2,6 +2,7 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -27,8 +28,11 @@ import java.util.List;
  * Created by viacheslav koshchii on 24.01.2017.
  */
 public class ProfileFrame extends Stage {
+    String firstConf;
+    String secondConf;
     public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
+        Stage stage=this;
         Pane grid = new Pane();
         //grid.setAlignment(Pos.TOP_LEFT);
         //grid.setHgap(0);
@@ -71,7 +75,7 @@ public class ProfileFrame extends Stage {
         Text myrankname = new Text("Рейтинг");
         myrankname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         myrankname.relocate(15, 80);
-        profile.getChildren().add( myrankname);
+        profile.getChildren().add(myrankname);
         Text myrank = new Text(freePlayers.get(5));
         myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         myrank.relocate(85, 80);
@@ -96,7 +100,7 @@ public class ProfileFrame extends Stage {
                 List<String> listIn = null;
                 try {
                     listIn = xmLin.receive();
-                    if("Ok".equals(listIn.get(0))){
+                    if ("Ok".equals(listIn.get(0))) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Сохранено");
@@ -104,7 +108,7 @@ public class ProfileFrame extends Stage {
                         alert.setContentText("Изменения сохранены");
                         alert.showAndWait();
                     }
-                    if("error".equals(listIn.get(0))) {
+                    if ("error".equals(listIn.get(0))) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Ошибка");
@@ -120,24 +124,32 @@ public class ProfileFrame extends Stage {
         });
         profile.getChildren().add(saveBtn);
         for (int i = 6; i < freePlayers.size(); i += 2) {
+            final String name = freePlayers.get(i);
             Text player = new Text(freePlayers.get(i));
             player.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-            player.relocate(20, 12 * (i-3));
+            player.relocate(20, 12 * (i - 3));
             freeplayer.getChildren().add(player);
             Text rank = new Text(freePlayers.get(i + 1));
             rank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
             rank.setFill(Color.GREEN);
-            rank.relocate(95, 12 * (i-3));
+            rank.relocate(95, 12 * (i - 3));
             freeplayer.getChildren().add(rank);
             Button btn = new Button("Играть");
             btn.setPadding(new Insets(0));
             btn.setPrefWidth(60.0);
             btn.setPrefHeight(20.0);
-            btn.relocate(150, 12 * (i-3));
+            btn.relocate(150, 12 * (i - 3));
             //grid.getChildren().add(hbBtn);
             btn.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent e) {
-
+                    List<String> list = new ArrayList<String>();
+                    list.add("callPlayer");
+                    list.add(name);
+                    try {
+                        xmlOut.sendMessage(list);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             });
             freeplayer.getChildren().add(btn);
@@ -145,5 +157,41 @@ public class ProfileFrame extends Stage {
         grid.getChildren().add(freeplayer);
         grid.getChildren().add(profile);
         this.show();
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                try {
+                     List<String> listIn= xmLin.receive();
+                     firstConf =listIn.get(0);
+                     secondConf=listIn.get(1);
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (TransformerConfigurationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                }
+                return null ;
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            if ("confirm".equals(firstConf)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initOwner(stage);
+                alert.getDialogPane().getStylesheets().add("Skin.css");
+                alert.setTitle("Приглашение");
+                alert.setHeaderText(null);
+                alert.setContentText("Вас приглашает " + secondConf);
+                alert.showAndWait();
+            }
+        });
+
+        new Thread(task).start();
+
     }
+
 }

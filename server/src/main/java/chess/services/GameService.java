@@ -16,7 +16,7 @@ import java.util.List;
 public class GameService {
     public static Player callPlayer(Player playerWhite, String nickName) {
         for (Player playerBlack : ServerMain.freePlayers) {
-            if (playerBlack.getNickname().equals(nickName)) {
+            if (playerBlack.getLogin().equals(nickName)) {
                 Game game = new Game(playerWhite, playerBlack);
                 ServerMain.waitingGames.add(game);
                 return playerBlack;

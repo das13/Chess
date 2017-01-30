@@ -82,21 +82,25 @@ public class Controller extends Thread {
                     PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
                 }
                 if (str.get(0).equals("callPlayer")) {
-                    //out.println("enter nickname your rival");
+                    System.out.println("confirm");
+                    List<String> out = new ArrayList<String>();
                     Player player = GameService.callPlayer(getPlayer(), str.get(1));
                     if (player != null) {
                         Controller otherController = player.getController();
-                        PrintWriter otherOut = new PrintWriter(otherController.getSocket().getOutputStream(), true);
-                        otherOut.println("confirm");
+                        XMLSender otherSender = otherController.getSender();
+                        out.add("confirm");
+                        out.add(getPlayer().getLogin());
+                        otherSender.send(out);
                     } else {
-                        //out.println("This player is out of reach ");
+                        out.add("error");
+                        sender.send(out);
                     }
-
                 }
                 if (str.get(0).equals("confirm")) {
                     //out.println("You are invited. enter Ok or No");
                     Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
                     setCurrentGame(thisGame);
+                    thisGame.getOtherPlayer(getPlayer()).getController().setCurrentGame(thisGame);
                 }
                 if (str.get(0).equals("drag")) {
                     //out.println("enter coordinates of figure - x and y");
@@ -151,6 +155,14 @@ public class Controller extends Thread {
         } finally {
             close();
         }
+    }
+
+    public XMLSender getSender() {
+        return sender;
+    }
+
+    public void setSender(XMLSender sender) {
+        this.sender = sender;
     }
 
     public void close() {

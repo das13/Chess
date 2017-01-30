@@ -48,7 +48,7 @@ public class PlayerService {
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
         } else {
-            for (Player p : ServerMain.freePlayers) {
+            for (Player p : ServerMain.allPlayers) {
                 if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
                     check = true;
                     out.add("Ok");
@@ -67,6 +67,11 @@ public class PlayerService {
                     out.add(p.getLogin());
                     out.add(String.valueOf(p.getRank()));
                 }
+            }
+            player.setLogin(login);
+            player.setPassword(password);
+            synchronized (ServerMain.freePlayers) {
+                ServerMain.freePlayers.add(player);
             }
 
         }

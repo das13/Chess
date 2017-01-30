@@ -90,6 +90,10 @@ public class Player {
         return id;
     }
 
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
     public void setId(int id) {
         this.id = id;
     }

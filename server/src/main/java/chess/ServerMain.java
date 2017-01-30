@@ -16,6 +16,8 @@ import java.util.List;
 public class ServerMain {
     public static List<Player> freePlayers =
             Collections.synchronizedList(new ArrayList<Player>());
+    public static List<Player> allPlayers =
+            Collections.synchronizedList(new ArrayList<Player>());
     public static List<Game> games =
             Collections.synchronizedList(new ArrayList<Game>());
     public static List<Game> waitingGames =
@@ -50,5 +52,13 @@ public class ServerMain {
     }
     public static void setFreePlayers(List<Player> list) {
         freePlayers = list;
+    }
+
+    public static List<Player> getAllPlayers() {
+        return allPlayers;
+    }
+
+    public static void setAllPlayers(List<Player> allPlayers) {
+        ServerMain.allPlayers = allPlayers;
     }
 }

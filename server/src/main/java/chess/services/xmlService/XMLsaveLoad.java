@@ -100,7 +100,7 @@ public class XMLsaveLoad {
                 }
             }
             if (players.size() > 0) {
-                ServerMain.setFreePlayers(players);
+                ServerMain.setAllPlayers(players);
             } else {
                 System.out.println("No players read from file");
             }
