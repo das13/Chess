@@ -2,27 +2,22 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,14 +57,12 @@ public class RegFrame extends Stage {
         passInput.setFocusTraversable(false);
         passInput.setPromptText("ваш пароль");
         GridPane.setConstraints(passInput, 1, 1);
-
         HBox hBox = new HBox();
         hBox.setSpacing(40);
         hBox.setAlignment(Pos.CENTER);
         Button yesButton = new Button("Создать");
         yesButton.setOnAction(e -> {
             if (loginInput.getText().isEmpty() || passInput.getText().isEmpty()) {
-
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.getDialogPane().getStylesheets().add("Skin.css");
                 alert.setTitle("Ошибка");

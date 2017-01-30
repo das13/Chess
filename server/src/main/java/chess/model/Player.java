@@ -11,6 +11,7 @@ import java.net.Socket;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Player {
+    private int id;
     private String login;
     private String password;
     private String nickname;
@@ -83,6 +84,14 @@ public class Player {
 
     public void setIpadress(String ipadress) {
         this.ipadress = ipadress;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     //    @Override

@@ -72,14 +72,17 @@ public class Controller extends Thread {
                     PlayerService.reg(str.get(1), str.get(2), ip, sender);
                 }
                 if (str.get(0).equals("auth")) {
-                    strOut.add("auth");
-                    PlayerService.auth(player, str.get(1), str.get(2), strOut);
+                    PlayerService.auth(player, str.get(1), str.get(2), sender);
                     System.out.println(strOut.size());
-                    sender.send(strOut);
+                    for(String s: strOut){
+                        System.out.println(s);
+                    }
+                }
+                if("saveProfile".equals(str.get(0))){
+                    PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
                 }
                 if (str.get(0).equals("callPlayer")) {
                     //out.println("enter nickname your rival");
-
                     Player player = GameService.callPlayer(getPlayer(), str.get(1));
                     if (player != null) {
                         Controller otherController = player.getController();

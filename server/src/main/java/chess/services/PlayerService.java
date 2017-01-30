@@ -10,6 +10,7 @@ import chess.services.xmlService.XMLsaveLoad;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,15 +41,18 @@ public class PlayerService {
 //        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
-    public static void auth(Player player, String login, String password, List<String> out) {
-        boolean check=false;
+    public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        boolean check = false;
+        List<String> out = new ArrayList<String>();
+        out.add("reg");
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
-        }else {
+        } else {
             for (Player p : ServerMain.freePlayers) {
                 if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
                     check = true;
                     out.add("Ok");
+                    out.add(String.valueOf(p.getId()));
                     out.add(login);
                     out.add(password);
                     out.add(String.valueOf(p.getRank()));
@@ -66,6 +70,30 @@ public class PlayerService {
             }
 
         }
+        sender.send(out);
+    }
+
+    public static void saveProfile(String login, String password, int id, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        Player player;
+        List<String> list = new ArrayList<String>();
+        if ((player=findPlayerById(id)) != null) {
+            list.add("Ok");
+            player.setLogin(login);
+            player.setPassword(password);
+            try {
+                XMLsaveLoad.savePlayers();
+                System.out.println("Players saved succsessfully");
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
+        } else {
+            list.add("error");
+        }
+        sender.send(list);
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -79,6 +107,7 @@ public class PlayerService {
             list.add("exists");
         } else {
             player = new Player(login, password, Status.OFFLINE, ipadress);
+            player.setId(ServerMain.getFreePlayers().size()+1);
             ServerMain.getFreePlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
             System.out.println("Player " + login + " " + password + " " + ipadress + " created");
@@ -102,10 +131,19 @@ public class PlayerService {
         System.out.println("was looking for player login " + login + ", result is FALSE");
         return null;
     }
+    public static Player findPlayerById(int id) {
+        for (Player p : ServerMain.freePlayers) {
+            if (p.getId()==id) {
+                return p;
+            }
+        }
+        System.out.println("was looking for player id " + id + ", result is FALSE");
+        return null;
+    }
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> list = new ArrayList<String>();
         list.add("admin_getPlayers");
-        for (Player p: ServerMain.getFreePlayers()) {
+        for (Player p : ServerMain.getFreePlayers()) {
             list.add(p.getLogin());
             list.add(String.valueOf(p.getRank()));
             list.add(String.valueOf(p.getStatus()));

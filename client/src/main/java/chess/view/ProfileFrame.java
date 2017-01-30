@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -14,7 +15,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +34,7 @@ public class ProfileFrame extends Stage {
         //grid.setHgap(0);
         //grid.setVgap(0);
         grid.setPadding(new Insets(0, 25, 25, 25));
-        Scene scene = new Scene(grid, 500, 500);
+        Scene scene = new Scene(grid, 500, 350);
         this.setScene(scene);
         Text scenetitle = new Text("Мой Профиль");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
@@ -48,7 +54,7 @@ public class ProfileFrame extends Stage {
         loginname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         loginname.relocate(15, 20);
         profile.getChildren().add(loginname);
-        TextField login = new TextField(freePlayers.get(2));
+        TextField login = new TextField(freePlayers.get(3));
         login.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         login.relocate(85, 20);
         login.setPrefWidth(120);
@@ -57,7 +63,7 @@ public class ProfileFrame extends Stage {
         passwordname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         passwordname.relocate(15, 50);
         profile.getChildren().add(passwordname);
-        TextField password = new TextField(freePlayers.get(3));
+        TextField password = new TextField(freePlayers.get(4));
         password.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         password.relocate(85, 50);
         password.setPrefWidth(120);
@@ -66,11 +72,54 @@ public class ProfileFrame extends Stage {
         myrankname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         myrankname.relocate(15, 80);
         profile.getChildren().add( myrankname);
-        Text myrank = new Text(freePlayers.get(4));
+        Text myrank = new Text(freePlayers.get(5));
         myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
         myrank.relocate(85, 80);
         profile.getChildren().add(myrank);
-        for (int i = 5; i < freePlayers.size(); i += 2) {
+        Button saveBtn = new Button("Сохранить");
+        saveBtn.setPadding(new Insets(0));
+        saveBtn.setPrefWidth(70.0);
+        saveBtn.setPrefHeight(20.0);
+        saveBtn.relocate(135, 85);
+        saveBtn.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                List<String> list = new ArrayList<String>();
+                list.add("saveProfile");
+                list.add(freePlayers.get(2));
+                list.add(login.getText());
+                list.add(password.getText());
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                List<String> listIn = null;
+                try {
+                    listIn = xmLin.receive();
+                    if("Ok".equals(listIn.get(0))){
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Сохранено");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Изменения сохранены");
+                        alert.showAndWait();
+                    }
+                    if("error".equals(listIn.get(0))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Пользователь с таким логином уже существует");
+                        alert.showAndWait();
+                    }
+
+                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        profile.getChildren().add(saveBtn);
+        for (int i = 6; i < freePlayers.size(); i += 2) {
             Text player = new Text(freePlayers.get(i));
             player.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
             player.relocate(20, 12 * (i-3));
@@ -88,7 +137,7 @@ public class ProfileFrame extends Stage {
             //grid.getChildren().add(hbBtn);
             btn.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent e) {
-                    //out.println("drag");
+
                 }
             });
             freeplayer.getChildren().add(btn);

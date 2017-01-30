@@ -25,7 +25,8 @@ import java.util.List;
  */
 public class AuthFrame extends Stage {
     Stage stage = this;
-    public AuthFrame(final XMLin xmLin, final XMLout xmlOut){
+
+    public AuthFrame(XMLin xmLin, XMLout xmlOut) {
         stage.setTitle("Шахматы онлайн");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -60,45 +61,44 @@ public class AuthFrame extends Stage {
             new RegFrame(xmLin, xmlOut);
         });
         btn.setOnAction(e -> {
-                if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Ошибка");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Заполните поля логин/пароль");
-                    alert.showAndWait();
-                } else {
-                    try {
-                        List<String> list = new ArrayList<String>();
-                        list.add("auth");
-                        list.add(userTextField.getText());
-                        list.add(pwBox.getText());
-                        xmlOut.sendMessage(list);
-                        List<String> listIn = xmLin.receive();
-                        if("Ok".equals(listIn.get(1))){
-                            stage.close();
-                            ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
-                        } else if ("admin".equals(listIn.get(1))) {
-                            stage.close();
-                            new AdminFrame(xmLin, xmlOut);
-                        } else if ("No".equals(listIn.get(1))) {
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.getDialogPane().getStylesheets().add("Skin.css");
-                            alert.setTitle("Ошибка");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Такой пользователь не зарегистрирован");
-                            alert.showAndWait();
-                        }
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    } catch (ParserConfigurationException e1) {
-                        e1.printStackTrace();
-                    } catch (TransformerConfigurationException e1) {
-                        e1.printStackTrace();
-                    } catch (SAXException e1) {
-                        e1.printStackTrace();
-                    }
+            if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.getDialogPane().getStylesheets().add("Skin.css");
+                alert.setTitle("Ошибка");
+                alert.setHeaderText(null);
+                alert.setContentText("Заполните поля логин/пароль");
+                alert.showAndWait();
+            } else {
+                List<String> list = new ArrayList<String>();
+                list.add("auth");
+                list.add(userTextField.getText());
+                list.add(pwBox.getText());
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
                 }
+                List<String> listIn = null;
+                try {
+                    listIn = xmLin.receive();
+                    if ("Ok".equals(listIn.get(1))) {
+                        stage.close();
+                        ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
+                    } else if ("admin".equals(listIn.get(1))) {
+                        stage.close();
+                        new AdminFrame(xmLin, xmlOut);
+                    } else if ("error".equals(listIn.get(1))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Такой пользователь не зарегистрирован");
+                        alert.showAndWait();
+                    }
+                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                    e1.printStackTrace();
+                }
+            }
         });
         this.show();
     }

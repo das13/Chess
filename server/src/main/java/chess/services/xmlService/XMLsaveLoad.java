@@ -1,6 +1,5 @@
 package chess.services.xmlService;
 
-import chess.Server;
 import chess.ServerMain;
 import chess.model.Player;
 import chess.model.Status;
@@ -44,13 +43,12 @@ public class XMLsaveLoad {
         PrintWriter pw = new PrintWriter(filePlayers);
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
-
         Element root = doc.createElement("savedPlayers");
-        doc.appendChild(root);
         players = ServerMain.getFreePlayers();
-
+        doc.appendChild(root);
         for (Player player: players) {
             Element el = doc.createElement("player");
+            el.setAttribute("id", String.valueOf(player.getId()));
             root.appendChild(el);
             Element login = doc.createElement("login");
             login.appendChild(doc.createTextNode(player.getLogin()));
@@ -90,12 +88,14 @@ public class XMLsaveLoad {
             for (int i = 0; i < nodes.getLength(); i++) {
                 if ("player".equals(nodes.item(i).getNodeName())) {
                     Element el = (Element) nodes.item(i);
+                    int id=Integer.parseInt(el.getAttribute("id"));
                     String login = el.getElementsByTagName("login").item(0).getTextContent();
                     String password = el.getElementsByTagName("password").item(0).getTextContent();
                     int rank = Integer.parseInt(el.getElementsByTagName("rank").item(0).getTextContent());
                     Status status = Status.valueOf(el.getElementsByTagName("status").item(0).getTextContent());
                     String ipadress = el.getElementsByTagName("ipadress").item(0).getTextContent();
                     Player player = new Player(login, password, status, ipadress);
+                    player.setId(id);
                     players.add(player);
                 }
             }
