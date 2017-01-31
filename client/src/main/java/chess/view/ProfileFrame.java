@@ -202,12 +202,8 @@ public class ProfileFrame extends Stage {
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                         e1.printStackTrace();
                     }
-                    try {
-                        stage.close();
-                        new GameFrame();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    stage.close();
+                    new GameFrame();
                 }
                 if (alert.getResult() == ButtonType.CANCEL) {
                     list.add("No");
@@ -226,12 +222,8 @@ public class ProfileFrame extends Stage {
             }
             if ("confirmresponse".equals(firstConf)) {
                 if ("Ok".equals(secondConf)) {
-                    try {
-                        stage.close();
-                        new GameFrame();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    stage.close();
+                    new GameFrame();
                 } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);

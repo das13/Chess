@@ -72,7 +72,7 @@ public class AdminFrame extends Stage {
         exitButton.setOnAction(e -> exitButtonClicked());
 
         HBox hBox = new HBox();
-        hBox.setPadding(new Insets(10,10,10,10));
+        hBox.setPadding(new Insets(10, 10, 10, 10));
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().addAll(refreshButton, banButton, offerButton, exitButton);
@@ -90,9 +90,8 @@ public class AdminFrame extends Stage {
         this.show();
 
 
-
-
     }
+
     public ObservableList<PlayerRow> getPlayers() {
         players.clear();
         List<String> list = new ArrayList<String>();
@@ -109,8 +108,8 @@ public class AdminFrame extends Stage {
             e.printStackTrace();
         }
         if ("admin_getPlayers".equals(listIn.get(0))) {
-            for (int i = 1; i < listIn.size(); i+=4) {
-                players.add(new PlayerRow(listIn.get(i), listIn.get(i+1), listIn.get(i+2), listIn.get(i+3)));
+            for (int i = 1; i < listIn.size(); i += 4) {
+                players.add(new PlayerRow(listIn.get(i), listIn.get(i + 1), listIn.get(i + 2), listIn.get(i + 3)));
             }
         }
 
@@ -176,21 +175,23 @@ public class AdminFrame extends Stage {
         players.clear();
     }
 
-    public void banButtonClicked(){
+    public void banButtonClicked() {
         System.out.println("BAN!");
     }
 
-    public void offerButtonClicked(){
+    public void offerButtonClicked() {
         this.close();
         try {
-            new GameFrame();
-        } catch (IOException e) {
+            GameFrame game = new GameFrame();
+            game.start(new Stage());
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         System.out.println("OFFER GAME");
     }
 
-    public void exitButtonClicked(){
+    public void exitButtonClicked() {
         this.close();
     }
 }
