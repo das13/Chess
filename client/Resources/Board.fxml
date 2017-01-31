@@ -208,7 +208,7 @@
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="2" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="2" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="3">
+                                      <Pane onDragDropped="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="3">
                                  <children>
                                     <Label text="5" />
                                  </children></Pane>
@@ -219,23 +219,23 @@
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="3" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="3" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="3" />
-                                      <Pane onDragDetected="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="4">
+                                      <Pane onDragDetected="#handleDrop" onDragDone="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="4">
                                  <children>
                                     <Label text="4" />
                                  </children></Pane>
-                                      <Pane onDragOver="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                      <Pane onDragDone="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                       <Pane onMouseDragReleased="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="4" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="4" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="4" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="4" />
-                                      <Pane onDragDone="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="5">
+                                      <Pane onDragDetected="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="5">
                                  <children>
                                     <Label text="3" />
                                  </children></Pane>
-                                      <Pane onDragDropped="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                      <Pane onDragEntered="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                      <Pane onDragOver="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                                       <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="5" />

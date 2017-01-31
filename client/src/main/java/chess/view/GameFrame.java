@@ -63,10 +63,22 @@ public class GameFrame extends Application {
     public void handleDrop(DragEvent event) {
         System.out.println("inside drop method");
         Dragboard db = event.getDragboard();
-        boolean success = false;
+
+        Node node = (Node) event.getSource();
+
+        System.out.println("X: " + GridPane.getColumnIndex(node));
+        System.out.println("Y: " + GridPane.getRowIndex(node));
+        System.out.println(node.getParent());
+
+//        boolean success = false;
         Pane pane = (Pane) event.getTarget();
-        ImageView image = new ImageView(db.getImage());
-        pane.getChildren().add(image);
+        pane.getChildren().add(new ImageView(db.getImage()));
+//        ImageView image = new ImageView(db.getImage());
+//        if (db.hasImage()) {
+//            System.out.println(event.getTarget().getClass());
+//            event.setDropCompleted(true);
+//        }
+
 //        Node node = event.getPickResult().getIntersectedNode();
 //        if(db.hasImage()){
 //
@@ -81,7 +93,6 @@ public class GameFrame extends Application {
 //        }
 //
 //event.setDropCompleted(success);
-        event.setDropCompleted(true);
 
 
         event.consume();
