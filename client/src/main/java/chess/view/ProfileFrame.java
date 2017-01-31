@@ -4,6 +4,7 @@ import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -31,9 +32,10 @@ import java.util.List;
 public class ProfileFrame extends Stage {
     String firstConf;
     String secondConf;
+
     public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
-        Stage stage=this;
+        Stage stage = this;
         Pane grid = new Pane();
         //grid.setAlignment(Pos.TOP_LEFT);
         //grid.setHgap(0);
@@ -159,28 +161,30 @@ public class ProfileFrame extends Stage {
         grid.getChildren().add(profile);
         this.show();
 
-        Task<Void> task = new Task<Void>() {
+
+        class MyTask<Void> extends Task<Void>{
             @Override
             public Void call() throws Exception {
-                    try {
-                        List<String> listIn = xmLin.receive();
-                        firstConf = listIn.get(0);
-                        secondConf = listIn.get(1);
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                    } catch (TransformerConfigurationException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (SAXException e) {
-                        e.printStackTrace();
-                    }
-
-                return null ;
+                try {
+                    List<String> listIn = xmLin.receive();
+                    firstConf = listIn.get(0);
+                    secondConf = listIn.get(1);
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (TransformerConfigurationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
-        };
-
-        task.setOnSucceeded(event -> {
+        }
+        MyTask<Void> task = new MyTask<Void>();
+        class MyHandler implements EventHandler {
+            @Override
+            public void handle(Event event) {
             if ("confirm".equals(firstConf)) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initOwner(stage);
@@ -191,7 +195,7 @@ public class ProfileFrame extends Stage {
                 List<String> list = new ArrayList<String>();
                 list.add("confirm");
                 alert.showAndWait();
-                if(alert.getResult()==ButtonType.OK){
+                if (alert.getResult() == ButtonType.OK) {
                     list.add("Ok");
                     try {
                         xmlOut.sendMessage(list);
@@ -205,21 +209,30 @@ public class ProfileFrame extends Stage {
                         e.printStackTrace();
                     }
                 }
-                if(alert.getResult()==ButtonType.CANCEL){
+                if (alert.getResult() == ButtonType.CANCEL) {
                     list.add("No");
-                    new Thread(task).start();
+                    try {
+                        xmlOut.sendMessage(list);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    MyTask myTask=new MyTask<Void>();
+                    myTask.setOnSucceeded(new MyHandler());
+                    Thread thread1 = new Thread(myTask);
+                    thread1.setDaemon(true);
+                    thread1.start();
                 }
 
             }
             if ("confirmresponse".equals(firstConf)) {
-                if("Ok".equals(secondConf)) {
+                if ("Ok".equals(secondConf)) {
                     try {
                         stage.close();
                         new GameFrame();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }else{
+                } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
@@ -227,9 +240,17 @@ public class ProfileFrame extends Stage {
                     alert.setHeaderText(null);
                     alert.setContentText("Вам отказали");
                     alert.showAndWait();
+                    MyTask myTask=new MyTask<Void>();
+                    myTask.setOnSucceeded(new MyHandler());
+                    Thread thread1 = new Thread(myTask);
+                    thread1.setDaemon(true);
+                    thread1.start();
                 }
             }
-        });
+
+            }
+        }
+        task.setOnSucceeded(new MyHandler());
         Thread thread = new Thread(task);
         thread.setDaemon(true);
         thread.start();

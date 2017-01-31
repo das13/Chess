@@ -83,7 +83,6 @@ public class Controller extends Thread {
                     PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
                 }
                 if (str.get(0).equals("callPlayer")) {
-                    System.out.println("confirm");
                     List<String> out = new ArrayList<String>();
                     Player player = GameService.callPlayer(getPlayer(), str.get(1));
                     if (player != null) {
@@ -107,7 +106,7 @@ public class Controller extends Thread {
                     if("Ok".equals(str.get(1)) && thisGame!=null) {
                         out.add("Ok");
                         setCurrentGame(thisGame);
-                        thisGame.getOtherPlayer(getPlayer()).getController().setCurrentGame(thisGame);
+                        thisGame.getOtherPlayer(player).getController().setCurrentGame(thisGame);
                     }
                     if("No".equals(str.get(1)) && thisGame!=null) {
                         out.add("No");
