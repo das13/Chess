@@ -65,7 +65,7 @@
                                       <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                   </rowConstraints>
                                   <children>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;">
                                  <children>
                                     <Label text="8" />
                                     <ImageView layoutX="2.0" layoutY="2.0">
@@ -75,7 +75,7 @@
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="2.0">
                                        <image>
@@ -83,7 +83,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="2.0">
                                        <image>
@@ -91,7 +91,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="2.0">
                                        <image>
@@ -99,7 +99,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4">
                                  <children>
                                     <ImageView layoutX="1.0" layoutY="2.0">
                                        <image>
@@ -107,7 +107,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="3.0">
                                        <image>
@@ -115,7 +115,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6">
                                  <children>
                                     <ImageView layoutX="1.0" layoutY="2.0">
                                        <image>
@@ -123,7 +123,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7">
                                  <children>
                                     <ImageView layoutX="1.0" layoutY="2.0">
                                        <image>
@@ -131,7 +131,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="1">
                                  <children>
                                     <Label text="7" />
                                     <ImageView layoutX="2.0" layoutY="2.0">
@@ -141,7 +141,7 @@
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="2.0">
                                        <image>
@@ -149,7 +149,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="3.0">
                                        <image>
@@ -157,7 +157,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutX="2.0" layoutY="2.0">
                                        <image>
@@ -165,7 +165,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutY="2.0">
                                        <image>
@@ -173,7 +173,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutY="2.0">
                                        <image>
@@ -181,7 +181,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutX="1.0" layoutY="2.0">
                                        <image>
@@ -189,7 +189,7 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="1">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="1">
                                  <children>
                                     <ImageView layoutY="1.0">
                                        <image>
@@ -197,191 +197,191 @@
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="2">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="2">
                                  <children>
                                     <Label text="6" />
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="2" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="2" />
-                                      <Pane onDragDropped="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="3">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="2" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="3">
                                  <children>
                                     <Label text="5" />
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="3" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="3" />
-                                      <Pane onDragDetected="#handleDrop" onDragDone="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="4">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="3" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="4">
                                  <children>
                                     <Label text="4" />
                                  </children></Pane>
-                                      <Pane onDragDone="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                      <Pane onMouseDragReleased="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="4" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="4" />
-                                      <Pane onDragDetected="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="5">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="4" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="5">
                                  <children>
                                     <Label text="3" />
                                  </children></Pane>
-                                      <Pane onDragOver="#handleDrop" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="5" />
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="5" />
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.rowIndex="6">
                                  <children>
                                     <Label text="2" />
-                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handle">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="6">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="6">
                                  <children>
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/pawnWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children></Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="52.0" layoutY="40.0" prefHeight="25.0" prefWidth="11.0" text="A" />
                                     <Label text="1" />
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/castleWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                                       </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="51.0" layoutY="41.0" prefHeight="20.0" prefWidth="17.0" text="B" />
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/knightWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="2" GridPane.rowIndex="7">
                                  <children>
                                     <Label alignment="BOTTOM_CENTER" layoutX="49.0" layoutY="40.0" prefHeight="20.0" prefWidth="11.0" text="C" />
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/bishopWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="3" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="49.0" layoutY="40.0" prefHeight="25.0" prefWidth="17.0" text="D" />
-                                    <ImageView layoutX="2.0" layoutY="1.0">
+                                    <ImageView layoutX="2.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/queenWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="4" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="52.0" layoutY="40.0" prefHeight="25.0" prefWidth="2.0" text="E" />
-                                    <ImageView>
+                                    <ImageView onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/kingWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="5" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="51.0" layoutY="43.0" prefHeight="20.0" prefWidth="23.0" text="F" />
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/bishopWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #457725; -fx-border-color: black;" GridPane.columnIndex="6" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="48.0" layoutY="40.0" prefHeight="25.0" prefWidth="17.0" text="G" />
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/knightWHITE.png" />
                                        </image>
                                     </ImageView>
                                  </children>
                               </Pane>
-                                      <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="7">
+                                      <Pane onDragDropped="#handleDrop" onDragOver="#handleDragOver" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f7eae4; -fx-border-color: black;" GridPane.columnIndex="7" GridPane.rowIndex="7">
                                  <children>
                                     <Label layoutX="48.0" layoutY="40.0" prefHeight="30.0" prefWidth="23.0" text="H" />
-                                    <ImageView layoutX="1.0" layoutY="1.0">
+                                    <ImageView layoutX="1.0" layoutY="1.0" onDragDetected="#handleOnDrag">
                                        <image>
                                           <Image url="@icons/castleWHITE.png" />
                                        </image>
