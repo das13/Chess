@@ -162,7 +162,7 @@ public class ProfileFrame extends Stage {
         this.show();
 
 
-        class MyTask<Void> extends Task<Void>{
+        class MyTask<Void> extends Task<Void> {
             @Override
             public Void call() throws Exception {
                 try {
@@ -185,60 +185,61 @@ public class ProfileFrame extends Stage {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-            if ("confirm".equals(firstConf)) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.initOwner(stage);
-                alert.getDialogPane().getStylesheets().add("Skin.css");
-                alert.setTitle("Приглашение");
-                alert.setHeaderText(null);
-                alert.setContentText("Вас приглашает " + secondConf);
-                List<String> list = new ArrayList<String>();
-                list.add("confirm");
-                alert.showAndWait();
-                if (alert.getResult() == ButtonType.OK) {
-                    list.add("Ok");
-                    try {
-                        xmlOut.sendMessage(list);
-                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    stage.close();
-                    new GameFrame();
-                }
-                if (alert.getResult() == ButtonType.CANCEL) {
-                    list.add("No");
-                    try {
-                        xmlOut.sendMessage(list);
-                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    MyTask myTask=new MyTask<Void>();
-                    myTask.setOnSucceeded(new MyHandler());
-                    Thread thread1 = new Thread(myTask);
-                    thread1.setDaemon(true);
-                    thread1.start();
-                }
-
-            }
-            if ("confirmresponse".equals(firstConf)) {
-                if ("Ok".equals(secondConf)) {
-                    stage.close();
-                    new GameFrame();
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                if ("confirm".equals(firstConf)) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.initOwner(stage);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Отказ");
+                    alert.setTitle("Приглашение");
                     alert.setHeaderText(null);
-                    alert.setContentText("Вам отказали");
+                    alert.setContentText("Вас приглашает " + secondConf);
+                    List<String> list = new ArrayList<String>();
+                    list.add("confirm");
                     alert.showAndWait();
-                    MyTask myTask=new MyTask<Void>();
-                    myTask.setOnSucceeded(new MyHandler());
-                    Thread thread1 = new Thread(myTask);
-                    thread1.setDaemon(true);
-                    thread1.start();
+                    if (alert.getResult() == ButtonType.OK) {
+                        list.add("Ok");
+                        try {
+                            xmlOut.sendMessage(list);
+                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        stage.close();
+                        new GameFrame(xmLin, xmlOut);
+
+                    }
+                    if (alert.getResult() == ButtonType.CANCEL) {
+                        list.add("No");
+                        try {
+                            xmlOut.sendMessage(list);
+                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                            e1.printStackTrace();
+                        }
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                    }
+
                 }
-            }
+                if ("confirmresponse".equals(firstConf)) {
+                    if ("Ok".equals(secondConf)) {
+                        stage.close();
+                        new GameFrame(xmLin, xmlOut);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Отказ");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Вам отказали");
+                        alert.showAndWait();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                    }
+                }
 
             }
         }

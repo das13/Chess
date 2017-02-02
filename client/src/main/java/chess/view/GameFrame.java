@@ -1,32 +1,191 @@
 package chess.view;
 
-import javafx.application.Application;
-import javafx.event.Event;
+import chess.services.xmlService.XMLin;
+import chess.services.xmlService.XMLout;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by bobnewmark on 30.01.2017
  */
-public class GameFrame extends Application {
+public class GameFrame extends Stage{
+    private List<Pane> targets = new ArrayList<Pane>();
+    private Map<String, Pane> board = new TreeMap<>();
+    public GameFrame(XMLin xmLin, final XMLout xmlOut){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Board.fxml"));
+        Pane root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.setTitle("Chess board");
+        Scene scene = new Scene(root, 700, 600);
+        this.setScene(scene);
+        this.setMinWidth(750);
+        this.setMinHeight(650);
+        this.show();
+        List<ImageView> sources = new ArrayList<ImageView>();
 
-    public static void main(String[] args) {
+        class DragOver implements EventHandler<DragEvent> {
+            private Pane target;
+
+            DragOver(Pane target) {
+                this.target = target;
+            }
+
+            public void handle(DragEvent event) {
+                if (event.getGestureSource() != target &&
+                        event.getDragboard().hasImage()) {
+                    event.acceptTransferModes(TransferMode.MOVE);
+
+                }
+                event.consume();
+            }
+        }
+        class DragDropped implements EventHandler<DragEvent> {
+            private Pane target;
+            private ImageView source;
+
+            DragDropped(Pane target, ImageView source) {
+                this.target = target;
+                this.source = source;
+            }
+
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                if (db.hasImage()) {
+                    System.out.print("Drop on cell: ");
+                    System.out.print("X:" + GridPane.getColumnIndex(target));
+                    System.out.println(" Y:" + GridPane.getRowIndex(target));
+                    for (Pane pane : targets) {
+                        pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+                    }
+                    target.getChildren().add(source);
+                    success = true;
+                } else {
+                    System.out.println("мимо");
+                }
+                resetSelected();
+                event.setDropCompleted(success);
+                event.consume();
+            }
+        }
+
+        class DragDroppedOut implements EventHandler<DragEvent> {
+
+            public void handle(DragEvent event) {
+                Dragboard db = event.getDragboard();
+                boolean success = false;
+                success = true;
+                resetSelected();
+                event.setDropCompleted(success);
+                event.consume();
+            }
+        }
+        class DragDetected implements EventHandler<MouseEvent> {
+            private ImageView source;
+
+            DragDetected(ImageView source) {
+                this.source = source;
+            }
+
+            public void handle(MouseEvent event) {
+                List<String> list = new ArrayList<String>();
+                list.add("drag");
+                System.out.println(String.valueOf(GridPane.getRowIndex(source.getParent())));
+                System.out.println(String.valueOf(GridPane.getColumnIndex(source.getParent())));
+                list.add(String.valueOf(GridPane.getColumnIndex(source.getParent())));
+                list.add(String.valueOf(GridPane.getRowIndex(source.getParent())));
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                List<String> listIn = null;
+                try {
+                    listIn = xmLin.receive();
+                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                    e1.printStackTrace();
+                }
+                Dragboard db = source.startDragAndDrop(TransferMode.ANY);
+                targets.clear();
+                for(String s: listIn) {
+                    targets.add(board.get(s));
+                }
+                for (Pane pane : targets) {
+                    pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+                    pane.setOnDragOver(new DragOver(pane));
+                    pane.setOnDragDropped(new DragDropped(pane, source));
+                }
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(source.getImage());
+                db.setContent(content);
+                event.consume();
+            }
+        }
+        GridPane grid = (GridPane) scene.lookup("#grid");
+        root.setOnDragOver(new DragOver(root));
+        root.setOnDragDropped(new DragDroppedOut());
+        for (Node node : grid.getChildren()) {
+            if (node.getClass().getSimpleName().equals("Pane")) {
+                Pane pane = (Pane) node;
+                int x;
+                int y;
+                if(GridPane.getRowIndex(pane)==null){
+                    x=0;
+                }else{
+                    x=GridPane.getRowIndex(pane);
+                }
+                if(GridPane.getColumnIndex(pane)==null){
+                    y=0;
+                }else{
+                    y=GridPane.getColumnIndex(pane);
+                }
+                board.put(x+""+y, pane);
+                for (Node n : pane.getChildren()) {
+                    if (n.getClass().getSimpleName().equals("ImageView")) {
+                        ImageView source = (ImageView) n;
+                        source.setOnDragDetected(new DragDetected(source));
+                        sources.add(source);
+                    }
+                }
+                System.out.print(GridPane.getColumnIndex(node) + " ");
+                System.out.println(GridPane.getRowIndex(node));
+            }
+        }
+        this.setScene(scene);
+        this.show();
+        Iterator<Map.Entry<String, Pane>> iter = board.entrySet().iterator();
+        while(iter.hasNext()){
+            Map.Entry<String, Pane> entry = iter.next();
+            System.out.println(entry.getKey()+" "+entry.getValue());
+        }
+    }
+    private void resetSelected(){
+        for (Pane pane : targets) {
+            pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
+            pane.setOnDragOver(null);
+            pane.setOnDragDropped(null);
+            pane.setOnDragExited(null);
+        }
+    }
+
+  /*  public static void main(String[] args) {
         launch(args);
     }
 
@@ -114,7 +273,7 @@ public class GameFrame extends Application {
         Node node = (Node) temp.getParent();
         System.out.println("X: " + GridPane.getColumnIndex(node));
         System.out.println("Y: " + GridPane.getRowIndex(node));
-    }
+    }*/
 }
 
 

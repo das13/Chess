@@ -114,13 +114,10 @@ public class Controller extends Thread {
                     otherSender.send(out);
                 }
                 if (str.get(0).equals("drag")) {
-                    //out.println("enter coordinates of figure - x and y");
+                    System.out.println(str.get(1)+" "+str.get(2));
                     try {
-                        int[] steps = GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2)));
+                        sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
                         //out.println("steps");
-                        for (int i : steps) {
-                            //out.println(i);
-                        }
                     } catch (RivalFigureException e) {
                         //out.println("you try taking rivals figure");
                         e.printStackTrace();

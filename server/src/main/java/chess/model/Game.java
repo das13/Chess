@@ -55,7 +55,7 @@ public class Game extends Thread{
         board[5][0].setFigure(new Bishop(Type.WHITE, board[5][0]));
         board[6][0].setFigure(new Knight(Type.WHITE, board[6][0]));
         board[7][0].setFigure(new Castle(Type.WHITE, board[7][0]));
-        //board[0][7].setFigure(new Castle(Type.BLACK, board[0][7]));
+        board[0][7].setFigure(new Castle(Type.BLACK, board[0][7]));
         board[1][7].setFigure(new Knight(Type.BLACK, board[1][7]));
         board[2][7].setFigure(new Bishop(Type.BLACK, board[2][7]));
         board[3][7].setFigure(new King(Type.BLACK, board[3][7]));
@@ -64,10 +64,10 @@ public class Game extends Thread{
         board[6][7].setFigure(new Knight(Type.BLACK, board[6][7]));
         board[7][7].setFigure(new Castle(Type.BLACK, board[7][7]));
         for (int i = 0; i < 8; i++) {
-            //board[i][1].setFigure(new Pawn(Type.WHITE, board[i][1]));
+            board[i][1].setFigure(new Pawn(Type.WHITE, board[i][1]));
             //board[1][2].setFigure(new Pawn(Type.BLACK, board[0][2]));
-            board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
-            //board[i][6].setFigure(new Pawn(Type.BLACK, board[i][6]));
+            //board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
+            board[i][6].setFigure(new Pawn(Type.BLACK, board[i][6]));
         }
         for (Cell[] cells: board) {
             for (Cell cell: cells) {

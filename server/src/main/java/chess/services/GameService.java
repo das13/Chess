@@ -7,6 +7,7 @@ import chess.model.Cell;
 import chess.model.Game;
 import chess.model.Player;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,23 +57,23 @@ public class GameService {
         return null;
     }
 
-    public static int[] steps(Game game, int x, int y) throws RivalFigureException {
-        Cell cell = game.getBoard()[x][y];
+    public static List<String> steps(Game game, int x, int y) throws RivalFigureException {
+        Cell cell = game.getCell(x, y);
+        System.out.println(cell.getFigure());
         //System.out.println(cell.getFigure().allAccessibleMove().size() * 2);
-        if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
+        /*if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
             throw new RivalFigureException();
-        }
+        }*/
         if (cell.isFigure()) {
-            int[] array = new int[cell.getFigure().allAccessibleMove().size() * 2];
+            List<String> array = new ArrayList<String>();
             int i = 0;
             for (Cell c : cell.getFigure().allAccessibleMove()) {
-                array[i] = c.getX();
-                i++;
-                array[i] = c.getY();
-                i++;
+                array.add(c.getY()+""+c.getX());
             }
+            System.out.println(array.size());
             return array;
         } else {
+            System.out.println("нет фигуры");
             throw new NullPointerException();
         }
     }
