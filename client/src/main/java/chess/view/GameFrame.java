@@ -39,7 +39,6 @@ public class GameFrame extends Stage{
         this.setMinHeight(650);
         this.show();
         List<ImageView> sources = new ArrayList<ImageView>();
-
         class DragOver implements EventHandler<DragEvent> {
             private Pane target;
 
@@ -69,16 +68,52 @@ public class GameFrame extends Stage{
                 Dragboard db = event.getDragboard();
                 boolean success = false;
                 if (db.hasImage()) {
-                    System.out.print("Drop on cell: ");
-                    System.out.print("X:" + GridPane.getColumnIndex(target));
-                    System.out.println(" Y:" + GridPane.getRowIndex(target));
                     for (Pane pane : targets) {
                         pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
                     }
+                    List<String> list = new ArrayList<String>();
+                    list.add("move");
+                    int x;
+                    int y;
+                    if(GridPane.getRowIndex(source.getParent())==null){
+                        x=0;
+                    }else{
+                        x=GridPane.getRowIndex(source.getParent());
+                    }
+                    if(GridPane.getColumnIndex(source.getParent())==null){
+                        y=0;
+                    }else{
+                        y=GridPane.getColumnIndex(source.getParent());
+                    }
+                    int x1;
+                    int y1;
+                    if(GridPane.getRowIndex(target)==null){
+                        x1=0;
+                    }else{
+                        x1=GridPane.getRowIndex(target);
+                    }
+                    if(GridPane.getColumnIndex(target)==null){
+                        y1=0;
+                    }else{
+                        y1=GridPane.getColumnIndex(target);
+                    }
+                    System.out.print("Drag from cell: ");
+                    System.out.print("X:" + y);
+                    System.out.println(" Y:" + x);
+                    System.out.print("Drop on cell: ");
+                    System.out.print("X:" + y1);
+                    System.out.println(" Y:" + x1);
+                    list.add(String.valueOf(y));
+                    list.add(String.valueOf(x));
+                    list.add(String.valueOf(y1));
+                    list.add(String.valueOf(x1));
+                    try {
+                        xmlOut.sendMessage(list);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                        e1.printStackTrace();
+                    }
                     target.getChildren().add(source);
                     success = true;
-                } else {
-                    System.out.println("мимо");
                 }
                 resetSelected();
                 event.setDropCompleted(success);
@@ -107,10 +142,22 @@ public class GameFrame extends Stage{
             public void handle(MouseEvent event) {
                 List<String> list = new ArrayList<String>();
                 list.add("drag");
-                System.out.println(String.valueOf(GridPane.getRowIndex(source.getParent())));
-                System.out.println(String.valueOf(GridPane.getColumnIndex(source.getParent())));
-                list.add(String.valueOf(GridPane.getColumnIndex(source.getParent())));
-                list.add(String.valueOf(GridPane.getRowIndex(source.getParent())));
+                int x;
+                int y;
+                if(GridPane.getRowIndex(source.getParent())==null){
+                    x=0;
+                }else{
+                    x=GridPane.getRowIndex(source.getParent());
+                }
+                if(GridPane.getColumnIndex(source.getParent())==null){
+                    y=0;
+                }else{
+                    y=GridPane.getColumnIndex(source.getParent());
+                }
+                System.out.print("accessible x "+y);
+                System.out.println(" accessible y "+x);
+                list.add(String.valueOf(y));
+                list.add(String.valueOf(x));
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -125,7 +172,9 @@ public class GameFrame extends Stage{
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
                 targets.clear();
                 for(String s: listIn) {
-                    targets.add(board.get(s));
+                    if(!s.equals("steps")) {
+                        targets.add(board.get(s));
+                    }
                 }
                 for (Pane pane : targets) {
                     pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));

@@ -26,7 +26,7 @@ public abstract class Figure {
     }
     // method checks if destination cell is available and moves a figure to it if so
     public void move(Cell destination) throws ReplacePawnException {
-        if (this.getType()==cell.getParentGame().getCurrentStep() && allAccessibleMove().contains(destination)) {
+        if (/*this.getType()==cell.getParentGame().getCurrentStep() && */allAccessibleMove().contains(destination)) {
             this.cell.setFigure(null);
             this.cell = destination;
             this.cell.setFigure(this);

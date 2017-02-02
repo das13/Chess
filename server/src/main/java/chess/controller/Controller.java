@@ -126,18 +126,18 @@ public class Controller extends Thread {
                 if (str.get(0).equals("move")) {
                     int[] steps = new int[0];
                     try {
-                        steps = GameService.move(getCurrentGame(), str);
+                        GameService.move(getCurrentGame(), str);
                     } catch (RivalFigureException e) {
                         //out.println("you try taking rivals figure");
                         e.printStackTrace();
                     }
-                    Player otherPlayer = getCurrentGame().getOtherPlayer(getPlayer());
-                    System.out.println(otherPlayer.getNickname());
-                    PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
-                    outOther.println("step");
-                    for (int i : steps) {
-                        outOther.println(i);
-                    }
+                    //Player otherPlayer = getCurrentGame().getOtherPlayer(getPlayer());
+                    //System.out.println(otherPlayer.getNickname());
+                    //PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
+                    //outOther.println("step");
+                    //for (int i : steps) {
+                    //    outOther.println(i);
+                   // }
                 }
                 if (str.equals("FREEPLAYERS")) {
                     XMLSender test = new XMLSender(out);

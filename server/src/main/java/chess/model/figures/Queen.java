@@ -32,6 +32,8 @@ public class Queen extends Figure {
                         System.out.println(game.getCell(i, j).getFigure().getClass().getName());
                         break;
                     }
+                }else{
+                    break;
                 }
             }
             i += stepX;
