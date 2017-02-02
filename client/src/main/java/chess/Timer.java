@@ -1,12 +1,27 @@
 package chess;
 
+import chess.view.GameFrame;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import static java.lang.Thread.sleep;
+
 /**
  * Created by bobnewmark on 20.01.2017
  */
-public class Timer extends Thread {
+public class Timer extends Observable implements Runnable {
 
     private int time = 30 * 60;
     private boolean active = true;
+    private GameFrame game;
+    int minutes;
+    int seconds;
+    String sec;
+
+    public Timer(GameFrame game) {
+        addObserver(game);
+    }
 
     public void run() {
         do {
@@ -18,16 +33,19 @@ public class Timer extends Thread {
                 }
             }
 
-            int minutes = time / 60;
-            int seconds = time % 60;
-            String sec = String.valueOf(seconds);
+            minutes = time / 60;
+            seconds = time % 60;
+            sec = String.valueOf(seconds);
             if(sec.length() < 2) {
                 sec = "0" + sec;
             }
-            System.out.println(minutes + ":" + sec);
+            String message = minutes + ":" + sec;
+            setChanged();
+            notifyObservers(message);
+            //System.out.println(minutes + ":" + sec);
 
             try {
-                Thread.sleep(1000);
+                sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -41,10 +59,29 @@ public class Timer extends Thread {
         return active;
     }
 
-    public void setActivity(boolean active) {
-        if (!active) {
-            // TODO: send time to server
-        }
-        this.active = active;
+    public void stopTimer() {
+        active = false;
+    }
+
+    public void startTimer() {
+        active = true;
+    }
+
+    public String getTime() {
+        return minutes + ":" + sec;
+    }
+
+    public int getTimeForServer(){
+        return time;
+    }
+
+    @Override
+    public synchronized void addObserver(Observer o) {
+        super.addObserver(o);
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
+        super.notifyObservers(arg);
     }
 }

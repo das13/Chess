@@ -173,7 +173,7 @@ public class AdminFrame extends Stage {
     public void offerButtonClicked() {
         this.close();
         try {
-            GameFrame game = new GameFrame(xmLin, xmLout);
+            GameFrame game = new GameFrame(xmLin, xmLout, true);
             //
         } catch (Exception e) {
             e.printStackTrace();

@@ -203,7 +203,7 @@ public class ProfileFrame extends Stage {
                             e1.printStackTrace();
                         }
                         stage.close();
-                        new GameFrame(xmLin, xmlOut);
+                        new GameFrame(xmLin, xmlOut, false);
 
                     }
                     if (alert.getResult() == ButtonType.CANCEL) {
@@ -224,7 +224,7 @@ public class ProfileFrame extends Stage {
                 if ("confirmresponse".equals(firstConf)) {
                     if ("Ok".equals(secondConf)) {
                         stage.close();
-                        new GameFrame(xmLin, xmlOut);
+                        new GameFrame(xmLin, xmlOut, true);
                     } else {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.initOwner(stage);
