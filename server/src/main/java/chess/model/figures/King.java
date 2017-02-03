@@ -45,35 +45,29 @@ public class King extends Figure {
                 validCells.add(game.getCell(x,y));
             }
         }
-
-        /* all cells that have figures of the same Type as this are removed here*/
-//        for (int i = 0; i < validCells.size(); i++) {
-//            if (validCells.get(i).isFriendlyCell(this)) {
-//                validCells.remove(i);
-//            }
-//        }
         return validCells;
     }
 
-    // overriding method to specialize castling both sides
-//    @Override
-//    public void move(Cell destination) {
-//        if ((allAccessibleMove().contains(destination)) && hasMove()) {
-//            this.getCell().setFigure(null);
-//            this.cell = destination;
-//            this.getCell().setFigure(this);
-//        } else if ((allAccessibleMove().contains(destination))
-//                && (true /*destination is castling Kingside cell*/)) {
-//            castlingKingside();
-//        } else if ((allAccessibleMove().contains(destination))
-//                && (true /*destination is castling Queenside cell*/)) {
-//            castlingQueenside();
-//        }
-//    }
+    @Override
+    public void move(Cell destination) throws ReplacePawnException {
+        if (allAccessibleMove().contains(destination)) {
+            this.getCell().setFigure(null);
+            this.setCell(destination);
+            this.getCell().setFigure(this);
+            setFirstMove(false);
+            getCell().getParentGame().changeCurrentStep();
+        } else if (this.isFirstMove()) {
+            if (castlingKingSideAllowed(destination)) castlingKingside();
+            if (castlingQueenSideAllowed(destination)) castlingQueenside();
+        }
+    }
 
-    public boolean castlingKingSideAllowed() {
-        // if king moved
-        if (!this.isFirstMove()) return false;
+
+
+
+    public boolean castlingKingSideAllowed(Cell destination) {
+        // if destination cell is proper for castling
+        if (!(destination.getX() == 6 && destination.getY() == this.getCell().getY())) return false;
         // if castle moved
         if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
@@ -84,9 +78,9 @@ public class King extends Figure {
     }
 
 
-    public boolean castlingQueenSideAllowed() {
-        // if king moved
-        if (!this.isFirstMove()) return false;
+    public boolean castlingQueenSideAllowed(Cell destination) {
+        // if destination cell is proper for castling
+        if (!(destination.getX() == 2 && destination.getY() == this.getCell().getY())) return false;
         // if castle moved
         if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
@@ -97,24 +91,22 @@ public class King extends Figure {
     }
 
     public void castlingKingside() {
-        if (castlingKingSideAllowed()) {
             try {
                 this.move(game.getCell(6, this.getCell().getY()));
                 game.getCell(7, this.getCell().getY()).getFigure().move(game.getCell(5, this.getCell().getY()));
+                System.out.println("CASTLING KINGSIDE");
             } catch (ReplacePawnException e) {
                 //ignore
             }
-        }
     }
 
     public void castlingQueenside() {
-        if (castlingQueenSideAllowed()) {
             try {
                 this.move(game.getCell(2, this.getCell().getY()));
                 game.getCell(0, this.getCell().getY()).getFigure().move(game.getCell(3, this.getCell().getY()));
+                System.out.println("CASTLING QUEENSIDE");
             } catch (ReplacePawnException e) {
                 //ignore
             }
-        }
     }
 }

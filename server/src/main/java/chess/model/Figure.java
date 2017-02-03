@@ -35,6 +35,10 @@ public abstract class Figure {
         }
     }
 
+    public void setCell(Cell cell) {
+        this.cell = cell;
+    }
+
     public Type getType() {
         return this.type;
     }
@@ -47,4 +51,7 @@ public abstract class Figure {
         return firstMove;
     }
 
+    public void setFirstMove(boolean firstMove) {
+        this.firstMove = firstMove;
+    }
 }
