@@ -27,6 +27,7 @@ public class Castle extends Figure {
     public List<Cell> allAccessibleMove() {
 
         List<Cell> validCells = new ArrayList<Cell>();
+        validCells.clear();
 
         Game game = getCell().getParentGame();
         int a = getCell().getX();
@@ -34,33 +35,59 @@ public class Castle extends Figure {
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
+
         for (int x = a - 1; x >= 0; x--) {
             if (x < 0) break;
-            validCells.add(game.getCell(x, b));
-            if (game.getCell(x, b).getFigure() != null) break;
+            if (game.getCell(x, b).getFigure() == null) {
+                validCells.add(game.getCell(x, b));
+            } else if (!game.getCell(x, b).isFriendlyCell(this)) {
+                validCells.add(game.getCell(x, b));
+                break;
+            } else {
+                break;
+            }
         }
         for (int x = a + 1; x <= 7; x++) {
             if (x > 7) break;
-            validCells.add(game.getCell(x, b));
-            if (game.getCell(x, b).getFigure() != null) break;
+            if (game.getCell(x, b).getFigure() == null) {
+                validCells.add(game.getCell(x, b));
+            } else if (!game.getCell(x, b).isFriendlyCell(this)) {
+                validCells.add(game.getCell(x, b));
+                break;
+            } else {
+                break;
+            }
         }
         for (int y = b - 1; y >= 0; y--) {
             if(y < 0) break;
-            validCells.add(game.getCell(a, y));
-            if (game.getCell(a, y).getFigure() != null) break;
+            if (game.getCell(a, y).getFigure() == null) {
+                validCells.add(game.getCell(a, y));
+            } else if (!game.getCell(a, y).isFriendlyCell(this)) {
+                validCells.add(game.getCell(a, y));
+                break;
+            } else {
+                break;
+            }
         }
         for (int y = b + 1; y <= 7; y++) {
             if (y > 7) break;
-            validCells.add(game.getCell(a, y));
-            if (game.getCell(a, y).getFigure() != null) break;
+            if (game.getCell(a, y).getFigure() == null) {
+                validCells.add(game.getCell(a, y));
+            } else if (!game.getCell(a, y).isFriendlyCell(this)) {
+                validCells.add(game.getCell(a, y));
+                break;
+            } else {
+                break;
+            }
         }
 
         //all cells that have figures of the same Type as this are removed here
-        for (int i = 0; i < validCells.size(); i++) {
-            if (validCells.get(i).getFigure() != null && validCells.get(i).isFriendlyCell(this)) {
-                validCells.remove(i);
-            }
-        }
+//        for (int i = 0; i < validCells.size(); i++) {
+//            if (validCells.get(i).getFigure() != null && validCells.get(i).isFriendlyCell(this)) {
+//                validCells.remove(i);
+//            }
+//        }
         return validCells;
     }
+
 }
