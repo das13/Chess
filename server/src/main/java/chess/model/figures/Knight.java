@@ -44,6 +44,11 @@ public class Knight extends Figure {
                 validCells.remove(i);
             }
         }
+        for (int i = 0; i < validCells.size(); i++) {
+            if (getCell().isFriendlyCell(validCells.get(i).getFigure())) {
+                validCells.remove(i);
+            }
+        }
         return validCells;
     }
 }
