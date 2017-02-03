@@ -28,7 +28,7 @@ public class ServerMain {
         logger.info("Server launched");
         try {
             XMLsaveLoad.loadPlayers();
-            System.out.println("players restored from file");
+            //System.out.println("players restored from file");
             for (Player p: freePlayers) {
                 System.out.println("player restored from file: " + p.getLogin());
             }
@@ -40,7 +40,7 @@ public class ServerMain {
             logger.error("Failed loading players from file ", e);
         }
         Game game = new Game();
-        List<Cell> cells = game.getBoard()[5][1].getFigure().allAccessibleMove();
+        List<Cell> cells = game.getBoard()[3][0].getFigure().allAccessibleMove();
         /*try {
             game.getBoard()[0][6].getFigure().move(game.getBoard()[0][7]);
         } catch (ReplacePawnException e) {
@@ -48,8 +48,8 @@ public class ServerMain {
             System.out.println("pick figure");
         }*/
         for(Cell c: cells)
-        System.out.println(c.getX()+" "+c.getY());
-       new Server();
+            System.out.println(c.getX()+"."+c.getY());
+        new Server();
 
     }
     public static List<Player> getFreePlayers() {

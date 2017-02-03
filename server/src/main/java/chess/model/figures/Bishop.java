@@ -51,13 +51,13 @@ public class Bishop extends Figure {
         for (int x = getCell().getX() + 1; x <= 7; x++) {
             if(x > 7) break;
             if (y3 >= 0) {
-                    validCells.add(game.getCell(x,y3));
-                    y3--;
+                validCells.add(game.getCell(x,y3));
+                y3--;
                 if (game.getCell(x,y3+1).getFigure() != null) break;
             }
             if (y4 <= 7) {
-                    validCells.add(game.getCell(x,y4));
-                    y4++;
+                validCells.add(game.getCell(x,y4));
+                y4++;
                 if (game.getCell(x,y4-1).getFigure() != null) break;
             }
         }

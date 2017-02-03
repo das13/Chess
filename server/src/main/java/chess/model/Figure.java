@@ -46,4 +46,5 @@ public abstract class Figure {
     public boolean isFirstMove() {
         return firstMove;
     }
+
 }

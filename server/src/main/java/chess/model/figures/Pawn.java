@@ -25,7 +25,7 @@ public class Pawn extends Figure {
     @Override
     public void move(Cell destination) throws ReplacePawnException {
         super.move(destination);
-        if ((destination.getY() == 7 && getType() == Type.WHITE) || (destination.getY() == 0 && getType() == Type.BLACK)) {
+        if ((destination.getY() == 7 && getType() == Type.BLACK) || (destination.getY() == 0 && getType() == Type.WHITE)) {
             throw new ReplacePawnException();
         }
     }
@@ -34,7 +34,7 @@ public class Pawn extends Figure {
         List<Cell> validCells = new ArrayList<Cell>();
         Game game = getCell().getParentGame();
         int koef = 1;
-        if (getType() == Type.BLACK) {
+        if (getType() == Type.WHITE) {
             koef = -1;
         }
 

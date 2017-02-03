@@ -23,7 +23,7 @@ public class Cell {
     }
 
     public Figure getFigure() {
-        if (figure == null) return null;
+        if (this.figure == null) return null;
         else return figure;
     }
 
@@ -32,8 +32,9 @@ public class Cell {
     }
 
     public boolean isFriendlyCell(Figure figure) {
-        if(figure==null) return false;
-        return this.getFigure().getType() == figure.getType();
+        if (figure == null) return false;
+        if(this.figure == null) return false;
+        return this.getFigure().getType().equals(figure.getType());
     }
 
     public Game getParentGame() {

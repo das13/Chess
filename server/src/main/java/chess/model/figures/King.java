@@ -13,6 +13,7 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class King extends Figure {
+    Game game;
     public King(Type type) {
         super(type);
     }
@@ -27,7 +28,7 @@ public class King extends Figure {
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
 
-        Game game = getCell().getParentGame();
+        game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();
 
@@ -40,16 +41,17 @@ public class King extends Figure {
                 if (x < 0 || x > 7) continue;
                 if (y < 0 || y > 7) continue;
                 if (game.getCell(x,y).getFigure() == this) continue;
+                if (game.getCell(x,y).isFriendlyCell(this)) continue;
                 validCells.add(game.getCell(x,y));
             }
         }
 
         /* all cells that have figures of the same Type as this are removed here*/
-        for (int i = 0; i < validCells.size(); i++) {
-            if (validCells.get(i).isFriendlyCell(this)) {
-                validCells.remove(i);
-            }
-        }
+//        for (int i = 0; i < validCells.size(); i++) {
+//            if (validCells.get(i).isFriendlyCell(this)) {
+//                validCells.remove(i);
+//            }
+//        }
         return validCells;
     }
 
@@ -69,42 +71,50 @@ public class King extends Figure {
 //        }
 //    }
 
-    public boolean castlingKingsideAllowed() {
-        return ((true /*king never moved*/)
-                && (true /*castle never moved*/)
-                && (true /*king is not under attack*/)
-                && (true /*cells for king to pass are safe*/)
-                && (true /*position after castling is safe*/));
+    public boolean castlingKingSideAllowed() {
+        // if king moved
+        if (!this.isFirstMove()) return false;
+        // if castle moved
+        if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
+        // if cell king is going to pass is under attack
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY()))) return false;
+        // if king's destination cell is under attack
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return  false;
+        return true;
     }
 
 
-    public boolean castlingQueensideAllowed() {
-        return ((true /*king never moved*/)
-                && (true /*castle never moved*/)
-                && (true /*king is not under attack*/)
-                && (true /*cells for king to pass are safe*/)
-                && (true /*position after castling is safe*/));
+    public boolean castlingQueenSideAllowed() {
+        // if king moved
+        if (!this.isFirstMove()) return false;
+        // if castle moved
+        if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
+        // if cell king is going to pass is under attack
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(3, this.getCell().getY()))) return false;
+        // if king's destination cell is under attack
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return  false;
+        return true;
     }
 
     public void castlingKingside() {
-        if (castlingKingsideAllowed()) {
+        if (castlingKingSideAllowed()) {
             try {
-                this.move(null /*Cell destination*/);
+                this.move(game.getCell(6, this.getCell().getY()));
+                game.getCell(7, this.getCell().getY()).getFigure().move(game.getCell(5, this.getCell().getY()));
             } catch (ReplacePawnException e) {
                 //ignore
             }
-            /*and castle (by it's unique number) moves too*/
         }
     }
 
     public void castlingQueenside() {
-        if (castlingQueensideAllowed()) {
+        if (castlingQueenSideAllowed()) {
             try {
-                this.move(null /*Cell destination*/);
+                this.move(game.getCell(2, this.getCell().getY()));
+                game.getCell(0, this.getCell().getY()).getFigure().move(game.getCell(3, this.getCell().getY()));
             } catch (ReplacePawnException e) {
                 //ignore
             }
-            /*and castle (by it's unique number) moves too*/
         }
     }
 }
