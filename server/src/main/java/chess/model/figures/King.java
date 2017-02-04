@@ -35,6 +35,17 @@ public class King extends Figure {
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
 
+        if (isFirstMove()
+                && game.getCell(1, b).getFigure() == null
+                && game.getCell(2, b).getFigure() == null
+                && game.getCell(3, b).getFigure() == null) {
+            validCells.add(game.getCell(2, b));
+        }
+        if (isFirstMove()
+                && game.getCell(5, b).getFigure() == null
+                && game.getCell(5, b).getFigure() == null) {
+            validCells.add(game.getCell(6, b));
+        }
 
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b -1; y <= b + 1; y++) {
@@ -51,19 +62,16 @@ public class King extends Figure {
     @Override
     public void move(Cell destination) throws ReplacePawnException {
         if (allAccessibleMove().contains(destination)) {
+            if (castlingKingSideAllowed(destination)) castlingKingside();
+            if (castlingQueenSideAllowed(destination)) castlingQueenside();
+        } else {
             this.getCell().setFigure(null);
             this.setCell(destination);
             this.getCell().setFigure(this);
             setFirstMove(false);
             getCell().getParentGame().changeCurrentStep();
-        } else if (this.isFirstMove()) {
-            if (castlingKingSideAllowed(destination)) castlingKingside();
-            if (castlingQueenSideAllowed(destination)) castlingQueenside();
         }
     }
-
-
-
 
     public boolean castlingKingSideAllowed(Cell destination) {
         // if destination cell is proper for castling

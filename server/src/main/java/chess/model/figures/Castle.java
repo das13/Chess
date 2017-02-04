@@ -35,11 +35,11 @@ public class Castle extends Figure {
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
-
         for (int x = a - 1; x >= 0; x--) {
             if (x < 0) break;
             if (game.getCell(x, b).getFigure() == null) {
                 validCells.add(game.getCell(x, b));
+                continue;
             } else if (!game.getCell(x, b).isFriendlyCell(this)) {
                 validCells.add(game.getCell(x, b));
                 break;
@@ -51,6 +51,7 @@ public class Castle extends Figure {
             if (x > 7) break;
             if (game.getCell(x, b).getFigure() == null) {
                 validCells.add(game.getCell(x, b));
+                continue;
             } else if (!game.getCell(x, b).isFriendlyCell(this)) {
                 validCells.add(game.getCell(x, b));
                 break;
@@ -62,6 +63,7 @@ public class Castle extends Figure {
             if(y < 0) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
+                continue;
             } else if (!game.getCell(a, y).isFriendlyCell(this)) {
                 validCells.add(game.getCell(a, y));
                 break;
@@ -73,6 +75,7 @@ public class Castle extends Figure {
             if (y > 7) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
+                continue;
             } else if (!game.getCell(a, y).isFriendlyCell(this)) {
                 validCells.add(game.getCell(a, y));
                 break;
@@ -89,5 +92,4 @@ public class Castle extends Figure {
 //        }
         return validCells;
     }
-
 }

@@ -5,6 +5,7 @@ import chess.Timer;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -31,6 +32,7 @@ public class GameFrame extends Stage implements Observer {
     FXMLLoader loader;
     Button offerDrawButton;
     Button resignButton;
+    Scene scene;
     private Timer count;
     Label yourTimer;
     private List<Pane> targets = new ArrayList<Pane>();
@@ -55,7 +57,7 @@ public class GameFrame extends Stage implements Observer {
             e.printStackTrace();
         }
         this.setTitle("Chess board");
-        Scene scene = new Scene(root, 700, 600);
+        scene = new Scene(root, 700, 600);
         this.setScene(scene);
         this.setMinWidth(750);
         this.setMinHeight(650);
@@ -69,10 +71,17 @@ public class GameFrame extends Stage implements Observer {
             count.stopTimer();
         });
 
+//      пока что на кнопку для тестов повесил перемещение фигуры (для противника или рокировки)
         resignButton = (Button) scene.lookup("#resignButton");
         resignButton.setOnMouseClicked(e -> {
-            count.startTimer();
+            moveFromTo(0,0, 4,4);
         });
+
+//        предыдущий код для кнопки resignButton, возобновляет таймер
+//        resignButton = (Button) scene.lookup("#resignButton");
+//        resignButton.setOnMouseClicked(e -> {
+//            count.startTimer();
+//        });
 
 
         count = new Timer(this);
@@ -92,7 +101,6 @@ public class GameFrame extends Stage implements Observer {
                 if (event.getGestureSource() != target &&
                         event.getDragboard().hasImage()) {
                     event.acceptTransferModes(TransferMode.MOVE);
-
                 }
                 event.consume();
             }
@@ -284,6 +292,7 @@ public class GameFrame extends Stage implements Observer {
         });
     }
 
+    // Переводит координаты клетки в формат для сервера, пока выводит просто в консоль
     private void getCoordinates(Pane pane /*, black or white player*/) {
         int x;
         int y;
@@ -297,105 +306,66 @@ public class GameFrame extends Stage implements Observer {
         } else {
             y = GridPane.getRowIndex(pane);
         }
-//  FOR BLACK PLAYER
-//        if (true /*This is black player*/) {
-//            x = 7 - x;
-//            y = 7 - y;
-//        }
+        if (!isWhitePlayer) {
+            x = translateForBlack(x);
+            y = translateForBlack(y);
+        }
         System.out.print("X:" + x);
         System.out.println(" Y:" + y);
     }
 
-
-  /*  public static void main(String[] args) {
-        launch(args);
+    private int translateForBlack(int coordinate) {
+        return 7 - coordinate;
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        Stage window = primaryStage;
-        Parent root = FXMLLoader.load(getClass().getResource("/Board.fxml"));
-        window.setTitle("Game");
-
-        Scene scene = new Scene(root, 700, 600);
-        window.setScene(scene);
-        window.setMinWidth(750);
-        window.setMinHeight(650);
-        window.show();
-    }
-
-    @FXML
-    public void handleOnDrag(MouseEvent event) {
-
-        Node node = (Node) event.getSource();
-        node = node.getParent();
-        System.out.print("Drag from cell: ");
-        System.out.print("X:" + GridPane.getColumnIndex(node));
-        System.out.println(" Y:" + GridPane.getRowIndex(node));
-
-        ImageView image = (ImageView) event.getSource();
-        Dragboard db = image.startDragAndDrop(TransferMode.ANY);
-
-        ClipboardContent cbContent = new ClipboardContent();
-        cbContent.putImage(image.getImage());
-        db.setContent(cbContent);
-        image.setVisible(false);
-        event.consume();
-    }
-
-    @FXML
-    public void handleDragOver(DragEvent de) {
-        Dragboard board = de.getDragboard();
-        if (board.hasImage()) {
-            de.acceptTransferModes(TransferMode.ANY);
+    // Перемещает фигуру согласно заданным координатам
+    private void moveFromTo(int fromX, int fromY, int toX, int toY) {
+        Pane source = findPane(fromX, fromY);
+        Pane target = findPane(toX, toY);
+        ImageView image = new ImageView();
+        for (Node node: source.getChildren()) {
+            if (node instanceof ImageView) {
+                image = (ImageView) node;
+            }
         }
+        target.getChildren().add(image);
     }
 
-    @FXML
-    public void handleDrop(DragEvent event) {
-
-        Dragboard db = event.getDragboard();
-        Node node = (Node) event.getSource();
-        Pane pane;
-
-        System.out.print("Drop on cell: ");
-        System.out.print("X:" + GridPane.getColumnIndex(node));
-        System.out.println(" Y:" + GridPane.getRowIndex(node));
-
-        if (event.getTarget() instanceof ImageView) {
-            ImageView temp = (ImageView) event.getTarget();
-            pane = (Pane) temp.getParent();
-        } else {
-            pane = (Pane) event.getTarget();
+    // находит и возвращает Pane на доске по заданным координатам согласно положению на сервере
+    private Pane findPane(int x, int y) {
+        if (!isWhitePlayer) {
+            x = translateForBlack(x);
+            y = translateForBlack(y);
         }
-
-        if (pane.getChildren().size() > 0) {
-            pane.getChildren().clear();
+        GridPane grid = (GridPane) scene.lookup("#grid");
+        Pane pane = null;
+        ObservableList<Node> children = grid.getChildren();
+        for (Node node : children) {
+            if (x == 0 && y == 0) {
+                if(GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == null) {
+                    pane = (Pane) node;
+                    return pane;
+                }
+            } else if (x == 0) {
+                if(GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == y) {
+                    pane = (Pane) node;
+                    return pane;
+                }
+            } else if (y == 0) {
+                if(GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == null) {
+                    pane = (Pane) node;
+                    return pane;
+                }
+            } else {
+                if (GridPane.getColumnIndex(node) == null) continue;
+                if (GridPane.getRowIndex(node) == null) continue;
+                if(GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y) {
+                    pane = (Pane) node;
+                }
+            }
         }
-
-        ImageView image = new ImageView(db.getImage());
-        image.setOnDragDetected(event1 -> {
-            ImageView image1 = (ImageView) event1.getSource();
-            Dragboard db1 = image1.startDragAndDrop(TransferMode.ANY);
-
-            ClipboardContent cbContent = new ClipboardContent();
-            cbContent.putImage(image1.getImage());
-            db1.setContent(cbContent);
-            image1.setVisible(false);
-            event1.consume();
-        });
-
-        pane.getChildren().add(image);
-        event.consume();
+        return pane;
     }
-
-    @FXML
-    public void handleClick(MouseEvent event) {
-        ImageView temp = (ImageView) event.getTarget();
-        Node node = (Node) temp.getParent();
-        System.out.println("X: " + GridPane.getColumnIndex(node));
-        System.out.println("Y: " + GridPane.getRowIndex(node));
-    }*/
 }
 
 

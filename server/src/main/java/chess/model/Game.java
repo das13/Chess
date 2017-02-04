@@ -12,6 +12,8 @@ import java.util.TreeSet;
 public class Game extends Thread{
     private Player whitePlayer;
     private Player blackPlayer;
+    private King whiteKing;
+    private King blackKing;
     private Cell[][] board = new Cell[8][8];
     private Set<Cell> allWhiteMoves = new TreeSet<Cell>(new Comparator<Cell>() {
         public int compare(Cell c1, Cell c2){
@@ -38,11 +40,13 @@ public class Game extends Thread{
                 board[i][j] = new Cell(i, j, this);
             }
         }
+        blackKing = new King(Type.BLACK, board[4][0]);
+        whiteKing = new King(Type.WHITE, board[4][7]);
         board[0][0].setFigure(new Castle(Type.BLACK, board[0][0]));
         board[1][0].setFigure(new Knight(Type.BLACK, board[1][0]));
         board[2][0].setFigure(new Bishop(Type.BLACK, board[2][0]));
         board[3][0].setFigure(new Queen(Type.BLACK, board[3][0]));
-        board[4][0].setFigure(new King(Type.BLACK, board[4][0]));
+        board[4][0].setFigure(blackKing);
         board[5][0].setFigure(new Bishop(Type.BLACK, board[5][0]));
         board[6][0].setFigure(new Knight(Type.BLACK, board[6][0]));
         board[7][0].setFigure(new Castle(Type.BLACK, board[7][0]));
@@ -50,7 +54,7 @@ public class Game extends Thread{
         board[1][7].setFigure(new Knight(Type.WHITE, board[1][7]));
         board[2][7].setFigure(new Bishop(Type.WHITE, board[2][7]));
         board[3][7].setFigure(new Queen(Type.WHITE, board[3][7]));
-        board[4][7].setFigure(new King(Type.WHITE, board[4][7]));
+        board[4][7].setFigure(whiteKing);
         board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
         board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
         board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
@@ -68,11 +72,13 @@ public class Game extends Thread{
                 board[i][j] = new Cell(i, j, this);
             }
         }
+        blackKing = new King(Type.BLACK, board[4][0]);
+        whiteKing = new King(Type.WHITE, board[4][7]);
         board[0][0].setFigure(new Castle(Type.BLACK, board[0][0]));
         board[1][0].setFigure(new Knight(Type.BLACK, board[1][0]));
         board[2][0].setFigure(new Bishop(Type.BLACK, board[2][0]));
         board[3][0].setFigure(new Queen(Type.BLACK, board[3][0]));
-        board[4][0].setFigure(new King(Type.BLACK, board[4][0]));
+        board[4][0].setFigure(blackKing);
         board[5][0].setFigure(new Bishop(Type.BLACK, board[5][0]));
         board[6][0].setFigure(new Knight(Type.BLACK, board[6][0]));
         board[7][0].setFigure(new Castle(Type.BLACK, board[7][0]));
@@ -80,7 +86,7 @@ public class Game extends Thread{
         board[1][7].setFigure(new Knight(Type.WHITE, board[1][7]));
         board[2][7].setFigure(new Bishop(Type.WHITE, board[2][7]));
         board[3][7].setFigure(new Queen(Type.WHITE, board[3][7]));
-        board[4][7].setFigure(new King(Type.WHITE, board[4][7]));
+        board[4][7].setFigure(whiteKing);
         board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
         board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
         board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
@@ -155,25 +161,38 @@ public class Game extends Thread{
         }
     }
 
-    // составляет множество всех потенциальных ходов игрока белыми
+    /* составляет множество всех потенциальных ходов игрока белыми,
+    если среди ходов противника есть клетк короля (шах),
+    то возможные ходы ограничиваются ходами короля*/
     public void setAllWhiteMoves() {
         allWhiteMoves.clear();
-        for (Cell[] cells: board) {
-            for (Cell cell: cells) {
-                if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.WHITE) {
-                    allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
+        if (getEnemyMoves(Type.BLACK).contains(whiteKing.getCell())) {
+            allWhiteMoves.addAll(whiteKing.allAccessibleMove());
+        } else {
+            for (Cell[] cells: board) {
+                for (Cell cell: cells) {
+                    if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.WHITE) {
+                        allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
+                    }
                 }
             }
         }
+
     }
 
-    // составляет множество всех потенциальных ходов игрока черными
+    /* составляет множество всех потенциальных ходов игрока черными,
+    если среди ходов противника есть клетк короля (шах),
+    то возможные ходы ограничиваются ходами короля*/
     public void setAllBlackMoves() {
         allBlackMoves.clear();
-        for (Cell[] cells: board) {
-            for (Cell cell: cells) {
-                if (cell.getFigure() != null && cell.getFigure().getType() == Type.BLACK) {
-                    allBlackMoves.addAll(cell.getFigure().allAccessibleMove());
+        if (getEnemyMoves(Type.WHITE).contains(blackKing.getCell())) {
+            allBlackMoves.addAll(blackKing.allAccessibleMove());
+        } else {
+            for (Cell[] cells: board) {
+                for (Cell cell: cells) {
+                    if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.BLACK) {
+                        allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
+                    }
                 }
             }
         }
