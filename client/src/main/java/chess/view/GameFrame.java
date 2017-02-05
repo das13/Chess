@@ -212,7 +212,7 @@ public class GameFrame extends Stage implements Observer {
         root.setOnDragOver(new DragOver(root));
         root.setOnDragDropped(new DragDroppedOut());
         for (Node node : grid.getChildren()) {
-            if (node.getClass().getSimpleName().equals("Pane")) {
+            if (node.getClass().getSimpleName().equals("Pane")){
                 Pane pane = (Pane) node;
                 String x = getCoordinateX(pane);
                 String y = getCoordinateY(pane);
@@ -221,7 +221,9 @@ public class GameFrame extends Stage implements Observer {
 //                String y = getYforServer(pane);
                 board.put(y + "" + x, pane);
                 for (Node n : pane.getChildren()) {
-                    if (n.getClass().getSimpleName().equals("ImageView")) {
+                    if (n.getClass().getSimpleName().equals("ImageView")
+                            && (GridPane.getRowIndex(pane) != null)
+                            && (GridPane.getRowIndex(pane) != 1)) {
                         ImageView source = (ImageView) n;
                         source.setOnDragDetected(new DragDetected(source));
                         sources.add(source);

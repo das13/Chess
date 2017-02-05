@@ -154,10 +154,12 @@ public class Game extends Thread{
         }
     }
 
+    // возвращает true если белый король под шахом
     public boolean isWhiteKingAttacked() {
         return allBlackMoves.contains(whiteKing.getCell());
     }
 
+    // возвращает true если черный король под шахом
     public boolean isBlackKingAttacked() {
         return allWhiteMoves.contains(blackKing.getCell());
     }
