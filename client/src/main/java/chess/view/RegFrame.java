@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -122,6 +124,13 @@ public class RegFrame extends Stage {
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.setResizable(false);
+        // при нажатии Enter срабатывает кнопка "Создать"
+        this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+            if (ev.getCode() == KeyCode.ENTER) {
+                yesButton.fire();
+                ev.consume();
+            }
+        });
         this.show();
     }
 }

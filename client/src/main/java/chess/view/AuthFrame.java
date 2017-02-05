@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
@@ -98,6 +100,13 @@ public class AuthFrame extends Stage {
                 } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
                     e1.printStackTrace();
                 }
+            }
+        });
+        // при нажатии Enter срабатывает кнопка "Войти"
+        this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+            if (ev.getCode() == KeyCode.ENTER) {
+                btn.fire();
+                ev.consume();
             }
         });
         this.show();
