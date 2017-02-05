@@ -17,12 +17,14 @@ public class Game extends Thread{
     private Cell[][] board = new Cell[8][8];
     private Set<Cell> allWhiteMoves = new TreeSet<Cell>(new Comparator<Cell>() {
         public int compare(Cell c1, Cell c2){
+            if (c1 == c2) return 1;
             if (c1.getX() != c2.getX()) return c1.getX() - c2.getX();
             else return c1.getY() - c2.getY();
         }
     });
     private Set<Cell> allBlackMoves = new TreeSet<Cell>(new Comparator<Cell>() {
         public int compare(Cell c1, Cell c2){
+            if (c1 == c2) return 1;
             if (c1.getX() != c2.getX()) return c1.getX() - c2.getX();
             else return c1.getY() - c2.getY();
         }
@@ -152,6 +154,14 @@ public class Game extends Thread{
         }
     }
 
+    public boolean isWhiteKingAttacked() {
+        return allBlackMoves.contains(whiteKing.getCell());
+    }
+
+    public boolean isBlackKingAttacked() {
+        return allWhiteMoves.contains(blackKing.getCell());
+    }
+
     // возвращает множество потенциальных ходов соперника
     public Set<Cell> getEnemyMoves(Type type) {
         if (type == Type.WHITE) {
@@ -161,38 +171,25 @@ public class Game extends Thread{
         }
     }
 
-    /* составляет множество всех потенциальных ходов игрока белыми,
-    если среди ходов противника есть клетк короля (шах),
-    то возможные ходы ограничиваются ходами короля*/
+    // составляет множество всех потенциальных ходов игрока белыми
     public void setAllWhiteMoves() {
         allWhiteMoves.clear();
-        if (getEnemyMoves(Type.BLACK).contains(whiteKing.getCell())) {
-            allWhiteMoves.addAll(whiteKing.allAccessibleMove());
-        } else {
-            for (Cell[] cells: board) {
-                for (Cell cell: cells) {
-                    if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.WHITE) {
-                        allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
-                    }
+        for (Cell[] cells: board) {
+            for (Cell cell: cells) {
+                if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.WHITE) {
+                    allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
                 }
             }
         }
-
     }
 
-    /* составляет множество всех потенциальных ходов игрока черными,
-    если среди ходов противника есть клетк короля (шах),
-    то возможные ходы ограничиваются ходами короля*/
+    // составляет множество всех потенциальных ходов игрока черными
     public void setAllBlackMoves() {
         allBlackMoves.clear();
-        if (getEnemyMoves(Type.WHITE).contains(blackKing.getCell())) {
-            allBlackMoves.addAll(blackKing.allAccessibleMove());
-        } else {
-            for (Cell[] cells: board) {
-                for (Cell cell: cells) {
-                    if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.BLACK) {
-                        allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
-                    }
+        for (Cell[] cells: board) {
+            for (Cell cell: cells) {
+                if (cell.getFigure() != null && cell.getFigure().getType() == Type.BLACK) {
+                    allBlackMoves.addAll(cell.getFigure().allAccessibleMove());
                 }
             }
         }

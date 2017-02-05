@@ -101,6 +101,7 @@ public class GameFrame extends Stage implements Observer {
                 if (event.getGestureSource() != target &&
                         event.getDragboard().hasImage()) {
                     event.acceptTransferModes(TransferMode.MOVE);
+
                 }
                 event.consume();
             }
@@ -123,40 +124,20 @@ public class GameFrame extends Stage implements Observer {
                     }
                     List<String> list = new ArrayList<String>();
                     list.add("move");
-                    int x;
-                    int y;
-                    if (GridPane.getRowIndex(source.getParent()) == null) {
-                        x = 0;
-                    } else {
-                        x = GridPane.getRowIndex(source.getParent());
-                    }
-                    if (GridPane.getColumnIndex(source.getParent()) == null) {
-                        y = 0;
-                    } else {
-                        y = GridPane.getColumnIndex(source.getParent());
-                    }
-                    int x1;
-                    int y1;
-                    if (GridPane.getRowIndex(target) == null) {
-                        x1 = 0;
-                    } else {
-                        x1 = GridPane.getRowIndex(target);
-                    }
-                    if (GridPane.getColumnIndex(target) == null) {
-                        y1 = 0;
-                    } else {
-                        y1 = GridPane.getColumnIndex(target);
-                    }
+                    String x = getCoordinateX(source.getParent());
+                    String y = getCoordinateY(source.getParent());
+                    String x1 = getCoordinateX(target);
+                    String y1 = getCoordinateY(target);
                     System.out.print("Drag from cell: ");
-                    System.out.print("X:" + y);
-                    System.out.println(" Y:" + x);
+                    System.out.print("X:" + x);
+                    System.out.println(" Y:" + y);
                     System.out.print("Drop on cell: ");
-                    System.out.print("X:" + y1);
-                    System.out.println(" Y:" + x1);
-                    list.add(String.valueOf(y));
+                    System.out.print("X:" + x1);
+                    System.out.println(" Y:" + y1);
                     list.add(String.valueOf(x));
-                    list.add(String.valueOf(y1));
+                    list.add(String.valueOf(y));
                     list.add(String.valueOf(x1));
+                    list.add(String.valueOf(y1));
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -192,22 +173,12 @@ public class GameFrame extends Stage implements Observer {
             public void handle(MouseEvent event) {
                 List<String> list = new ArrayList<String>();
                 list.add("drag");
-                int x;
-                int y;
-                if (GridPane.getRowIndex(source.getParent()) == null) {
-                    x = 0;
-                } else {
-                    x = GridPane.getRowIndex(source.getParent());
-                }
-                if (GridPane.getColumnIndex(source.getParent()) == null) {
-                    y = 0;
-                } else {
-                    y = GridPane.getColumnIndex(source.getParent());
-                }
-                System.out.print("accessible x " + y);
-                System.out.println(" accessible y " + x);
-                list.add(String.valueOf(y));
-                list.add(String.valueOf(x));
+                String x = getCoordinateX(source.getParent());
+                String y = getCoordinateY(source.getParent());
+                System.out.print("accessible x " + x);
+                System.out.println(" accessible y " + y);
+                list.add(x);
+                list.add(y);
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -243,19 +214,12 @@ public class GameFrame extends Stage implements Observer {
         for (Node node : grid.getChildren()) {
             if (node.getClass().getSimpleName().equals("Pane")) {
                 Pane pane = (Pane) node;
-                int x;
-                int y;
-                if (GridPane.getRowIndex(pane) == null) {
-                    x = 0;
-                } else {
-                    x = GridPane.getRowIndex(pane);
-                }
-                if (GridPane.getColumnIndex(pane) == null) {
-                    y = 0;
-                } else {
-                    y = GridPane.getColumnIndex(pane);
-                }
-                board.put(x + "" + y, pane);
+                String x = getCoordinateX(pane);
+                String y = getCoordinateY(pane);
+
+//                String x = getXforServer(pane);
+//                String y = getYforServer(pane);
+                board.put(y + "" + x, pane);
                 for (Node n : pane.getChildren()) {
                     if (n.getClass().getSimpleName().equals("ImageView")) {
                         ImageView source = (ImageView) n;
@@ -293,6 +257,54 @@ public class GameFrame extends Stage implements Observer {
     }
 
     // Переводит координаты клетки в формат для сервера, пока выводит просто в консоль
+    private String getCoordinateX(Node node) {
+        int x;
+        if (GridPane.getColumnIndex(node) == null) {
+            x = 0;
+        } else {
+            x = GridPane.getColumnIndex(node);
+        }
+        if (!isWhitePlayer) {
+            x = translateForBlack(x);
+        }
+
+        return String.valueOf(x);
+    }
+
+    private String getCoordinateY(Node node) {
+        int y;
+        if (GridPane.getRowIndex(node) == null) {
+            y = 0;
+        } else {
+            y = GridPane.getRowIndex(node);
+        }
+        if (!isWhitePlayer) {
+            y = translateForBlack(y);
+        }
+        return String.valueOf(y);
+    }
+
+    private String getXforServer(Node node) {
+        int x;
+        if (GridPane.getColumnIndex(node) == null) {
+            x = 0;
+        } else {
+            x = GridPane.getColumnIndex(node);
+        }
+        return String.valueOf(x);
+    }
+
+    private String getYforServer(Node node) {
+        int y;
+        if (GridPane.getRowIndex(node) == null) {
+            y = 0;
+        } else {
+            y = GridPane.getRowIndex(node);
+        }
+        return String.valueOf(y);
+    }
+
+    // Переводит координаты клетки в формат для сервера, пока выводит просто в консоль
     private void getCoordinates(Pane pane /*, black or white player*/) {
         int x;
         int y;
@@ -306,10 +318,11 @@ public class GameFrame extends Stage implements Observer {
         } else {
             y = GridPane.getRowIndex(pane);
         }
-        if (!isWhitePlayer) {
-            x = translateForBlack(x);
-            y = translateForBlack(y);
-        }
+//  FOR BLACK PLAYER
+//        if (true /*This is black player*/) {
+//            x = translateForBlack(x);
+//            y = translateForBlack(y);
+//        }
         System.out.print("X:" + x);
         System.out.println(" Y:" + y);
     }
