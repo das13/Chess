@@ -163,6 +163,16 @@ public class GameFrame extends Stage implements Observer {
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                         e1.printStackTrace();
                     }
+                    Label label = null;
+                    for (Node node: target.getChildren()) {
+                        if(node instanceof Label) {
+                            label = (Label) node;
+                        } else if (node instanceof ImageView) {
+                            lastTakenFigure = (ImageView) node;
+                        }
+                    }
+                    target.getChildren().clear();
+                    if (label != null) target.getChildren().add(label);
                     target.getChildren().add(source);
                     success = true;
                 }
