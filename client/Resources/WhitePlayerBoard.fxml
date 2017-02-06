@@ -592,7 +592,7 @@
                             <children>
                                 <HBox alignment="CENTER" minHeight="30.0" prefHeight="30.0">
                                     <children>
-                                        <Label text="Opponent's timer">
+                                        <Label fx:id="opponentTimer" text="Opponent's timer">
                                             <font>
                                                 <Font name="System Bold" size="14.0"/>
                                             </font>

@@ -2,6 +2,7 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -29,41 +31,50 @@ public class AuthFrame extends Stage {
     Stage stage = this;
 
     public AuthFrame(XMLin xmLin, XMLout xmlOut) {
-        stage.setTitle("Шахматы онлайн");
+        this.setTitle("Шахматы онлайн");
+
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
+        grid.setPadding(new Insets(20, 10, 20, 10));
+        grid.setVgap(15);
         grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(40, 25, 25, 25));
-        Scene scene = new Scene(grid, 300, 200);
-        this.setScene(scene);
+
         Text scenetitle = new Text("Авторизация");
+        scenetitle.setId("scenetitle");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 1, 0, 1, 1);
-        Label userName = new Label("Логин:");
-        grid.add(userName, 0, 1);
-        final TextField userTextField = new TextField();
-        grid.add(userTextField, 1, 1);
-        Label pw = new Label("Пароль:");
-        grid.add(pw, 0, 2);
-        final PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);
-        Button btn = new Button("Войти");
-        btn.setMinWidth(70);
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.CENTER);
 
+        Label loginLabel = new Label("Логин:");
+        GridPane.setConstraints(loginLabel, 0, 0);
 
-        Button btnReg = new Button("Создать");
-        btnReg.setMinWidth(70);
-        hbBtn.getChildren().addAll(btnReg, btn);
-        grid.add(hbBtn, 1, 4);
-        btnReg.setOnAction((e) -> {
+        TextField loginInput = new TextField();
+        loginInput.setMinWidth(180);
+        //loginInput.setFocusTraversable(false);
+        loginInput.setPromptText("ваш логин");
+        GridPane.setConstraints(loginInput, 1, 0);
+
+        Label passLabel = new Label("Пароль:");
+        GridPane.setConstraints(passLabel, 0, 1);
+
+        PasswordField passInput = new PasswordField();
+        passInput.setFocusTraversable(false);
+        passInput.setPromptText("ваш пароль");
+        GridPane.setConstraints(passInput, 1, 1);
+
+        HBox hBox = new HBox();
+        hBox.setSpacing(40);
+        hBox.setAlignment(Pos.CENTER);
+        Button createButton = new Button("Создать");
+        createButton.setPrefWidth(90);
+        createButton.setOnAction((e) -> {
             stage.close();
             new RegFrame(xmLin, xmlOut);
         });
-        btn.setOnAction(e -> {
-            if (userTextField.getText().equals("") || pwBox.getText().equals("")) {
+        Button enterButton = new Button("Войти");
+        enterButton.setPrefWidth(90);
+        enterButton.setOnAction(e -> {
+            if (loginInput.getText().equals("") || passInput.getText().equals("")) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.getDialogPane().getStylesheets().add("Skin.css");
                 alert.setTitle("Ошибка");
@@ -73,8 +84,8 @@ public class AuthFrame extends Stage {
             } else {
                 List<String> list = new ArrayList<String>();
                 list.add("auth");
-                list.add(userTextField.getText());
-                list.add(pwBox.getText());
+                list.add(loginInput.getText());
+                list.add(passInput.getText());
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -102,13 +113,43 @@ public class AuthFrame extends Stage {
                 }
             }
         });
+        hBox.getChildren().addAll(createButton, enterButton);
+        //Add everything to grid
+        grid.getChildren().addAll(loginLabel, loginInput, passLabel, passInput);
+
+        //Scene scene = new Scene(grid, 300, 200);
+        vBox.getChildren().addAll(scenetitle, grid, hBox);
+        Scene scene = new Scene(vBox, 300, 200);
+        scene.getStylesheets().add("Skin.css");
+        this.setScene(scene);
+        this.setResizable(false);
         // при нажатии Enter срабатывает кнопка "Войти"
-        this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
-            if (ev.getCode() == KeyCode.ENTER) {
-                btn.fire();
+        this.addEventHandler(KeyEvent.ANY, ev -> {
+            if (ev.getCode().equals(KeyCode.ENTER)) {
+                enterButton.fire();
                 ev.consume();
             }
         });
+        loginInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) passInput.requestFocus();
+            event.consume();
+        });
+        passInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) loginInput.requestFocus();
+            event.consume();
+        });
+//        this.addEventHandler(KeyEvent.KEY_PRESSED, eve -> {
+//            if (eve.getCode() == KeyCode.TAB) {
+//                System.out.println(loginInput.getCaretPosition());
+//                if (loginInput.getCaretPosition() == 0) {
+//                    System.out.println("YES");
+//                    passInput.positionCaret(0);
+//                } else if (passInput.getCaretPosition() > 0) {
+//                    loginInput.positionCaret(0);
+//                }
+//                eve.consume();
+//            }
+//        });
         this.show();
     }
 }

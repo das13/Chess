@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -32,6 +33,8 @@ import java.util.List;
 public class ProfileFrame extends Stage {
     String firstConf;
     String secondConf;
+    String myName;
+    String myPass;
 
     public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
@@ -40,54 +43,62 @@ public class ProfileFrame extends Stage {
         //grid.setAlignment(Pos.TOP_LEFT);
         //grid.setHgap(0);
         //grid.setVgap(0);
-        grid.setPadding(new Insets(0, 25, 25, 25));
-        Scene scene = new Scene(grid, 500, 350);
+        grid.setPadding(new Insets(0, 25, 25, 50));
+        Scene scene = new Scene(grid, 480, 350);
+        scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         Text scenetitle = new Text("Мой Профиль");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        scenetitle.relocate(200, 10);
+        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+        scenetitle.relocate(70, 90);
+//        Text scenetitle2 = new Text("Свободные игроки");
+//        scenetitle2.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+//        scenetitle2.relocate(250, 10);
         grid.getChildren().add(scenetitle);
+        //grid.getChildren().add(scenetitle2);
         Pane profile = new Pane();
-        profile.relocate(10, 40);
-        profile.setPrefSize(230, 120);
-        profile.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, new CornerRadii(15), new BorderWidths(3))));
-        profile.setBackground(new Background(new BackgroundFill(Color.DARKGREY, new CornerRadii(15), Insets.EMPTY)));
+        profile.relocate(10, 120);
+        profile.setPrefSize(230, 180);
+        profile.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
+        profile.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
         Pane freeplayer = new Pane();
-        freeplayer.relocate(250, 40);
+        freeplayer.relocate(250, 10);
         freeplayer.setPrefSize(230, 300);
-        freeplayer.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(15), new BorderWidths(3))));
-        freeplayer.setBackground(new Background(new BackgroundFill(Color.DARKGREY, new CornerRadii(15), Insets.EMPTY)));
+        freeplayer.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
+        freeplayer.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
         Text loginname = new Text("Никнейм");
-        loginname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
+        loginname.setFont(Font.font(14));
         loginname.relocate(15, 20);
         profile.getChildren().add(loginname);
         TextField login = new TextField(freePlayers.get(3));
+        myName = login.getText();
         login.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        login.relocate(85, 20);
-        login.setPrefWidth(120);
+        login.relocate(85, 15);
+        login.setPrefWidth(130);
         profile.getChildren().add(login);
         Text passwordname = new Text("Пароль");
-        passwordname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        passwordname.relocate(15, 50);
+        passwordname.setFont(Font.font(14));
+        passwordname.relocate(15, 60);
         profile.getChildren().add(passwordname);
         TextField password = new TextField(freePlayers.get(4));
+        myPass = password.getText();
         password.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        password.relocate(85, 50);
-        password.setPrefWidth(120);
+        password.relocate(85, 55);
+        password.setPrefWidth(130);
         profile.getChildren().add(password);
         Text myrankname = new Text("Рейтинг");
-        myrankname.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        myrankname.relocate(15, 80);
+        myrankname.setFont(Font.font(14));
+        myrankname.relocate(15, 100);
         profile.getChildren().add(myrankname);
         Text myrank = new Text(freePlayers.get(5));
-        myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        myrank.relocate(85, 80);
+        myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+        myrank.relocate(130, 100);
         profile.getChildren().add(myrank);
         Button saveBtn = new Button("Сохранить");
-        saveBtn.setPadding(new Insets(0));
-        saveBtn.setPrefWidth(70.0);
-        saveBtn.setPrefHeight(20.0);
-        saveBtn.relocate(135, 85);
+        //saveBtn.setPadding(new Insets(0));
+        saveBtn.setMinWidth(90);
+        saveBtn.setMinHeight(25);
+        saveBtn.relocate(70, 140);
+        saveBtn.setDisable(true);
         saveBtn.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 List<String> list = new ArrayList<String>();
@@ -109,6 +120,7 @@ public class ProfileFrame extends Stage {
                         alert.setTitle("Сохранено");
                         alert.setHeaderText(null);
                         alert.setContentText("Изменения сохранены");
+                        saveBtn.setDisable(true);
                         alert.showAndWait();
                     }
                     if ("error".equals(listIn.get(0))) {
@@ -133,8 +145,8 @@ public class ProfileFrame extends Stage {
             player.relocate(20, 12 * (i - 3));
             freeplayer.getChildren().add(player);
             Text rank = new Text(freePlayers.get(i + 1));
-            rank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 12));
-            rank.setFill(Color.GREEN);
+            rank.setFont(Font.font("Tahoma", FontWeight.BOLD, 14));
+            rank.setFill(Color.valueOf("#47484a"));
             rank.relocate(95, 12 * (i - 3));
             freeplayer.getChildren().add(rank);
             Button btn = new Button("Играть");
@@ -157,8 +169,15 @@ public class ProfileFrame extends Stage {
             });
             freeplayer.getChildren().add(btn);
         }
+        Button refreshButton = new Button("Обновить список игроков");
+        refreshButton.setMinWidth(100);
+        refreshButton.setMinHeight(20);
+        refreshButton.relocate(280, 320);
         grid.getChildren().add(freeplayer);
         grid.getChildren().add(profile);
+        grid.getChildren().add(refreshButton);
+
+        this.setResizable(false);
         this.show();
 
 
@@ -243,6 +262,13 @@ public class ProfileFrame extends Stage {
 
             }
         }
+        login.textProperty().addListener((observable, oldValue, newValue) -> {
+            saveBtn.setDisable(false);
+        });
+        password.textProperty().addListener((observable, oldValue, newValue) -> {
+            saveBtn.setDisable(false);
+        });
+
         task.setOnSucceeded(new MyHandler());
         Thread thread = new Thread(task);
         thread.setDaemon(true);

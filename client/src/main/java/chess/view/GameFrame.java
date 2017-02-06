@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
@@ -34,10 +35,18 @@ public class GameFrame extends Stage implements Observer {
     Button resignButton;
     Scene scene;
     private Timer count;
+    Label opponentTimer;
     Label yourTimer;
+    GridPane grid;
     private List<Pane> targets = new ArrayList<Pane>();
     private Map<String, Pane> board = new TreeMap<>();
     private boolean isWhitePlayer;
+    int lastMoveFromX;
+    int lastMoveFromY;
+    int lastMoveToX;
+    int lastMoveToY;
+    ImageView lastMovedFigure;
+    ImageView lastTakenFigure;
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite) {
 
@@ -58,23 +67,28 @@ public class GameFrame extends Stage implements Observer {
         }
         this.setTitle("Chess board");
         scene = new Scene(root, 700, 600);
+        scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.setMinWidth(750);
         this.setMinHeight(650);
         this.show();
 
 //      таймер выводит оставшееся время, кнопки ставят таймер на паузу и возобновляют
+        opponentTimer = (Label) scene.lookup("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
+
 
         offerDrawButton = (Button) scene.lookup("#offerDrawButton");
         offerDrawButton.setOnMouseClicked(e -> {
+            //grid.setDisable(true);
             count.stopTimer();
         });
 
 //      пока что на кнопку для тестов повесил перемещение фигуры (для противника или рокировки)
         resignButton = (Button) scene.lookup("#resignButton");
         resignButton.setOnMouseClicked(e -> {
-            moveFromTo(0,0, 4,4);
+            //grid.setDisable(false);
+            moveFromTo(lastMoveToX, lastMoveToY, lastMoveFromX, lastMoveFromY);
         });
 
 //        предыдущий код для кнопки resignButton, возобновляет таймер
@@ -128,6 +142,12 @@ public class GameFrame extends Stage implements Observer {
                     String y = getCoordinateY(source.getParent());
                     String x1 = getCoordinateX(target);
                     String y1 = getCoordinateY(target);
+
+                    lastMoveFromX = Integer.parseInt(getCoordinateX(source.getParent()));
+                    lastMoveFromY = Integer.parseInt(getCoordinateY(source.getParent()));
+                    lastMoveToX = Integer.parseInt(getCoordinateX(target));
+                    lastMoveToY = Integer.parseInt(getCoordinateY(target));
+
                     System.out.print("Drag from cell: ");
                     System.out.print("X:" + x);
                     System.out.println(" Y:" + y);
@@ -168,6 +188,7 @@ public class GameFrame extends Stage implements Observer {
 
             DragDetected(ImageView source) {
                 this.source = source;
+                lastMovedFigure = source;
             }
 
             public void handle(MouseEvent event) {
@@ -192,23 +213,30 @@ public class GameFrame extends Stage implements Observer {
                 }
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
                 targets.clear();
-                for (String s : listIn) {
-                    if (!s.equals("steps")) {
-                        targets.add(board.get(s));
+                if ("steps".equals(listIn.get(0))) {
+                    for (String s : listIn) {
+                        if (!s.equals("steps")) {
+                            targets.add(board.get(s));
+                        }
+                    }
+                    for (Pane pane : targets) {
+                        pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+                        pane.setOnDragOver(new DragOver(pane));
+                        pane.setOnDragDropped(new DragDropped(pane, source));
+                    }
+                    ClipboardContent content = new ClipboardContent();
+                    content.putImage(source.getImage());
+                    db.setContent(content);
+                    event.consume();
+                } else {
+                    for (String s: listIn) {
+                        System.out.println("FROM SERVER: " + s);
                     }
                 }
-                for (Pane pane : targets) {
-                    pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
-                    pane.setOnDragOver(new DragOver(pane));
-                    pane.setOnDragDropped(new DragDropped(pane, source));
-                }
-                ClipboardContent content = new ClipboardContent();
-                content.putImage(source.getImage());
-                db.setContent(content);
-                event.consume();
+
             }
         }
-        GridPane grid = (GridPane) scene.lookup("#grid");
+        grid = (GridPane) scene.lookup("#grid");
         root.setOnDragOver(new DragOver(root));
         root.setOnDragDropped(new DragDroppedOut());
         for (Node node : grid.getChildren()) {
@@ -240,6 +268,7 @@ public class GameFrame extends Stage implements Observer {
             Map.Entry<String, Pane> entry = iter.next();
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+
     }
 
     private void resetSelected() {
@@ -352,33 +381,45 @@ public class GameFrame extends Stage implements Observer {
             x = translateForBlack(x);
             y = translateForBlack(y);
         }
+        System.out.println("looking for pane with X:" + x + " Y:" + y);
         GridPane grid = (GridPane) scene.lookup("#grid");
         Pane pane = null;
         ObservableList<Node> children = grid.getChildren();
-        for (Node node : children) {
-            if (x == 0 && y == 0) {
-                if(GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == null) {
+        if (x == 0 && y == 0) {
+            for (Node node : children) {
+                if (GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == null) {
+                    System.out.println(GridPane.getColumnIndex(node));
+                    System.out.println(GridPane.getRowIndex(node));
                     pane = (Pane) node;
-                    return pane;
+                    break;
                 }
-            } else if (x == 0) {
-                if(GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == y) {
-                    pane = (Pane) node;
-                    return pane;
-                }
-            } else if (y == 0) {
-                if(GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == null) {
-                    pane = (Pane) node;
-                    return pane;
-                }
-            } else {
-                if (GridPane.getColumnIndex(node) == null) continue;
+            }
+        } else if (x == 0) {
+            for (Node node : children) {
                 if (GridPane.getRowIndex(node) == null) continue;
-                if(GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y) {
+                if (GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == y) {
                     pane = (Pane) node;
+                    break;
+                }
+            }
+        } else if (y == 0) {
+            for (Node node : children) {
+                if (GridPane.getColumnIndex(node) == null) continue;
+                if (GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == null) {
+                    pane = (Pane) node;
+                    break;
+                }
+            }
+        } else {
+            for (Node node : children) {
+                if (GridPane.getColumnIndex(node) == null || GridPane.getRowIndex(node) == null) continue;
+                if (GridPane.getColumnIndex(node) == x && GridPane.getRowIndex(node) == y) {
+                    pane = (Pane) node;
+                    break;
                 }
             }
         }
+
         return pane;
     }
 }

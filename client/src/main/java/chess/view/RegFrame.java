@@ -29,7 +29,7 @@ import java.util.List;
 public class RegFrame extends Stage {
     //Stage stage = this;
     public RegFrame(final XMLin xmLin, final XMLout xmlOut) {
-        this.setTitle("Регистрация нового пользователя");
+        this.setTitle("Регистрация нового игрока");
 
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
@@ -48,7 +48,7 @@ public class RegFrame extends Stage {
 
         TextField loginInput = new TextField();
         loginInput.setMinWidth(180);
-        loginInput.setFocusTraversable(false);
+        //loginInput.setFocusTraversable(false);
         loginInput.setPromptText("будет виден другим игрокам");
         GridPane.setConstraints(loginInput, 1, 0);
 
@@ -63,6 +63,7 @@ public class RegFrame extends Stage {
         hBox.setSpacing(40);
         hBox.setAlignment(Pos.CENTER);
         Button yesButton = new Button("Создать");
+        yesButton.setPrefWidth(90);
         yesButton.setOnAction(e -> {
             if (loginInput.getText().isEmpty() || passInput.getText().isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -108,6 +109,7 @@ public class RegFrame extends Stage {
             //xmlOut.sendMessage();
         });
         Button noButton = new Button("Отмена");
+        noButton.setPrefWidth(90);
         noButton.setOnAction(e -> {
             this.close();
             new AuthFrame(xmLin, xmlOut);
@@ -130,6 +132,14 @@ public class RegFrame extends Stage {
                 yesButton.fire();
                 ev.consume();
             }
+        });
+        loginInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) passInput.requestFocus();
+            event.consume();
+        });
+        passInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.TAB) loginInput.requestFocus();
+            event.consume();
         });
         this.show();
     }

@@ -1,20 +1,36 @@
 .root {
-    -fx-background-color: #372e29;
+    -fx-background-color: #d1d2bf;
     -fx-font-size: 9pt;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .button {
-    -fx-background-color: #ecb939;
-    -fx-pref-width: 70pt;
+    -fx-text-fill: #cba46a;
+    -fx-font-weight: bold;
+    -fx-background-color: #47484a;
+
+}
+
+.button:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-effect: dropshadow( gaussian , #343236 , 0,2,0,2 );
+}
+
+.list-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-control-inner-background: #E1E2D6;
 }
 
 .label {
-    -fx-text-fill: #f0c75e;
+    -fx-text-fill: #343236;
     -fx-font-size: 10pt;
 }
 
 #scenetitle {
-    -fx-fill: #f0c75e;
+    -fx-fill: #343236;
 }
 
 .text-field {

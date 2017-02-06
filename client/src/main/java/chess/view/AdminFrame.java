@@ -77,6 +77,7 @@ public class AdminFrame extends Stage {
         vBox.getChildren().addAll(table, hBox);
 
         Scene scene = new Scene(vBox);
+        scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.show();
 
