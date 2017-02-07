@@ -2,6 +2,7 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -27,11 +28,11 @@ import java.util.List;
  * Created by Admin on 26.01.2017.
  */
 public class AuthFrame extends Stage {
-
+    Stage stage = this;
 
     public AuthFrame(XMLin xmLin, XMLout xmlOut) {
         this.setTitle("Шахматы онлайн");
-        Stage stage = this;
+
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         GridPane grid = new GridPane();
@@ -123,19 +124,25 @@ public class AuthFrame extends Stage {
         this.setScene(scene);
         this.setResizable(false);
         // при нажатии Enter срабатывает кнопка "Войти"
-        this.addEventHandler(KeyEvent.ANY, ev -> {
+        this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
             if (ev.getCode().equals(KeyCode.ENTER)) {
                 enterButton.fire();
                 ev.consume();
             }
         });
         loginInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.TAB) passInput.requestFocus();
-            event.consume();
+            if (event.getCode() == KeyCode.TAB) {
+                passInput.requestFocus();
+                event.consume();
+            }
+
         });
         passInput.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (event.getCode() == KeyCode.TAB) loginInput.requestFocus();
-            event.consume();
+            if (event.getCode() == KeyCode.TAB) {
+                loginInput.requestFocus();
+                event.consume();
+            }
+
         });
 //        this.addEventHandler(KeyEvent.KEY_PRESSED, eve -> {
 //            if (eve.getCode() == KeyCode.TAB) {

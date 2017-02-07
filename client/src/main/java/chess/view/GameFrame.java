@@ -50,6 +50,8 @@ public class GameFrame extends Stage implements Observer {
     private List<String> listIn;
     private ImageView dragFigure;
     private MouseEvent currentEvent;
+    private HBox blackMiniBox;
+    private HBox whiteMiniBox;
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite) {
         Stage stage = this;
@@ -77,7 +79,7 @@ public class GameFrame extends Stage implements Observer {
         this.show();
 
 //      таймер выводит оставшееся время, кнопки ставят таймер на паузу и возобновляют
-        opponentTimer = (Label) scene.lookup("opponentTimer");
+        opponentTimer = (Label) loader.getNamespace().get("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
 
 
@@ -105,6 +107,11 @@ public class GameFrame extends Stage implements Observer {
         Thread clock = new Thread(count);
         clock.setDaemon(true);
         clock.start();
+        if (!isWhitePlayer) count.stopTimer();
+
+        whiteMiniBox = (HBox) loader.getNamespace().get("whiteMiniBox");
+        blackMiniBox = (HBox) loader.getNamespace().get("blackMiniBox");
+
 
         List<ImageView> sources = new ArrayList<ImageView>();
         class DragOver implements EventHandler<DragEvent> {
@@ -162,12 +169,15 @@ public class GameFrame extends Stage implements Observer {
                     list.add(String.valueOf(y));
                     list.add(String.valueOf(x1));
                     list.add(String.valueOf(y1));
+                    list.add(count.getTime());
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                         e1.printStackTrace();
                     }
                     Label label = null;
+                    lastTakenFigure = null;
+
                     for (Node node : target.getChildren()) {
                         if (node instanceof Label) {
                             label = (Label) node;
@@ -180,6 +190,8 @@ public class GameFrame extends Stage implements Observer {
                     for (Node n : pane.getChildren()) {
                         if (n.getClass().getSimpleName().equals("ImageView")) {
                             target.getChildren().add(n);
+                            sendToMiniBox(lastTakenFigure);
+                            count.stopTimer();
                         }
                     }
                     success = true;
@@ -299,7 +311,9 @@ public class GameFrame extends Stage implements Observer {
                     alert.setHeaderText(null);
                     alert.setContentText("Соперник сделал ход");
                     alert.showAndWait();
+                    count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
+                    opponentTimer.setText(listIn.get(5));
                 }
                 if ("steps".equals(listIn.get(0))) {
                     targets.clear();
@@ -314,9 +328,9 @@ public class GameFrame extends Stage implements Observer {
                         pane.setOnDragDropped(new DragDropped(pane));
                     }
                 } else {
-                    for (String s : listIn) {
-                        System.out.println("FROM SERVER: " + s);
-                    }
+//                    for (String s : listIn) {
+//                        System.out.println("FROM SERVER: " + s);
+//                    }
                 }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());
@@ -429,13 +443,31 @@ public class GameFrame extends Stage implements Observer {
     private void moveFromTo(int fromX, int fromY, int toX, int toY) {
         Pane source = findPane(fromX, fromY);
         Pane target = findPane(toX, toY);
+
+        ImageView mini = null;
         ImageView image = new ImageView();
+        Label label = null;
+        System.out.println("TARGET CHILDREN: " + target.getChildren().size());
+
+            for (Node node : target.getChildren()) {
+                if (node instanceof Label) {
+                    label = (Label) node;
+                } else if (node instanceof ImageView) {
+                    System.out.println("THIS IS IMAGE");
+                    mini = (ImageView) node;
+                }
+            }
+            target.getChildren().clear();
+            sendToMiniBox(mini);
+            if (label != null) target.getChildren().add(label);
+
         for (Node node : source.getChildren()) {
             if (node instanceof ImageView) {
                 image = (ImageView) node;
             }
         }
         target.getChildren().add(image);
+
     }
 
     // находит и возвращает Pane на доске по заданным координатам согласно положению на сервере
@@ -482,10 +514,36 @@ public class GameFrame extends Stage implements Observer {
                 }
             }
         }
-
         return pane;
     }
 
+    public void cancelLastMove() {
+        moveFromTo(lastMoveToX, lastMoveToY, lastMoveFromX, lastMoveFromY);
+        lastTakenFigure.fitHeightProperty().unbind();
+        lastTakenFigure.setFitHeight(60);
+        lastTakenFigure.setFitWidth(60);
+        findPane(lastMoveToX, lastMoveToY).getChildren().add(lastTakenFigure);
+        lastTakenFigure.setLayoutY(1);
+        lastTakenFigure.setLayoutX(1);
+    }
+
+
+    public void sendToMiniBox(ImageView figure) {
+        System.out.println("inside of sendtominibox");
+        if (figure == null) return;
+        figure.setPreserveRatio(true);
+//        if (figure.getId().contains("White") && isWhitePlayer) return;
+//        if (figure.getId().contains("Black") && !isWhitePlayer) return;
+        if (figure.getId().contains("Black")) {
+            figure.fitHeightProperty().bind(whiteMiniBox.heightProperty());
+            whiteMiniBox.getChildren().add(figure);
+        } else if (figure.getId().contains("White")) {
+            figure.fitHeightProperty().bind(blackMiniBox.heightProperty());
+            blackMiniBox.getChildren().add(figure);
+        }
+    }
 }
+
+
 
 

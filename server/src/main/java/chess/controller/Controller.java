@@ -139,6 +139,7 @@ public class Controller extends Thread {
                         out.add(str.get(2));
                         out.add(str.get(3));
                         out.add(str.get(4));
+                        out.add(str.get(5));
                         System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
                         otherSender.send(out);
                     } catch (RivalFigureException e) {

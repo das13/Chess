@@ -9,7 +9,6 @@
     -fx-text-fill: #cba46a;
     -fx-font-weight: bold;
     -fx-background-color: #47484a;
-
 }
 
 .button:hover {
@@ -37,4 +36,10 @@
     -fx-background-color: honeydew;
 }
 
+#opponentTimer {
+    -fx-font-weight: bold;
+}
 
+#yourTimer{
+    -fx-font-weight: bold;
+}
