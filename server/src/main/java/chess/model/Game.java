@@ -32,6 +32,7 @@ public class Game extends Thread{
     private Type currentStep = Type.WHITE;
 
     public Game(Player whitePlayer, Player blackPlayer){
+        this.currentStep = Type.WHITE;
         this.whitePlayer=whitePlayer;
         this.blackPlayer=blackPlayer;
         this.blackPlayer.setCurrentGame(this);
@@ -69,6 +70,7 @@ public class Game extends Thread{
     }
 
     public Game() {
+        this.currentStep = Type.WHITE;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 board[i][j] = new Cell(i, j, this);

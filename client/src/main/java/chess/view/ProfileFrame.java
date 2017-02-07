@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -268,7 +267,6 @@ public class ProfileFrame extends Stage {
         password.textProperty().addListener((observable, oldValue, newValue) -> {
             saveBtn.setDisable(false);
         });
-
         task.setOnSucceeded(new MyHandler());
         Thread thread = new Thread(task);
         thread.setDaemon(true);

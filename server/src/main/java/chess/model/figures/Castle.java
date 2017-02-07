@@ -28,7 +28,7 @@ public class Castle extends Figure {
 
         List<Cell> validCells = new ArrayList<Cell>();
         validCells.clear();
-
+        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();

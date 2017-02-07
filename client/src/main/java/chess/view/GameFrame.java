@@ -47,13 +47,15 @@ public class GameFrame extends Stage implements Observer {
     private int lastMoveToY;
     private ImageView lastMovedFigure;
     private ImageView lastTakenFigure;
-    private List<String> rivalMove = new ArrayList<>();
+    private List<String> listIn;
+    private ImageView dragFigure;
+    private MouseEvent currentEvent;
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite) {
         Stage stage = this;
         isWhitePlayer = isWhite;
 //      Для игрока белыми и черными подгружаются разные fxml
-        if(isWhitePlayer) {
+        if (isWhitePlayer) {
             loader = new FXMLLoader(getClass().getResource("/WhitePlayerBoard.fxml"));
         } else {
             loader = new FXMLLoader(getClass().getResource("/BlackPlayerBoard.fxml"));
@@ -123,11 +125,11 @@ public class GameFrame extends Stage implements Observer {
         }
         class DragDropped implements EventHandler<DragEvent> {
             private Pane target;
-            private ImageView source;
 
-            DragDropped(Pane target, ImageView source) {
+
+            DragDropped(Pane target) {
                 this.target = target;
-                this.source = source;
+
             }
 
             public void handle(DragEvent event) {
@@ -137,15 +139,16 @@ public class GameFrame extends Stage implements Observer {
                     for (Pane pane : targets) {
                         pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
                     }
+                    Pane pane = board.get(db.getString());
                     List<String> list = new ArrayList<String>();
                     list.add("move");
-                    String x = getCoordinateX(source.getParent());
-                    String y = getCoordinateY(source.getParent());
+                    String x = getCoordinateX(pane);
+                    String y = getCoordinateY(pane);
                     String x1 = getCoordinateX(target);
                     String y1 = getCoordinateY(target);
 
-                    lastMoveFromX = Integer.parseInt(getCoordinateX(source.getParent()));
-                    lastMoveFromY = Integer.parseInt(getCoordinateY(source.getParent()));
+                    lastMoveFromX = Integer.parseInt(getCoordinateX(pane));
+                    lastMoveFromY = Integer.parseInt(getCoordinateY(pane));
                     lastMoveToX = Integer.parseInt(getCoordinateX(target));
                     lastMoveToY = Integer.parseInt(getCoordinateY(target));
 
@@ -165,8 +168,8 @@ public class GameFrame extends Stage implements Observer {
                         e1.printStackTrace();
                     }
                     Label label = null;
-                    for (Node node: target.getChildren()) {
-                        if(node instanceof Label) {
+                    for (Node node : target.getChildren()) {
+                        if (node instanceof Label) {
                             label = (Label) node;
                         } else if (node instanceof ImageView) {
                             lastTakenFigure = (ImageView) node;
@@ -174,7 +177,11 @@ public class GameFrame extends Stage implements Observer {
                     }
                     target.getChildren().clear();
                     if (label != null) target.getChildren().add(label);
-                    target.getChildren().add(source);
+                    for (Node n : pane.getChildren()) {
+                        if (n.getClass().getSimpleName().equals("ImageView")) {
+                            target.getChildren().add(n);
+                        }
+                    }
                     success = true;
                 }
                 resetSelected();
@@ -203,6 +210,7 @@ public class GameFrame extends Stage implements Observer {
             }
 
             public void handle(MouseEvent event) {
+                currentEvent = event;
                 List<String> list = new ArrayList<String>();
                 list.add("drag");
                 String x = getCoordinateX(source.getParent());
@@ -216,34 +224,13 @@ public class GameFrame extends Stage implements Observer {
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                     e1.printStackTrace();
                 }
-                List<String> listIn = null;
-                try {
-                    listIn = xmLin.receive();
-                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
-                    e1.printStackTrace();
-                }
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
-                targets.clear();
-                if ("steps".equals(listIn.get(0))) {
-                    for (String s : listIn) {
-                        if (!s.equals("steps")) {
-                            targets.add(board.get(s));
-                        }
-                    }
-                    for (Pane pane : targets) {
-                        pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
-                        pane.setOnDragOver(new DragOver(pane));
-                        pane.setOnDragDropped(new DragDropped(pane, source));
-                    }
-                    ClipboardContent content = new ClipboardContent();
-                    content.putImage(source.getImage());
-                    db.setContent(content);
-                    event.consume();
-                } else {
-                    for (String s: listIn) {
-                        System.out.println("FROM SERVER: " + s);
-                    }
-                }
+                ClipboardContent content = new ClipboardContent();
+                content.putString(y + "" + x);
+                content.putImage(source.getImage());
+                System.out.println(y + "" + x);
+                db.setContent(content);
+                currentEvent.consume();
 
             }
         }
@@ -251,7 +238,7 @@ public class GameFrame extends Stage implements Observer {
         root.setOnDragOver(new DragOver(root));
         root.setOnDragDropped(new DragDroppedOut());
         for (Node node : grid.getChildren()) {
-            if (node.getClass().getSimpleName().equals("Pane")){
+            if (node.getClass().getSimpleName().equals("Pane")) {
                 Pane pane = (Pane) node;
                 String x = getCoordinateX(pane);
                 String y = getCoordinateY(pane);
@@ -285,7 +272,7 @@ public class GameFrame extends Stage implements Observer {
             @Override
             public Void call() throws Exception {
                 try {
-                    rivalMove = xmLin.receive();
+                    listIn = xmLin.receive();
                     //firstConf = listIn.get(0);
                     //secondConf = listIn.get(1);
                 } catch (ParserConfigurationException e) {
@@ -304,20 +291,38 @@ public class GameFrame extends Stage implements Observer {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                    if ("rivalMove".equals(rivalMove.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ход");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Соперник сделал ход");
-                        alert.showAndWait();
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
+                if ("rivalMove".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник сделал ход");
+                    alert.showAndWait();
+                    moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
+                }
+                if ("steps".equals(listIn.get(0))) {
+                    targets.clear();
+                    for (String s : listIn) {
+                        if (!s.equals("steps")) {
+                            targets.add(board.get(s));
+                        }
                     }
+                    for (Pane pane : targets) {
+                        pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+                        pane.setOnDragOver(new DragOver(pane));
+                        pane.setOnDragDropped(new DragDropped(pane));
+                    }
+                } else {
+                    for (String s : listIn) {
+                        System.out.println("FROM SERVER: " + s);
+                    }
+                }
+                MyTask myTask = new MyTask<Void>();
+                myTask.setOnSucceeded(new MyHandler());
+                Thread thread1 = new Thread(myTask);
+                thread1.setDaemon(true);
+                thread1.start();
             }
         }
 
@@ -341,7 +346,7 @@ public class GameFrame extends Stage implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Platform.runLater(() -> {
-            yourTimer.setText((String)arg);
+            yourTimer.setText((String) arg);
         });
     }
 
@@ -425,7 +430,7 @@ public class GameFrame extends Stage implements Observer {
         Pane source = findPane(fromX, fromY);
         Pane target = findPane(toX, toY);
         ImageView image = new ImageView();
-        for (Node node: source.getChildren()) {
+        for (Node node : source.getChildren()) {
             if (node instanceof ImageView) {
                 image = (ImageView) node;
             }

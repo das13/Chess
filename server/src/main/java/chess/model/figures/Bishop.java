@@ -26,7 +26,7 @@ public class Bishop extends Figure {
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
         validCells.clear();
-
+        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
 
         int row = getCell().getX();

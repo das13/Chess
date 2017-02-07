@@ -27,7 +27,7 @@ public class King extends Figure {
 
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
-
+        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();

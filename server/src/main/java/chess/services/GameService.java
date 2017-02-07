@@ -96,15 +96,15 @@ public class GameService {
             array[2] = x2;
             int y2 = Integer.parseInt(str.get(4));
             array[3] = y2;
-           /* if (game.getCurrentStep() != game.getBoard()[x1][y1].getFigure().getType()) {
-                throw new RivalFigureException();
-            }*/
+
             if (game.getBoard()[x1][y1].isFigure()) {
                 try {
                     System.out.println("begin"+x2+" "+y2);
                     game.getBoard()[x1][y1].getFigure().move(game.getBoard()[x2][y2]);
                     System.out.println("done"+x2+" "+y2);
-                    game.changeCurrentStep();
+                    System.out.println(game.getCurrentStep());
+                    //game.changeCurrentStep();
+                    System.out.println(game.getCurrentStep());
                 } catch (ReplacePawnException e) {
                     //out.println("pick figure");
                     e.printStackTrace();

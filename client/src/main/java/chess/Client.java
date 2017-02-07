@@ -20,7 +20,7 @@ public class Client {
         Scanner scan = new Scanner(System.in);
         String ip = "localhost";
         try {
-            socket = new Socket(ip, 2543);
+            socket = new Socket(ip, 2544);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             input = new DataInputStream(socket.getInputStream());

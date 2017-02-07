@@ -17,7 +17,7 @@ public class ClientMain extends Application {
     private XMLout xmlOut;
     private XMLin xmLin;
     public ClientMain() throws IOException {
-        socket = new Socket("localhost", 2543);
+        socket = new Socket("localhost", 2544);
         xmlOut = new XMLout(socket.getOutputStream());
         xmLin = new XMLin(socket.getInputStream());
     }

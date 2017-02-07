@@ -32,6 +32,7 @@ public class Pawn extends Figure {
 
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
+        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int koef = 1;
         if (getType() == Type.WHITE) {

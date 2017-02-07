@@ -9,7 +9,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class Server {
@@ -20,7 +19,7 @@ public class Server {
 
     public Server() {
         try {
-            server = new ServerSocket(2543);
+            server = new ServerSocket(2544);
 
             while (true) {
                 Socket socket = server.accept();

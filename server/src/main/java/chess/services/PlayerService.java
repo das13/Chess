@@ -80,7 +80,7 @@ public class PlayerService {
     public static void saveProfile(String login, String password, int id, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         Player player;
         List<String> list = new ArrayList<String>();
-        if ((player=findPlayerById(id)) != null) {
+        if ((player=findPlayerByIdAll(id)) != null) {
             list.add("Ok");
             player.setLogin(login);
             player.setPassword(password);
@@ -137,6 +137,15 @@ public class PlayerService {
     }
     public static Player findPlayerById(int id) {
         for (Player p : ServerMain.freePlayers) {
+            if (p.getId()==id) {
+                return p;
+            }
+        }
+        System.out.println("was looking for player id " + id + ", result is FALSE");
+        return null;
+    }
+    public static Player findPlayerByIdAll(int id) {
+        for (Player p : ServerMain.allPlayers) {
             if (p.getId()==id) {
                 return p;
             }

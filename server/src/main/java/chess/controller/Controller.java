@@ -133,13 +133,13 @@ public class Controller extends Thread {
                     try {
                         List<String> out = new ArrayList<String>();
                         GameService.move(getCurrentGame(), str);
-                        out.add(getPlayer().getLogin());
                         XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
                         out.add("rivalMove");
                         out.add(str.get(1));
                         out.add(str.get(2));
                         out.add(str.get(3));
                         out.add(str.get(4));
+                        System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
                         otherSender.send(out);
                     } catch (RivalFigureException e) {
                         //out.println("you try taking rivals figure");
