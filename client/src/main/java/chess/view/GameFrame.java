@@ -1,23 +1,23 @@
 package chess.view;
 
-import chess.*;
 import chess.Timer;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
@@ -30,26 +30,27 @@ import java.util.*;
  * Created by bobnewmark on 30.01.2017
  */
 public class GameFrame extends Stage implements Observer {
-    FXMLLoader loader;
-    Button offerDrawButton;
-    Button resignButton;
-    Scene scene;
+    private FXMLLoader loader;
+    private Button offerDrawButton;
+    private Button resignButton;
+    private Scene scene;
     private Timer count;
-    Label opponentTimer;
-    Label yourTimer;
-    GridPane grid;
+    private Label opponentTimer;
+    private Label yourTimer;
+    private GridPane grid;
     private List<Pane> targets = new ArrayList<Pane>();
     private Map<String, Pane> board = new TreeMap<>();
     private boolean isWhitePlayer;
-    int lastMoveFromX;
-    int lastMoveFromY;
-    int lastMoveToX;
-    int lastMoveToY;
-    ImageView lastMovedFigure;
-    ImageView lastTakenFigure;
+    private int lastMoveFromX;
+    private int lastMoveFromY;
+    private int lastMoveToX;
+    private int lastMoveToY;
+    private ImageView lastMovedFigure;
+    private ImageView lastTakenFigure;
+    private List<String> rivalMove = new ArrayList<>();
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite) {
-
+        Stage stage = this;
         isWhitePlayer = isWhite;
 //      Для игрока белыми и черными подгружаются разные fxml
         if(isWhitePlayer) {
@@ -278,6 +279,53 @@ public class GameFrame extends Stage implements Observer {
             Map.Entry<String, Pane> entry = iter.next();
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+        class MyTask<Void> extends Task<Void>
+
+        {
+            @Override
+            public Void call() throws Exception {
+                try {
+                    rivalMove = xmLin.receive();
+                    //firstConf = listIn.get(0);
+                    //secondConf = listIn.get(1);
+                } catch (ParserConfigurationException e) {
+                    e.printStackTrace();
+                } catch (TransformerConfigurationException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        MyTask<Void> task = new MyTask<Void>();
+        class MyHandler implements EventHandler {
+            @Override
+            public void handle(Event event) {
+                    if ("rivalMove".equals(rivalMove.get(0))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ход");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник сделал ход");
+                        alert.showAndWait();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                    }
+            }
+        }
+
+
+        task.setOnSucceeded(new MyHandler());
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -432,6 +480,7 @@ public class GameFrame extends Stage implements Observer {
 
         return pane;
     }
+
 }
 
 

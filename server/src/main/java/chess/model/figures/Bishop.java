@@ -80,6 +80,11 @@ public class Bishop extends Figure {
                 break;
             }
         }
+        for (int i = 0; i < validCells.size(); i++) {
+            if (validCells.get(i).isFriendlyCell(this)) {
+                validCells.remove(i);
+            }
+        }
         return validCells;
     }
 }

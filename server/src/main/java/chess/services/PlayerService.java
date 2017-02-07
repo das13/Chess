@@ -57,6 +57,8 @@ public class PlayerService {
                     out.add(password);
                     out.add(String.valueOf(p.getRank()));
                     p.setStatus(Status.FREE);
+                    player.setLogin(login);
+                    player.setPassword(password);
                     break;
                 }
             }
@@ -67,13 +69,10 @@ public class PlayerService {
                     out.add(p.getLogin());
                     out.add(String.valueOf(p.getRank()));
                 }
+                synchronized (ServerMain.freePlayers) {
+                    ServerMain.freePlayers.add(player);
+                }
             }
-            player.setLogin(login);
-            player.setPassword(password);
-            synchronized (ServerMain.freePlayers) {
-                ServerMain.freePlayers.add(player);
-            }
-
         }
         sender.send(out);
     }

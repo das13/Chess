@@ -79,6 +79,11 @@ public class Controller extends Thread {
                         System.out.println(s);
                     }
                 }
+                if (str.get(0).equals("logout")) {
+                    synchronized (ServerMain.freePlayers) {
+                        ServerMain.freePlayers.remove(player);
+                    }
+                }
                 if("saveProfile".equals(str.get(0))){
                     PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
                 }
@@ -126,7 +131,16 @@ public class Controller extends Thread {
                 if (str.get(0).equals("move")) {
                     int[] steps = new int[0];
                     try {
+                        List<String> out = new ArrayList<String>();
                         GameService.move(getCurrentGame(), str);
+                        out.add(getPlayer().getLogin());
+                        XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
+                        out.add("rivalMove");
+                        out.add(str.get(1));
+                        out.add(str.get(2));
+                        out.add(str.get(3));
+                        out.add(str.get(4));
+                        otherSender.send(out);
                     } catch (RivalFigureException e) {
                         //out.println("you try taking rivals figure");
                         e.printStackTrace();
@@ -179,11 +193,7 @@ public class Controller extends Thread {
             out.close();
             socket.close();
             synchronized (ServerMain.freePlayers) {
-                for (int i = 0; i <ServerMain.freePlayers.size(); i++){
-                    if(ServerMain.freePlayers.get(i).equals(this.getPlayer())){
-                        ServerMain.freePlayers.remove(i);
-                    }
-                }
+                        ServerMain.freePlayers.remove(player);
             }
         } catch (Exception e) {
             e.printStackTrace();

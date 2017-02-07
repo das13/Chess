@@ -104,6 +104,7 @@ public class GameService {
                     System.out.println("begin"+x2+" "+y2);
                     game.getBoard()[x1][y1].getFigure().move(game.getBoard()[x2][y2]);
                     System.out.println("done"+x2+" "+y2);
+                    game.changeCurrentStep();
                 } catch (ReplacePawnException e) {
                     //out.println("pick figure");
                     e.printStackTrace();
