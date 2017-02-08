@@ -231,7 +231,7 @@ public class Player {
         Player player = (Player) o;
 
         if (!login.equals(player.login)) return false;
-        return nickname.equals(player.nickname);
+        return true;
     }
 
     @Override

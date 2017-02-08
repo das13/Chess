@@ -85,7 +85,7 @@ public class Controller extends Thread {
                     }
                 }
                 if("saveProfile".equals(str.get(0))){
-                    PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
+                    sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
                 }
                 if (str.get(0).equals("callPlayer")) {
                     List<String> out = new ArrayList<String>();
@@ -112,6 +112,14 @@ public class Controller extends Thread {
                         out.add("Ok");
                         setCurrentGame(thisGame);
                         thisGame.getOtherPlayer(player).getController().setCurrentGame(thisGame);
+                        synchronized (ServerMain.freePlayers) {
+                            ServerMain.freePlayers.remove(player);
+                            ServerMain.freePlayers.remove(thisGame.getOtherPlayer(player));
+                        }
+                        synchronized (ServerMain.inGamePlayers) {
+                            ServerMain.inGamePlayers.add(player);
+                            ServerMain.inGamePlayers.add(thisGame.getOtherPlayer(player));
+                        }
                     }
                     if("No".equals(str.get(1)) && thisGame!=null) {
                         out.add("No");

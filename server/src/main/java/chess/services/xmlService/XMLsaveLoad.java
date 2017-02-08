@@ -44,7 +44,7 @@ public class XMLsaveLoad {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
         Element root = doc.createElement("savedPlayers");
-        players = ServerMain.getFreePlayers();
+        players = ServerMain.allPlayers;
         doc.appendChild(root);
         for (Player player: players) {
             Element el = doc.createElement("player");

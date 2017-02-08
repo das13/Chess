@@ -44,7 +44,14 @@ public class PlayerService {
     public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         boolean check = false;
         List<String> out = new ArrayList<String>();
+        player.setLogin(login);
+        player.setPassword(password);
         out.add("reg");
+        if(ServerMain.freePlayers.contains(player) || ServerMain.inGamePlayers.contains(player)){
+            out.add("online");
+            sender.send(out);
+            return;
+        }
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
         } else {
@@ -57,8 +64,6 @@ public class PlayerService {
                     out.add(password);
                     out.add(String.valueOf(p.getRank()));
                     p.setStatus(Status.FREE);
-                    player.setLogin(login);
-                    player.setPassword(password);
                     break;
                 }
             }
@@ -77,10 +82,13 @@ public class PlayerService {
         sender.send(out);
     }
 
-    public static void saveProfile(String login, String password, int id, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+    public static List<String> saveProfile(String login, String password, int id) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         Player player;
         List<String> list = new ArrayList<String>();
-        if ((player=findPlayerByIdAll(id)) != null) {
+        list.add("saveconfirm");
+        try {
+            player=findPlayerByIdAll(id);
+            System.out.println(login+" "+password+" "+id);
             list.add("Ok");
             player.setLogin(login);
             player.setPassword(password);
@@ -94,10 +102,10 @@ public class PlayerService {
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
             }
-        } else {
+        } catch (NullPointerException e){
             list.add("error");
         }
-        sender.send(list);
+     return list;
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
