@@ -39,7 +39,7 @@ public class GameFrame extends Stage implements Observer {
     private Label yourTimer;
     private GridPane grid;
     private List<Pane> targets = new ArrayList<Pane>();
-    private Map<String, Pane> board = new TreeMap<>();
+    private Map<String, Pane> board = Collections.synchronizedSortedMap(new TreeMap<>());
     private boolean isWhitePlayer;
     private int lastMoveFromX;
     private int lastMoveFromY;
@@ -189,9 +189,9 @@ public class GameFrame extends Stage implements Observer {
                     }
                     target.getChildren().clear();
                     if (label != null) target.getChildren().add(label);
-                    for (Node n : pane.getChildren()) {
-                        if (n.getClass().getSimpleName().equals("ImageView")) {
-                            target.getChildren().add(n);
+                    for (int i = 0; i < pane.getChildren().size(); i++) {
+                        if (pane.getChildren().get(i).getClass().getSimpleName().equals("ImageView")) {
+                            target.getChildren().add(pane.getChildren().get(i));
                             sendToMiniBox(lastTakenFigure);
                             count.stopTimer();
                         }

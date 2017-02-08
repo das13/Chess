@@ -15,17 +15,17 @@
 <ipadress>/127.0.0.1</ipadress>
 </player>
 <player id="3">
-<login>andusha</login>
-<password>12345</password>
+<login>andrey</login>
+<password>111</password>
 <rank>50</rank>
 <status>FREE</status>
 <ipadress>/127.0.0.1</ipadress>
 </player>
 <player id="4">
-<login>slava11</login>
+<login>dima</login>
 <password>111</password>
 <rank>50</rank>
-<status>OFFLINE</status>
+<status>FREE</status>
 <ipadress>/127.0.0.1</ipadress>
 </player>
 </savedPlayers>

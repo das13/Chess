@@ -20,6 +20,8 @@ public class ServerMain {
             Collections.synchronizedList(new ArrayList<Player>());
     public static List<Player> allPlayers =
             Collections.synchronizedList(new ArrayList<Player>());
+    public static List<Player> inGamePlayers =
+            Collections.synchronizedList(new ArrayList<Player>());
     public static List<Game> games =
             Collections.synchronizedList(new ArrayList<Game>());
     public static List<Game> waitingGames =

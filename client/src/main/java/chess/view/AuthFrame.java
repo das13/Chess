@@ -2,7 +2,6 @@ package chess.view;
 
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -108,6 +107,13 @@ public class AuthFrame extends Stage {
                         alert.setTitle("Ошибка");
                         alert.setHeaderText(null);
                         alert.setContentText("Такой пользователь не зарегистрирован");
+                        alert.showAndWait();
+                    } else if ("online".equals(listIn.get(1))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Вы уже вошли из другого приложения");
                         alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
