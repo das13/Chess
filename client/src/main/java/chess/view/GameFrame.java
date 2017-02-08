@@ -52,8 +52,10 @@ public class GameFrame extends Stage implements Observer {
     private MouseEvent currentEvent;
     private HBox blackMiniBox;
     private HBox whiteMiniBox;
+    private ArrayList<String> playerInfo;
 
-    public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite) {
+    public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
+        playerInfo = (ArrayList<String>) info;
         Stage stage = this;
         isWhitePlayer = isWhite;
 //      Для игрока белыми и черными подгружаются разные fxml
@@ -314,8 +316,7 @@ public class GameFrame extends Stage implements Observer {
                     count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
                     opponentTimer.setText(listIn.get(5));
-                }
-                if ("steps".equals(listIn.get(0))) {
+                } else if ("steps".equals(listIn.get(0))) {
                     targets.clear();
                     for (String s : listIn) {
                         if (!s.equals("steps")) {
@@ -327,10 +328,34 @@ public class GameFrame extends Stage implements Observer {
                         pane.setOnDragOver(new DragOver(pane));
                         pane.setOnDragDropped(new DragDropped(pane));
                     }
-                } else {
-//                    for (String s : listIn) {
-//                        System.out.println("FROM SERVER: " + s);
-//                    }
+                } else if ("cancel".equals(listIn.get(0))) {
+                    cancelLastMove();
+                } else if ("checkmate".equals(listIn.get(0))) {
+                    String message = "";
+                    String rank = "";
+                    if(playerInfo.get(3).equals(listIn.get(2))) {
+                        rank = listIn.get(3);
+                        playerInfo.set(3, rank);
+                    }
+                    if(playerInfo.get(3).equals(listIn.get(4))) {
+                        rank = listIn.get(5);
+                        playerInfo.set(3, rank);
+                    }
+
+                    if ("WHITE".equals(listIn.get(1))) {
+                        message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
+                    } else {
+                        message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
+                    }
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Конец игры");
+                    alert.setHeaderText(null);
+                    alert.setContentText(message);
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, playerInfo);
                 }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());
@@ -449,17 +474,17 @@ public class GameFrame extends Stage implements Observer {
         Label label = null;
         System.out.println("TARGET CHILDREN: " + target.getChildren().size());
 
-            for (Node node : target.getChildren()) {
-                if (node instanceof Label) {
-                    label = (Label) node;
-                } else if (node instanceof ImageView) {
-                    System.out.println("THIS IS IMAGE");
-                    mini = (ImageView) node;
-                }
+        for (Node node : target.getChildren()) {
+            if (node instanceof Label) {
+                label = (Label) node;
+            } else if (node instanceof ImageView) {
+                System.out.println("THIS IS IMAGE");
+                mini = (ImageView) node;
             }
-            target.getChildren().clear();
-            sendToMiniBox(mini);
-            if (label != null) target.getChildren().add(label);
+        }
+        target.getChildren().clear();
+        sendToMiniBox(mini);
+        if (label != null) target.getChildren().add(label);
 
         for (Node node : source.getChildren()) {
             if (node instanceof ImageView) {
@@ -519,12 +544,15 @@ public class GameFrame extends Stage implements Observer {
 
     public void cancelLastMove() {
         moveFromTo(lastMoveToX, lastMoveToY, lastMoveFromX, lastMoveFromY);
-        lastTakenFigure.fitHeightProperty().unbind();
-        lastTakenFigure.setFitHeight(60);
-        lastTakenFigure.setFitWidth(60);
-        findPane(lastMoveToX, lastMoveToY).getChildren().add(lastTakenFigure);
-        lastTakenFigure.setLayoutY(1);
-        lastTakenFigure.setLayoutX(1);
+        if (lastTakenFigure != null) {
+            lastTakenFigure.fitHeightProperty().unbind();
+            lastTakenFigure.setFitHeight(60);
+            lastTakenFigure.setFitWidth(60);
+            findPane(lastMoveToX, lastMoveToY).getChildren().add(lastTakenFigure);
+            lastTakenFigure.setLayoutY(1);
+            lastTakenFigure.setLayoutX(1);
+        }
+
     }
 
 

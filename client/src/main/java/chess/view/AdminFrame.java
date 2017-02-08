@@ -174,7 +174,8 @@ public class AdminFrame extends Stage {
     public void offerButtonClicked() {
         this.close();
         try {
-            GameFrame game = new GameFrame(xmLin, xmLout, true);
+            //TODO ДОБАВИТЬ В GAMEFRAME ВМЕСТО NULL СПИСОК ИГРОКА(ЛОГИН, ПАРОЛЬ, РЕЙТИНГ)
+            GameFrame game = new GameFrame(xmLin, xmLout, true, null);
             //
         } catch (Exception e) {
             e.printStackTrace();

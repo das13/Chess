@@ -22,7 +22,7 @@ public class Knight extends Figure {
 
     public List<Cell> allAccessibleMove()  {
         List<Cell> validCells = new ArrayList<Cell>();
-        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
+        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         if(getCell().getX() + 2<8 && getCell().getY() + 1<8)
             validCells.add(game.getCell(getCell().getX() + 2, getCell().getY() + 1));

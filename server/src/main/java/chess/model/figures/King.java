@@ -27,7 +27,7 @@ public class King extends Figure {
 
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
-        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
+        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();
@@ -100,30 +100,30 @@ public class King extends Figure {
     }
 
     public void castlingKingside() {
-            try {
-                Castle castle = (Castle) game.getCell(7, this.getCell().getY()).getFigure();
-                castle.getCell().setFigure(null);
-                castle.setCell(game.getCell(5, this.getCell().getY()));
-                game.getCell(5, this.getCell().getY()).setFigure(castle);
-                castle.setFirstMove(false);
-                this.move(game.getCell(6, this.getCell().getY()));
-                System.out.println("CASTLING KINGSIDE");
-            } catch (ReplacePawnException e) {
-                //ignore
-            }
+        try {
+            Castle castle = (Castle) game.getCell(7, this.getCell().getY()).getFigure();
+            castle.getCell().setFigure(null);
+            castle.setCell(game.getCell(5, this.getCell().getY()));
+            game.getCell(5, this.getCell().getY()).setFigure(castle);
+            castle.setFirstMove(false);
+            this.move(game.getCell(6, this.getCell().getY()));
+            System.out.println("CASTLING KINGSIDE");
+        } catch (ReplacePawnException e) {
+            //ignore
+        }
     }
 
     public void castlingQueenside() {
-            try {
-                Castle castle = (Castle) game.getCell(0, this.getCell().getY()).getFigure();
-                castle.getCell().setFigure(null);
-                castle.setCell(game.getCell(3, this.getCell().getY()));
-                game.getCell(3, this.getCell().getY()).setFigure(castle);
-                castle.setFirstMove(false);
-                this.move(game.getCell(2, this.getCell().getY()));
-                System.out.println("CASTLING QUEENSIDE");
-            } catch (ReplacePawnException e) {
-                //ignore
-            }
+        try {
+            Castle castle = (Castle) game.getCell(0, this.getCell().getY()).getFigure();
+            castle.getCell().setFigure(null);
+            castle.setCell(game.getCell(3, this.getCell().getY()));
+            game.getCell(3, this.getCell().getY()).setFigure(castle);
+            castle.setFirstMove(false);
+            this.move(game.getCell(2, this.getCell().getY()));
+            System.out.println("CASTLING QUEENSIDE");
+        } catch (ReplacePawnException e) {
+            //ignore
+        }
     }
 }

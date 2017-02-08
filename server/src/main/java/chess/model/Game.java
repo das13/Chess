@@ -9,37 +9,38 @@ import java.util.TreeSet;
 /**
  * Created by viacheslav koshchii on 17.01.2017.
  */
-public class Game extends Thread{
+public class Game extends Thread {
     private Player whitePlayer;
     private Player blackPlayer;
     private King whiteKing;
     private King blackKing;
+    private Figure lastFigureMoved;
     private Cell[][] board = new Cell[8][8];
     private Set<Cell> allWhiteMoves = new TreeSet<Cell>(new Comparator<Cell>() {
-        public int compare(Cell c1, Cell c2){
-            if (c1 == c2) return 1;
+        public int compare(Cell c1, Cell c2) {
+            if (c1 == c2) return 0;
             if (c1.getX() != c2.getX()) return c1.getX() - c2.getX();
             else return c1.getY() - c2.getY();
         }
     });
     private Set<Cell> allBlackMoves = new TreeSet<Cell>(new Comparator<Cell>() {
-        public int compare(Cell c1, Cell c2){
-            if (c1 == c2) return 1;
+        public int compare(Cell c1, Cell c2) {
+            if (c1 == c2) return 0;
             if (c1.getX() != c2.getX()) return c1.getX() - c2.getX();
             else return c1.getY() - c2.getY();
         }
     });
     private Type currentStep = Type.WHITE;
 
-    public Game(Player whitePlayer, Player blackPlayer){
+    public Game(Player whitePlayer, Player blackPlayer) {
         this.currentStep = Type.WHITE;
-        this.whitePlayer=whitePlayer;
-        this.blackPlayer=blackPlayer;
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
         this.blackPlayer.setCurrentGame(this);
         this.whitePlayer.setCurrentGame(this);
 
-        for(int i=0; i<8; i++) {
-            for(int j=0; j<8; j++) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 board[i][j] = new Cell(i, j, this);
             }
         }
@@ -61,12 +62,13 @@ public class Game extends Thread{
         board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
         board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
         board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
-        for(int i=0; i<8; i++){
+        for (int i = 0; i < 8; i++) {
             board[i][1].setFigure(new Pawn(Type.BLACK, board[i][1]));
             board[i][6].setFigure(new Pawn(Type.WHITE, board[i][6]));
         }
         setAllWhiteMoves();
         setAllBlackMoves();
+        System.out.println("THIS IS NEW GAME AND WHITE MOVES ARE: " + allWhiteMoves.size() + " AND BLACK ARE: " + allBlackMoves.size());
     }
 
     public Game() {
@@ -100,16 +102,11 @@ public class Game extends Thread{
             //board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
             board[i][6].setFigure(new Pawn(Type.WHITE, board[i][6]));
         }
-//        for (Cell[] cells: board) {
-//            for (Cell cell: cells) {
-//                System.out.print(cell.getX() + "." + cell.getY() + " ");
-//            }
-//            System.out.println();
-//        }
         setAllWhiteMoves();
         setAllBlackMoves();
 
     }
+
     public Cell getCell(int x, int y) {
         return board[x][y];
     }
@@ -119,10 +116,10 @@ public class Game extends Thread{
     }
 
     public void changeCurrentStep() {
-        if(currentStep == Type.WHITE) {
+        if (currentStep == Type.WHITE) {
             setAllWhiteMoves();
             this.currentStep = Type.BLACK;
-        }else{
+        } else {
             setAllBlackMoves();
             this.currentStep = Type.WHITE;
         }
@@ -148,10 +145,10 @@ public class Game extends Thread{
         this.blackPlayer = blackPlayer;
     }
 
-    public Player getOtherPlayer(Player player){
-        if(player.equals(whitePlayer)){
+    public Player getOtherPlayer(Player player) {
+        if (player.equals(whitePlayer)) {
             return blackPlayer;
-        }else{
+        } else {
             return whitePlayer;
         }
     }
@@ -166,6 +163,31 @@ public class Game extends Thread{
         return allWhiteMoves.contains(blackKing.getCell());
     }
 
+    // возвращает true если белый король под шахом
+    public boolean isPlayersKingAttacked(Type type) {
+        if (type == Type.WHITE) {
+            return allBlackMoves.contains(whiteKing.getCell());
+        } else {
+            return allWhiteMoves.contains(blackKing.getCell());
+        }
+    }
+
+    public King getKing(Type type) {
+        if (type == Type.WHITE) {
+            return whiteKing;
+        } else {
+            return blackKing;
+        }
+    }
+
+    public Figure getLastFigureMoved() {
+        return lastFigureMoved;
+    }
+
+    public void setLastFigureMoved(Figure lastFigureMoved) {
+        this.lastFigureMoved = lastFigureMoved;
+    }
+
     // возвращает множество потенциальных ходов соперника
     public Set<Cell> getEnemyMoves(Type type) {
         if (type == Type.WHITE) {
@@ -175,12 +197,24 @@ public class Game extends Thread{
         }
     }
 
+    // возвращает множество потенциальных ходов соперника
+    public Set<Cell> getPlayerMoves(Type type) {
+        if (type == Type.WHITE) {
+            return allWhiteMoves;
+        } else {
+            return allBlackMoves;
+        }
+    }
+
     // составляет множество всех потенциальных ходов игрока белыми
     public void setAllWhiteMoves() {
+        System.out.println("SETTING WHITE MOVES");
         allWhiteMoves.clear();
-        for (Cell[] cells: board) {
-            for (Cell cell: cells) {
+        for (Cell[] cells : board) {
+            for (Cell cell : cells) {
+                System.out.println("setting white, cell");
                 if ((cell.getFigure() != null) && cell.getFigure().getType() == Type.WHITE) {
+                    System.out.println("accessible moves of WHITE figure are: " + cell.getFigure().allAccessibleMove().size());
                     allWhiteMoves.addAll(cell.getFigure().allAccessibleMove());
                 }
             }
@@ -189,13 +223,16 @@ public class Game extends Thread{
 
     // составляет множество всех потенциальных ходов игрока черными
     public void setAllBlackMoves() {
+        System.out.println("SETTING BLACK MOVES");
         allBlackMoves.clear();
-        for (Cell[] cells: board) {
-            for (Cell cell: cells) {
+        for (Cell[] cells : board) {
+            for (Cell cell : cells) {
                 if (cell.getFigure() != null && cell.getFigure().getType() == Type.BLACK) {
+                    System.out.println("accessible moves of BLACK figure are: " + cell.getFigure().allAccessibleMove().size());
                     allBlackMoves.addAll(cell.getFigure().allAccessibleMove());
                 }
             }
         }
     }
 }
+

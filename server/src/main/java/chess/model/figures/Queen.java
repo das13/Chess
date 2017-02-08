@@ -43,7 +43,7 @@ public class Queen extends Figure {
 
     public List<Cell> allAccessibleMove() {
         List<Cell> validCells = new ArrayList<Cell>();
-        if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
+        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         checkPath(validCells, getCell().getX(), getCell().getY(), 1, 0);
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, 0);

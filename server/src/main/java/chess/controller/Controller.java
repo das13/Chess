@@ -30,6 +30,7 @@ public class Controller extends Thread {
     private DataInputStream input;
     private DataOutputStream output;
     private Player player;
+    private Player otherPlayer;
     private XMLSender sender;
     private XMLReciever reciever;
 
@@ -89,9 +90,9 @@ public class Controller extends Thread {
                 }
                 if (str.get(0).equals("callPlayer")) {
                     List<String> out = new ArrayList<String>();
-                    Player player = GameService.callPlayer(getPlayer(), str.get(1));
-                    if (player != null) {
-                        Controller otherController = player.getController();
+                    otherPlayer = GameService.callPlayer(getPlayer(), str.get(1));
+                    if (otherPlayer != null) {
+                        Controller otherController = otherPlayer.getController();
                         XMLSender otherSender = otherController.getSender();
                         out.add("confirm");
                         out.add(getPlayer().getLogin());
@@ -106,12 +107,13 @@ public class Controller extends Thread {
                     Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
                     List<String> out = new ArrayList<String>();
                     out.add("confirmresponse");
-                    Controller otherController = thisGame.getOtherPlayer(player).getController();
+                    otherPlayer = thisGame.getOtherPlayer(player);
+                    Controller otherController = otherPlayer.getController();
                     XMLSender otherSender = otherController.getSender();
                     if("Ok".equals(str.get(1)) && thisGame!=null) {
                         out.add("Ok");
                         setCurrentGame(thisGame);
-                        thisGame.getOtherPlayer(player).getController().setCurrentGame(thisGame);
+                        otherPlayer.getController().setCurrentGame(thisGame);
                     }
                     if("No".equals(str.get(1)) && thisGame!=null) {
                         out.add("No");
@@ -132,16 +134,25 @@ public class Controller extends Thread {
                     int[] steps = new int[0];
                     try {
                         List<String> out = new ArrayList<String>();
-                        GameService.move(getCurrentGame(), str);
+                        List<String> result = GameService.move(getCurrentGame(), str, player, otherPlayer);
                         XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
-                        out.add("rivalMove");
-                        out.add(str.get(1));
-                        out.add(str.get(2));
-                        out.add(str.get(3));
-                        out.add(str.get(4));
-                        out.add(str.get(5));
-                        System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
-                        otherSender.send(out);
+                        if ("moving".equals(result.get(0))) {
+                            System.out.println("CONTROLELR: MAKING MOVE");
+                            out.add("rivalMove");
+                            out.add(str.get(1));
+                            out.add(str.get(2));
+                            out.add(str.get(3));
+                            out.add(str.get(4));
+                            out.add(str.get(5));
+                            System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
+                            otherSender.send(out);
+                        } else if ("cancel".equals(result.get(0))) {
+                            sender.send(result);
+                        } else {
+                            sender.send(result);
+                            otherSender.send(result);
+                        }
+
                     } catch (RivalFigureException e) {
                         //out.println("you try taking rivals figure");
                         e.printStackTrace();
@@ -152,7 +163,7 @@ public class Controller extends Thread {
                     //outOther.println("step");
                     //for (int i : steps) {
                     //    outOther.println(i);
-                   // }
+                    // }
                 }
                 if (str.equals("FREEPLAYERS")) {
                     XMLSender test = new XMLSender(out);
@@ -194,7 +205,7 @@ public class Controller extends Thread {
             out.close();
             socket.close();
             synchronized (ServerMain.freePlayers) {
-                        ServerMain.freePlayers.remove(player);
+                ServerMain.freePlayers.remove(player);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -208,6 +219,10 @@ public class Controller extends Thread {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Player getOtherPlayer() {
+        return otherPlayer;
     }
 
     public void setPlayer(Player player) {

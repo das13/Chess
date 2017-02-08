@@ -54,4 +54,5 @@ public abstract class Figure {
     public void setFirstMove(boolean firstMove) {
         this.firstMove = firstMove;
     }
+
 }
