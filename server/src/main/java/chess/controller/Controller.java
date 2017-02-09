@@ -86,7 +86,7 @@ public class Controller extends Thread {
                     }
                 }
                 if("saveProfile".equals(str.get(0))){
-                    PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)), sender);
+                    PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)));
                 }
                 if (str.get(0).equals("callPlayer")) {
                     List<String> out = new ArrayList<String>();
@@ -147,6 +147,7 @@ public class Controller extends Thread {
                             System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
                             otherSender.send(out);
                         } else if ("cancel".equals(result.get(0))) {
+                            System.out.println("CONTROLLER SENDS CANCEL");
                             sender.send(result);
                         } else {
                             sender.send(result);

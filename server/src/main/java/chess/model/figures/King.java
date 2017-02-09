@@ -36,16 +36,19 @@ public class King extends Figure {
         * and as we have a cell with a figure we add it and check another direction */
 
         if (isFirstMove()
+                && !game.isPlayersKingAttacked(this.getType())
                 && game.getCell(1, b).getFigure() == null
                 && game.getCell(2, b).getFigure() == null
                 && game.getCell(3, b).getFigure() == null) {
             validCells.add(game.getCell(2, b));
         }
         if (isFirstMove()
+                && !game.isPlayersKingAttacked(this.getType())
                 && game.getCell(5, b).getFigure() == null
-                && game.getCell(5, b).getFigure() == null) {
+                && game.getCell(6, b).getFigure() == null) {
             validCells.add(game.getCell(6, b));
         }
+
 
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b -1; y <= b + 1; y++) {
@@ -53,8 +56,13 @@ public class King extends Figure {
                 if (y < 0 || y > 7) continue;
                 if (game.getCell(x,y).getFigure() == this) continue;
                 if (game.getCell(x,y).isFriendlyCell(this)) continue;
+                if (game.getEnemyMoves(this.getType()).contains(game.getCell(x,y))) continue;
                 validCells.add(game.getCell(x,y));
             }
+        }
+        System.out.println("KING HAS " + validCells.size() + " MOVES");
+        for (Cell cell: validCells) {
+            System.out.println("KING'S ACCESSIBLE CELL: X:" + cell.getX() + " Y:" + cell.getY());
         }
         return validCells;
     }

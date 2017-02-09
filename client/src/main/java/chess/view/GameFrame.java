@@ -111,6 +111,9 @@ public class GameFrame extends Stage implements Observer {
         clock.start();
         if (!isWhitePlayer) count.stopTimer();
 
+        grid = (GridPane) scene.lookup("#grid");
+        System.out.println("IS GRID NULL " + grid);
+        if (!isWhitePlayer) grid.setDisable(true);
         whiteMiniBox = (HBox) loader.getNamespace().get("whiteMiniBox");
         blackMiniBox = (HBox) loader.getNamespace().get("blackMiniBox");
 
@@ -172,6 +175,7 @@ public class GameFrame extends Stage implements Observer {
                     list.add(String.valueOf(x1));
                     list.add(String.valueOf(y1));
                     list.add(count.getTime());
+                    grid.setDisable(true);
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -248,7 +252,7 @@ public class GameFrame extends Stage implements Observer {
 
             }
         }
-        grid = (GridPane) scene.lookup("#grid");
+
         root.setOnDragOver(new DragOver(root));
         root.setOnDragDropped(new DragDroppedOut());
         for (Node node : grid.getChildren()) {
@@ -313,6 +317,7 @@ public class GameFrame extends Stage implements Observer {
                     alert.setHeaderText(null);
                     alert.setContentText("Соперник сделал ход");
                     alert.showAndWait();
+                    grid.setDisable(false);
                     count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
                     opponentTimer.setText(listIn.get(5));
@@ -329,23 +334,30 @@ public class GameFrame extends Stage implements Observer {
                         pane.setOnDragDropped(new DragDropped(pane));
                     }
                 } else if ("cancel".equals(listIn.get(0))) {
+                    grid.setDisable(false);
                     cancelLastMove();
                 } else if ("checkmate".equals(listIn.get(0))) {
                     String message = "";
                     String rank = "";
                     if(playerInfo.get(3).equals(listIn.get(2))) {
-                        rank = listIn.get(3);
-                        playerInfo.set(3, rank);
+                        int result = Integer.parseInt(playerInfo.get(5));
+                        int correction = Integer.parseInt(listIn.get(3));
+                        result += correction;
+                        rank = String.valueOf(result);
+                        playerInfo.set(5, rank);
                     }
                     if(playerInfo.get(3).equals(listIn.get(4))) {
-                        rank = listIn.get(5);
-                        playerInfo.set(3, rank);
+                        int result = Integer.parseInt(playerInfo.get(5));
+                        int correction = Integer.parseInt(listIn.get(5));
+                        result += correction;
+                        rank = String.valueOf(result);
+                        playerInfo.set(5, rank);
                     }
 
                     if ("WHITE".equals(listIn.get(1))) {
-                        message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
-                    } else {
                         message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
+                    } else {
+                        message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
                     }
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
