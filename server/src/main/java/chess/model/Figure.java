@@ -12,11 +12,17 @@ public abstract class Figure {
         this.type=type;
     }
     private int id;
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     private Type type;
     private Cell cell;
     private boolean firstMove = true;
     public abstract List<Cell> allAccessibleMove();
-
+    public Figure() {
+    }
     public Figure(Type type, Cell cell) {
         this.type = type;
         this.cell = cell;
@@ -31,7 +37,9 @@ public abstract class Figure {
             this.cell = destination;
             this.cell.setFigure(this);
             firstMove = false;
+            System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
             cell.getParentGame().changeCurrentStep();
+            System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
         }
     }
 

@@ -6,18 +6,23 @@ import chess.services.xmlService.XMLout;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.xml.sax.SAXException;
 
@@ -55,14 +60,38 @@ public class GameFrame extends Stage implements Observer {
     private ArrayList<String> playerInfo;
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
+        ImageView castle;
+        ImageView knight;
+        ImageView bishop;
+        ImageView queen;
+        ImageView rivalcastle;
+        ImageView rivalknight;
+        ImageView rivalbishop;
+        ImageView rivalqueen;
         playerInfo = (ArrayList<String>) info;
         Stage stage = this;
         isWhitePlayer = isWhite;
 //      Для игрока белыми и черными подгружаются разные fxml
         if (isWhitePlayer) {
             loader = new FXMLLoader(getClass().getResource("/WhitePlayerBoard.fxml"));
+            castle = new ImageView(new Image("/icons/castleWHITE.png"));
+            knight = new ImageView(new Image("/icons/knightWHITE.png"));
+            bishop = new ImageView(new Image("/icons/bishopWHITE.png"));
+            queen = new ImageView(new Image("/icons/queenWHITE.png"));
+            rivalcastle = new ImageView(new Image("/icons/castleBLACK.png"));
+            rivalknight = new ImageView(new Image("/icons/knightBLACK.png"));
+            rivalbishop = new ImageView(new Image("/icons/bishopBLACK.png"));
+            rivalqueen = new ImageView(new Image("/icons/queenBLACK.png"));
         } else {
             loader = new FXMLLoader(getClass().getResource("/BlackPlayerBoard.fxml"));
+            castle = new ImageView(new Image("/icons/castleBLACK.png"));
+            knight = new ImageView(new Image("/icons/knightBLACK.png"));
+            bishop = new ImageView(new Image("/icons/bishopBLACK.png"));
+            queen = new ImageView(new Image("/icons/queenBLACK.png"));
+            rivalcastle = new ImageView(new Image("/icons/castleWHITE.png"));
+            rivalknight = new ImageView(new Image("/icons/knightWHITE.png"));
+            rivalbishop = new ImageView(new Image("/icons/bishopWHITE.png"));
+            rivalqueen = new ImageView(new Image("/icons/queenWHITE.png"));
         }
 
         Pane root = null;
@@ -79,7 +108,6 @@ public class GameFrame extends Stage implements Observer {
         this.setMinWidth(750);
         this.setMinHeight(650);
         this.show();
-
 //      таймер выводит оставшееся время, кнопки ставят таймер на паузу и возобновляют
         opponentTimer = (Label) loader.getNamespace().get("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
@@ -284,6 +312,45 @@ public class GameFrame extends Stage implements Observer {
             Map.Entry<String, Pane> entry = iter.next();
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+        class ReplaceButtonHandler implements EventHandler<ActionEvent> {
+            private Pane pane;
+            private ImageView figure;
+            private String x;
+            private String y;
+            private String name;
+            private Stage stage;
+            ReplaceButtonHandler(ImageView figure, Pane pane, String x, String y, String name, Stage stage){
+                this.figure = figure;
+                this.pane = pane;
+                this.x=x;
+                this.y=y;
+                this.name = name;
+                this.stage = stage;
+            }
+            @Override
+            public void handle(ActionEvent event) {
+                pane.getChildren().clear();
+                ImageView newFigure = new ImageView(figure.getImage());
+                newFigure.setOnDragDetected(new DragDetected(newFigure));
+                pane.getChildren().add(newFigure);
+                List<String> list = new ArrayList<String>();
+                list.add("replacePawn");
+                String x1 = getCoordinateX(pane);
+                String y1 = getCoordinateY(pane);
+                list.add(x);
+                list.add(y);
+                list.add(x1);
+                list.add(y1);
+                list.add(name);
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+                stage.close();
+            }
+
+        }
         class MyTask<Void> extends Task<Void>
 
         {
@@ -305,6 +372,7 @@ public class GameFrame extends Stage implements Observer {
                 return null;
             }
         }
+
         MyTask<Void> task = new MyTask<Void>();
         class MyHandler implements EventHandler {
             @Override
@@ -320,9 +388,10 @@ public class GameFrame extends Stage implements Observer {
                     grid.setDisable(false);
                     count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
-                    opponentTimer.setText(listIn.get(5));
+                    //opponentTimer.setText(listIn.get(5));
                 } else if ("steps".equals(listIn.get(0))) {
                     targets.clear();
+                    System.out.println("client sizeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+listIn.size());
                     for (String s : listIn) {
                         if (!s.equals("steps")) {
                             targets.add(board.get(s));
@@ -368,6 +437,55 @@ public class GameFrame extends Stage implements Observer {
                     alert.showAndWait();
                     stage.close();
                     new ProfileFrame(xmLin, xmlOut, playerInfo);
+                } else if ("replacePawn".equals(listIn.get(0))) {
+                    Stage dialogStage = new Stage();
+                    dialogStage.initModality(Modality.APPLICATION_MODAL);
+                    dialogStage.setTitle("Выберите фигуру для замены");
+                    Button castlebutton = new Button("Тура");
+                    Button knightbutton = new Button("Конь");
+                    Button bishopbutton = new Button("Офицер");
+                    Button queenbutton = new Button("Ферзь");
+                    castlebutton.setOnAction(new ReplaceButtonHandler(castle, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Castle", dialogStage));
+                    knightbutton.setOnAction(new ReplaceButtonHandler(knight, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Knight", dialogStage));
+                    bishopbutton.setOnAction(new ReplaceButtonHandler(bishop, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Bishop", dialogStage));
+                    queenbutton.setOnAction(new ReplaceButtonHandler(queen, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Queen", dialogStage));
+                    VBox vbox1 = new VBox(castle, castlebutton);
+                    VBox vbox2 = new VBox(knight, knightbutton);
+                    VBox vbox3 = new VBox(bishop, bishopbutton);
+                    VBox vbox4= new VBox(queen, queenbutton);
+                    vbox1.setAlignment(Pos.CENTER);
+                    vbox1.setPadding(new Insets(15));
+                    vbox2.setAlignment(Pos.CENTER);
+                    vbox2.setPadding(new Insets(15));
+                    vbox3.setAlignment(Pos.CENTER);
+                    vbox3.setPadding(new Insets(15));
+                    vbox4.setAlignment(Pos.CENTER);
+                    vbox4.setPadding(new Insets(15));
+                    HBox hbox= new HBox(vbox1, vbox2, vbox3, vbox4);
+                    dialogStage.setScene(new Scene(hbox));
+                    dialogStage.initOwner(stage);
+                    dialogStage.show();
+                } else if ("rivalReplace".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник сделал ход");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                    count.startTimer();
+                    moveFromTo(Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(4)), Integer.parseInt(listIn.get(3)));
+                    //opponentTimer.setText(listIn.get(5));
+                    ImageView figure = null;
+                    if(listIn.get(5).equals("Castle")) figure = rivalcastle;
+                    if(listIn.get(5).equals("Knight")) figure = rivalknight;
+                    if(listIn.get(5).equals("Bishop")) figure = rivalbishop;
+                    if(listIn.get(5).equals("Queen")) figure = rivalqueen;
+                    board.get(listIn.get(3)+listIn.get(4)).getChildren().clear();
+                    ImageView newFigure = new ImageView(figure.getImage());
+                    newFigure.setOnDragDetected(new DragDetected(newFigure));
+                    findPane(Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4))).getChildren().add(newFigure);
                 }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());

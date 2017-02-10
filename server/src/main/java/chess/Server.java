@@ -19,7 +19,7 @@ public class Server {
 
     public Server() {
         try {
-            server = new ServerSocket(2544);
+            server = new ServerSocket(Constants.PORT);
 
             while (true) {
                 Socket socket = server.accept();

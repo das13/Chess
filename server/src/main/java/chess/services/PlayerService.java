@@ -57,6 +57,8 @@ public class PlayerService {
         } else {
             for (Player p : ServerMain.allPlayers) {
                 if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
+                    player.setId(p.getId());
+                    player.setRank(p.getRank());
                     check = true;
                     out.add("Ok");
                     out.add(String.valueOf(p.getId()));
@@ -80,6 +82,22 @@ public class PlayerService {
             }
         }
         sender.send(out);
+    }
+    public static List<String> refresh(Player player, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        List<String> out = new ArrayList<String>();
+        out.add("Ok");
+        out.add(String.valueOf(player.getId()));
+        out.add(player.getLogin());
+        out.add(player.getPassword());
+        out.add(String.valueOf(player.getRank()));
+        player.setStatus(Status.FREE);
+        for (Player p : ServerMain.freePlayers) {
+            if(!player.equals(p)) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+            }
+        }
+        return out;
     }
 
     public static List<String> saveProfile(String login, String password, int id) throws IOException, ParserConfigurationException, TransformerConfigurationException {

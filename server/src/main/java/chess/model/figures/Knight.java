@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.Constants;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
@@ -13,6 +14,8 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Knight extends Figure {
+    public Knight() {
+    }
     List<Cell> validCells;
     public Knight(Type type) {
         super(type);

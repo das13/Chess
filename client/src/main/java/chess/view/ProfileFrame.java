@@ -30,10 +30,11 @@ import java.util.List;
  * Created by viacheslav koshchii on 24.01.2017.
  */
 public class ProfileFrame extends Stage {
-    String firstConf;
-    String secondConf;
-    String myName;
-    String myPass;
+    private String firstConf;
+    private String secondConf;
+    private String myName;
+    private String myPass;
+    private List<String> listIn;
 
     public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
@@ -46,22 +47,22 @@ public class ProfileFrame extends Stage {
         Scene scene = new Scene(grid, 480, 350);
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
-        Text scenetitle = new Text("Мой Профиль");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
-        scenetitle.relocate(70, 90);
-//        Text scenetitle2 = new Text("Свободные игроки");
-//        scenetitle2.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
-//        scenetitle2.relocate(250, 10);
-        grid.getChildren().add(scenetitle);
-        //grid.getChildren().add(scenetitle2);
+        Text profiletitle = new Text("Мой Профиль");
+        profiletitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+        profiletitle.relocate(70, 10);
+        Text freetitle = new Text("Свободные игроки");
+        freetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+        freetitle.relocate(260, 10);
+        grid.getChildren().add(profiletitle);
+        grid.getChildren().add(freetitle);
         Pane profile = new Pane();
-        profile.relocate(10, 120);
+        profile.relocate(10, 30);
         profile.setPrefSize(230, 180);
         profile.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
         profile.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
         Pane freeplayer = new Pane();
-        freeplayer.relocate(250, 10);
-        freeplayer.setPrefSize(230, 300);
+        freeplayer.relocate(250, 30);
+        freeplayer.setPrefSize(220, 280);
         freeplayer.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
         freeplayer.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
         Text loginname = new Text("Никнейм");
@@ -110,30 +111,6 @@ public class ProfileFrame extends Stage {
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                     e1.printStackTrace();
                 }
-                List<String> listIn = null;
-                try {
-                    listIn = xmLin.receive();
-                    if ("Ok".equals(listIn.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Сохранено");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Изменения сохранены");
-                        saveBtn.setDisable(true);
-                        alert.showAndWait();
-                    }
-                    if ("error".equals(listIn.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ошибка");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Пользователь с таким логином уже существует");
-                        alert.showAndWait();
-                    }
-
-                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
-                    e1.printStackTrace();
-                }
             }
         });
         profile.getChildren().add(saveBtn);
@@ -141,18 +118,18 @@ public class ProfileFrame extends Stage {
             final String name = freePlayers.get(i);
             Text player = new Text(freePlayers.get(i));
             player.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-            player.relocate(20, 12 * (i - 3));
+            player.relocate(20, 12 * (i - 5));
             freeplayer.getChildren().add(player);
             Text rank = new Text(freePlayers.get(i + 1));
             rank.setFont(Font.font("Tahoma", FontWeight.BOLD, 14));
             rank.setFill(Color.valueOf("#47484a"));
-            rank.relocate(95, 12 * (i - 3));
+            rank.relocate(95, 12 * (i - 5));
             freeplayer.getChildren().add(rank);
             Button btn = new Button("Играть");
             btn.setPadding(new Insets(0));
             btn.setPrefWidth(60.0);
             btn.setPrefHeight(20.0);
-            btn.relocate(150, 12 * (i - 3));
+            btn.relocate(150, 12 * (i - 5));
             //grid.getChildren().add(hbBtn);
             btn.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent e) {
@@ -171,7 +148,18 @@ public class ProfileFrame extends Stage {
         Button refreshButton = new Button("Обновить список игроков");
         refreshButton.setMinWidth(100);
         refreshButton.setMinHeight(20);
-        refreshButton.relocate(280, 320);
+        refreshButton.relocate(270, 320);
+        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                List<String> list = new ArrayList<String>();
+                list.add("refresh");
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
         grid.getChildren().add(freeplayer);
         grid.getChildren().add(profile);
         grid.getChildren().add(refreshButton);
@@ -184,9 +172,10 @@ public class ProfileFrame extends Stage {
             @Override
             public Void call() throws Exception {
                 try {
-                    List<String> listIn = xmLin.receive();
-                    firstConf = listIn.get(0);
-                    secondConf = listIn.get(1);
+                    List<String> list = xmLin.receive();
+                    firstConf = list.get(0);
+                    secondConf = list.get(1);
+                    listIn=list;
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (TransformerConfigurationException e) {
@@ -239,6 +228,17 @@ public class ProfileFrame extends Stage {
                     }
 
                 }
+                if ("notconfirm".equals(firstConf)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("игрок уже не активен");
+                    alert.setHeaderText(null);
+                    alert.setContentText("игрок уже не активен");
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                }
                 if ("confirmresponse".equals(firstConf)) {
                     if ("Ok".equals(secondConf)) {
                         stage.close();
@@ -257,6 +257,41 @@ public class ProfileFrame extends Stage {
                         thread1.setDaemon(true);
                         thread1.start();
                     }
+                }
+                if ("saveconfirm".equals(firstConf)) {
+                    if ("Ok".equals(secondConf)) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Сохранено");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Изменения сохранены");
+                        saveBtn.setDisable(true);
+                        alert.showAndWait();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                    }
+                    if ("error".equals(secondConf)) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ошибка");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Пользователь с таким логином уже существует");
+                        alert.showAndWait();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                    }
+                }
+                if("refresh".equals(firstConf)){
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
                 }
 
             }

@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.Constants;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
@@ -16,7 +17,9 @@ public class Queen extends Figure {
     public Queen(Type type) {
         super(type);
     }
+    public Queen() {
 
+    }
     public Queen(Type type, Cell cell) {
         super(type, cell);
     }
@@ -25,7 +28,7 @@ public class Queen extends Figure {
         Game game = getCell().getParentGame();
         int i = x + stepX;
         int j = y + stepY;
-        while (i < 8 && j < 8 && i >= 0 && j >= 0) {
+        while (i < Constants.BOARDSIZE && j < Constants.BOARDSIZE && i >= 0 && j >= 0) {
             if (game.getCell(i, j) != null) {
                 if (!getCell().isFriendlyCell(game.getCell(i, j).getFigure())) {
                     validCells.add(game.getCell(i, j));
@@ -33,7 +36,7 @@ public class Queen extends Figure {
                         System.out.println(game.getCell(i, j).getFigure().getClass().getName());
                         break;
                     }
-                } else {
+                }else{
                     break;
                 }
             }
@@ -58,7 +61,5 @@ public class Queen extends Figure {
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, 1);
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, -1);
         return validCells;
-
-
     }
 }

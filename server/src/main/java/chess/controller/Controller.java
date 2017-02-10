@@ -1,7 +1,6 @@
 package chess.controller;
 
 import chess.ServerMain;
-import chess.exceptions.RivalFigureException;
 import chess.model.Game;
 import chess.model.Player;
 import chess.model.Status;
@@ -75,10 +74,12 @@ public class Controller extends Thread {
                 }
                 if (str.get(0).equals("auth")) {
                     PlayerService.auth(player, str.get(1), str.get(2), sender);
-                    System.out.println(strOut.size());
-                    for(String s: strOut){
-                        System.out.println(s);
-                    }
+                }
+                if (str.get(0).equals("refresh")) {
+                    List<String> outList = new ArrayList<String>();
+                    outList.add("refresh");
+                    outList.addAll(PlayerService.refresh(player,  sender));
+                    sender.send(outList);
                 }
                 if (str.get(0).equals("logout")) {
                     synchronized (ServerMain.freePlayers) {
@@ -86,7 +87,7 @@ public class Controller extends Thread {
                     }
                 }
                 if("saveProfile".equals(str.get(0))){
-                    PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1)));
+                    sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
                 }
                 if (str.get(0).equals("callPlayer")) {
                     List<String> out = new ArrayList<String>();
@@ -98,12 +99,14 @@ public class Controller extends Thread {
                         out.add(getPlayer().getLogin());
                         otherSender.send(out);
                     } else {
-                        out.add("error");
-                        sender.send(out);
+                        List<String> outList = new ArrayList<String>();
+                        outList.add("notconfirm");
+                        outList.addAll(PlayerService.refresh(player,  sender));
+                        sender.send(outList);
+
                     }
                 }
                 if (str.get(0).equals("confirm")) {
-                    //out.println("You are invited. enter Ok or No");
                     Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
                     List<String> out = new ArrayList<String>();
                     out.add("confirmresponse");
@@ -113,7 +116,15 @@ public class Controller extends Thread {
                     if("Ok".equals(str.get(1)) && thisGame!=null) {
                         out.add("Ok");
                         setCurrentGame(thisGame);
-                        otherPlayer.getController().setCurrentGame(thisGame);
+                        thisGame.getOtherPlayer(player).getController().setCurrentGame(thisGame);
+                        synchronized (ServerMain.freePlayers) {
+                            ServerMain.freePlayers.remove(player);
+                            ServerMain.freePlayers.remove(thisGame.getOtherPlayer(player));
+                        }
+                        synchronized (ServerMain.inGamePlayers) {
+                            ServerMain.inGamePlayers.add(player);
+                            ServerMain.inGamePlayers.add(thisGame.getOtherPlayer(player));
+                        }
                     }
                     if("No".equals(str.get(1)) && thisGame!=null) {
                         out.add("No");
@@ -121,18 +132,10 @@ public class Controller extends Thread {
                     otherSender.send(out);
                 }
                 if (str.get(0).equals("drag")) {
-                    System.out.println(str.get(1)+" "+str.get(2));
-                    try {
-                        sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
-                        //out.println("steps");
-                    } catch (RivalFigureException e) {
-                        //out.println("you try taking rivals figure");
-                        e.printStackTrace();
-                    }
+                    sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
                 }
                 if (str.get(0).equals("move")) {
                     int[] steps = new int[0];
-                    try {
                         List<String> out = new ArrayList<String>();
                         List<String> result = GameService.move(getCurrentGame(), str, player, otherPlayer);
                         XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
@@ -147,34 +150,25 @@ public class Controller extends Thread {
                             System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
                             otherSender.send(out);
                         } else if ("cancel".equals(result.get(0))) {
-                            System.out.println("CONTROLLER SENDS CANCEL");
+                            sender.send(result);
+                        } else if ("replacePawn".equals(result.get(0))){
                             sender.send(result);
                         } else {
                             sender.send(result);
                             otherSender.send(result);
                         }
-
-                    } catch (RivalFigureException e) {
-                        //out.println("you try taking rivals figure");
-                        e.printStackTrace();
-                    }
-                    //Player otherPlayer = getCurrentGame().getOtherPlayer(getPlayer());
-                    //System.out.println(otherPlayer.getNickname());
-                    //PrintWriter outOther = new PrintWriter(otherPlayer.getSocket().getOutputStream(), true);
-                    //outOther.println("step");
-                    //for (int i : steps) {
-                    //    outOther.println(i);
-                    // }
                 }
-                if (str.equals("FREEPLAYERS")) {
-                    XMLSender test = new XMLSender(out);
-                   /* try {
-                        test.sendFreePlayers();
-                    } catch (ParserConfigurationException e) {
-                        e.printStackTrace();
-                    } catch (TransformerConfigurationException e) {
-                        e.printStackTrace();
-                    }*/
+                if ("replacePawn".equals(str.get(0))) {
+                      getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
+                    XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
+                    List<String> out = new ArrayList<String>();
+                    out.add("rivalReplace");
+                    out.add(str.get(1));
+                    out.add(str.get(2));
+                    out.add(str.get(3));
+                    out.add(str.get(4));
+                    out.add(str.get(5));
+                    otherSender.send(out);
                 }
                 if ("admin_getPlayers".equals(str.get(0))) {
                     PlayerService.adminGetPlayers(sender);
@@ -182,6 +176,7 @@ public class Controller extends Thread {
             }
 
         } catch (IOException e) {
+            System.out.println("close");
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -207,6 +202,9 @@ public class Controller extends Thread {
             socket.close();
             synchronized (ServerMain.freePlayers) {
                 ServerMain.freePlayers.remove(player);
+            }
+            synchronized (ServerMain.inGamePlayers) {
+                ServerMain.inGamePlayers.remove(player);
             }
         } catch (Exception e) {
             e.printStackTrace();

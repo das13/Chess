@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.Constants;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
@@ -14,6 +15,7 @@ import java.util.List;
 public class Bishop extends Figure {
     List<Cell> validCells;
 
+    public Bishop() {}
     public Bishop(Type type) {
         super(type);
     }
@@ -38,7 +40,7 @@ public class Bishop extends Figure {
         int column = getCell().getY();
 
         //all possible moves in the down positive diagonal
-        for (int j = column + 1, i = row + 1; j < 8 && i < 8; j++, i++) {
+        for (int j = column + 1, i = row + 1; j < Constants.BOARDSIZE && i < Constants.BOARDSIZE; j++, i++) {
             Cell cell = game.getCell(i, j);
             if (cell.getFigure() == null) {
                 validCells.add(cell);
@@ -50,7 +52,7 @@ public class Bishop extends Figure {
             }
         }
         //all possible moves in the up positive diagonal
-        for (int j = column - 1, i = row + 1; j > -1 && i < 8; j--, i++) {
+        for (int j = column - 1, i = row + 1; j > -1 && i < Constants.BOARDSIZE; j--, i++) {
             Cell cell = game.getCell(i, j);
             if (cell.getFigure() == null) {
                 validCells.add(cell);
@@ -74,7 +76,7 @@ public class Bishop extends Figure {
             }
         }
         //all possible moves in the down negative diagonal
-        for (int j = column + 1, i = row - 1; j < 8 && i > -1; j++, i--) {
+        for (int j = column + 1, i = row - 1; j < Constants.BOARDSIZE && i > -1; j++, i--) {
             Cell cell = game.getCell(i, j);
             if (cell.getFigure() == null) {
                 validCells.add(cell);

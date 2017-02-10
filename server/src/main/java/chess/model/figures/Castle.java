@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.Constants;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
@@ -12,6 +13,8 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Castle extends Figure {
+    public Castle() {
+    }
 
     List<Cell> validCells;
 
@@ -52,7 +55,7 @@ public class Castle extends Figure {
                 break;
             }
         }
-        for (int x = a + 1; x <= 7; x++) {
+        for (int x = a + 1; x <= Constants.BOARDSIZE-1; x++) {
             if (x > 7) break;
             if (game.getCell(x, b).getFigure() == null) {
                 validCells.add(game.getCell(x, b));
@@ -76,8 +79,8 @@ public class Castle extends Figure {
                 break;
             }
         }
-        for (int y = b + 1; y <= 7; y++) {
-            if (y > 7) break;
+        for (int y = b + 1; y <= Constants.BOARDSIZE-1; y++) {
+            if (y > Constants.BOARDSIZE-1) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
                 continue;

@@ -43,6 +43,7 @@ public class ServerMain {
         }
         Game game = new Game();
         List<Cell> cells = game.getBoard()[3][0].getFigure().allAccessibleMove();
+        System.out.println(game.getBoard()[3][0].getFigure().getClass().getName());
         /*try {
             game.getBoard()[0][6].getFigure().move(game.getBoard()[0][7]);
         } catch (ReplacePawnException e) {

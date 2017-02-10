@@ -1,8 +1,10 @@
 package chess.model;
 
+import chess.Constants;
 import chess.model.figures.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by viacheslav koshchii on 17.01.2017.
@@ -28,8 +30,8 @@ public class Game extends Thread {
         this.blackPlayer.setCurrentGame(this);
         this.whitePlayer.setCurrentGame(this);
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < Constants.BOARDSIZE; i++) {
+            for (int j = 0; j < Constants.BOARDSIZE; j++) {
                 board[i][j] = new Cell(i, j, this);
             }
         }
@@ -51,7 +53,7 @@ public class Game extends Thread {
         board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
         board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
         board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < Constants.BOARDSIZE; i++) {
             board[i][1].setFigure(new Pawn(Type.BLACK, board[i][1]));
             board[i][6].setFigure(new Pawn(Type.WHITE, board[i][6]));
         }
@@ -73,8 +75,8 @@ public class Game extends Thread {
 
     public Game() {
         this.currentStep = Type.WHITE;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < Constants.BOARDSIZE; i++) {
+            for (int j = 0; j < Constants.BOARDSIZE; j++) {
                 board[i][j] = new Cell(i, j, this);
             }
         }
@@ -96,7 +98,7 @@ public class Game extends Thread {
         board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
         board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
         board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < Constants.BOARDSIZE; i++) {
             board[i][1].setFigure(new Pawn(Type.BLACK, board[i][1]));
             //board[1][2].setFigure(new Pawn(Type.BLACK, board[0][2]));
             //board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
@@ -258,6 +260,21 @@ public class Game extends Thread {
                     allBlackMoves.addAll(cell.getFigure().allAccessibleMove());
                 }
             }
+        }
+    }
+    public void replacePawn(String figureName, int x, int y){
+        try {
+            Figure figure = (Figure) Class.forName("chess.model.figures."+figureName).newInstance();
+            figure.setCell(board[y][x]);
+            figure.setType(board[y][x].getFigure().getType());
+            board[y][x].setFigure(figure);
+            System.out.println(board[y][x].getFigure().getClass().getName()+" "+y+" "+x);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

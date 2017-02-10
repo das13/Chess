@@ -1,5 +1,6 @@
 package chess.model.figures;
 
+import chess.Constants;
 import chess.exceptions.ReplacePawnException;
 import chess.model.Cell;
 import chess.model.Figure;
@@ -15,12 +16,13 @@ import java.util.List;
  */
 public class King extends Figure {
     Game game;
+    public King() {
+    }
     List<Cell> validCells;
 
     public King(Type type) {
         super(type);
     }
-
     public King(Type type, Cell cell) {
         super(type, cell);
     }
