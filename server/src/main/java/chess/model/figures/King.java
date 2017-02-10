@@ -7,6 +7,7 @@ import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,9 +15,12 @@ import java.util.List;
  */
 public class King extends Figure {
     Game game;
+    List<Cell> validCells;
+
     public King(Type type) {
         super(type);
     }
+
     public King(Type type, Cell cell) {
         super(type, cell);
     }
@@ -26,7 +30,9 @@ public class King extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        List<Cell> validCells = new ArrayList<Cell>();
+        Type otherType = this.getType() == Type.WHITE ? Type.BLACK : Type.WHITE;
+        validCells = new ArrayList<Cell>();
+
         //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         game = getCell().getParentGame();
         int a = getCell().getX();
@@ -35,36 +41,44 @@ public class King extends Figure {
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
 
-        if (isFirstMove()
-                && !game.isPlayersKingAttacked(this.getType())
-                && game.getCell(1, b).getFigure() == null
-                && game.getCell(2, b).getFigure() == null
-                && game.getCell(3, b).getFigure() == null) {
-            validCells.add(game.getCell(2, b));
-        }
-        if (isFirstMove()
-                && !game.isPlayersKingAttacked(this.getType())
-                && game.getCell(5, b).getFigure() == null
-                && game.getCell(6, b).getFigure() == null) {
-            validCells.add(game.getCell(6, b));
-        }
-
-
-        for (int x = a - 1; x <= a + 1; x++) {
-            for (int y = b -1; y <= b + 1; y++) {
-                if (x < 0 || x > 7) continue;
-                if (y < 0 || y > 7) continue;
-                if (game.getCell(x,y).getFigure() == this) continue;
-                if (game.getCell(x,y).isFriendlyCell(this)) continue;
-                if (game.getEnemyMoves(this.getType()).contains(game.getCell(x,y))) continue;
-                validCells.add(game.getCell(x,y));
+        synchronized (validCells) {
+            validCells.clear();
+            if (isFirstMove()
+                    && !game.isPlayersKingAttacked(this.getType())
+                    && game.getCell(1, b).getFigure() == null
+                    && game.getCell(2, b).getFigure() == null
+                    && game.getCell(3, b).getFigure() == null) {
+                validCells.add(game.getCell(2, b));
             }
+            if (isFirstMove()
+                    && !game.isPlayersKingAttacked(this.getType())
+                    && game.getCell(5, b).getFigure() == null
+                    && game.getCell(6, b).getFigure() == null) {
+                validCells.add(game.getCell(6, b));
+            }
+
+            for (int x = a - 1; x <= a + 1; x++) {
+                for (int y = b - 1; y <= b + 1; y++) {
+                    if (x < 0 || x > 7) {
+                        continue;
+                    }
+                    if (y < 0 || y > 7) {
+                        continue;
+                    }
+                    if (game.getCell(x, y).getFigure() == this) {
+                        continue;
+                    }
+                    if (game.getCell(x, y).isFriendlyCell(this)) {
+                        continue;
+                    }
+                    if (game.getEnemyMoves(this.getType()).contains(game.getCell(x, y))) {
+                        continue;
+                    }
+                    validCells.add(game.getCell(x, y));
+                }
+            }
+            return validCells;
         }
-        System.out.println("KING HAS " + validCells.size() + " MOVES");
-        for (Cell cell: validCells) {
-            System.out.println("KING'S ACCESSIBLE CELL: X:" + cell.getX() + " Y:" + cell.getY());
-        }
-        return validCells;
     }
 
     @Override
@@ -90,7 +104,7 @@ public class King extends Figure {
         // if cell king is going to pass is under attack
         if (game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY()))) return false;
         // if king's destination cell is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return  false;
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return false;
         return true;
     }
 
@@ -103,7 +117,7 @@ public class King extends Figure {
         // if cell king is going to pass is under attack
         if (game.getEnemyMoves(this.getType()).contains(game.getCell(3, this.getCell().getY()))) return false;
         // if king's destination cell is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return  false;
+        if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return false;
         return true;
     }
 

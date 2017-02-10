@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class Pawn extends Figure {
 
+    List<Cell> validCells;
+
     public Pawn(Type type) {
         super(type);
     }
@@ -31,7 +33,10 @@ public class Pawn extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        List<Cell> validCells = new ArrayList<Cell>();
+        validCells = new ArrayList<Cell>();
+
+        validCells.clear();
+        if (getCell() == null) return validCells;
         //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int koef = 1;
@@ -62,6 +67,8 @@ public class Pawn extends Figure {
             }
         }
         return validCells;
+
+
     }
 
 }

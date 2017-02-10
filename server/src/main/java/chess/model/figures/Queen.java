@@ -12,6 +12,7 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Queen extends Figure {
+    List<Cell> validCells;
     public Queen(Type type) {
         super(type);
     }
@@ -32,7 +33,7 @@ public class Queen extends Figure {
                         System.out.println(game.getCell(i, j).getFigure().getClass().getName());
                         break;
                     }
-                }else{
+                } else {
                     break;
                 }
             }
@@ -42,9 +43,12 @@ public class Queen extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        List<Cell> validCells = new ArrayList<Cell>();
+        validCells = new ArrayList<Cell>();
+
+        validCells.clear();
+        if (getCell() == null) return validCells;
         //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
-        Game game = getCell().getParentGame();
+        //Game game = getCell().getParentGame();
         checkPath(validCells, getCell().getX(), getCell().getY(), 1, 0);
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, 0);
         checkPath(validCells, getCell().getX(), getCell().getY(), 0, 1);
@@ -54,5 +58,7 @@ public class Queen extends Figure {
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, 1);
         checkPath(validCells, getCell().getX(), getCell().getY(), -1, -1);
         return validCells;
+
+
     }
 }

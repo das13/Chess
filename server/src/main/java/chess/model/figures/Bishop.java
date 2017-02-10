@@ -12,9 +12,12 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Bishop extends Figure {
+    List<Cell> validCells;
+
     public Bishop(Type type) {
         super(type);
     }
+
     public Bishop(Type type, Cell cell) {
         super(type, cell);
     }
@@ -24,8 +27,10 @@ public class Bishop extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        List<Cell> validCells = new ArrayList<Cell>();
+        validCells = new ArrayList<Cell>();
+
         validCells.clear();
+        if (getCell() == null) return validCells;
         //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
 
@@ -85,6 +90,13 @@ public class Bishop extends Figure {
                 validCells.remove(i);
             }
         }
+        for (Cell cell: validCells) {
+            System.out.print(cell.getX() + "." + cell.getY() + " ");
+        }
+        System.out.println();
+
         return validCells;
+
+
     }
 }

@@ -13,7 +13,7 @@ public class Game extends Thread {
     private King whiteKing;
     private King blackKing;
     private Figure lastFigureMoved;
-    private Figure lastFigureTaken;
+    private Figure lastFigureTaken = null;
     private Cell[][] board = new Cell[8][8];
     private List<Figure> whiteFigures = new ArrayList<Figure>();
     private List<Figure> blackFigures = new ArrayList<Figure>();

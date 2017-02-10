@@ -12,6 +12,9 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Castle extends Figure {
+
+    List<Cell> validCells;
+
     public Castle(Type type) {
         super(type);
     }
@@ -26,8 +29,10 @@ public class Castle extends Figure {
 
     public List<Cell> allAccessibleMove() {
 
-        List<Cell> validCells = new ArrayList<Cell>();
+        validCells = new ArrayList<Cell>();
+
         validCells.clear();
+        if (getCell() == null) return validCells;
         //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int a = getCell().getX();
@@ -60,7 +65,7 @@ public class Castle extends Figure {
             }
         }
         for (int y = b - 1; y >= 0; y--) {
-            if(y < 0) break;
+            if (y < 0) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
                 continue;
@@ -91,5 +96,7 @@ public class Castle extends Figure {
 //            }
 //        }
         return validCells;
+
+
     }
 }
