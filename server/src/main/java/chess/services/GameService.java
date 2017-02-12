@@ -1,14 +1,18 @@
 package chess.services;
 
 import chess.ServerMain;
+import chess.controller.Controller;
 import chess.exceptions.ReplacePawnException;
 import chess.model.*;
 import chess.model.figures.King;
+import chess.services.xmlService.XMLSender;
 import chess.services.xmlService.XMLsaveLoad;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,49 +21,79 @@ import java.util.List;
  * Created by viacheslav koshchii on 20.01.2017.
  */
 public class GameService {
-    public static Player callPlayer(Player playerWhite, String nickName) {
+    public static void callPlayer(Player playerWhite, String nickName) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        List<String> out = new ArrayList<String>();
+        Controller controller = playerWhite.getController();
+        XMLSender sender = controller.getSender();
         for (Player playerBlack : ServerMain.freePlayers) {
             if (playerBlack.getLogin().equals(nickName)) {
                 Game game = new Game(playerWhite, playerBlack);
                 ServerMain.waitingGames.add(game);
-                return playerBlack;
+                Controller otherController = playerBlack.getController();
+                XMLSender otherSender = otherController.getSender();
+                out.add("confirm");
+                out.add(playerWhite.getLogin());
+                otherSender.send(out);
+                break;
             }
+                List<String> outList = new ArrayList<String>();
+                outList.add("notconfirm");
+                outList.addAll(PlayerService.refresh(playerWhite,  sender));
+                sender.send(outList);
+
         }
-        return null;
+
     }
 
-    public static Game confirmGame(Player blackPlayer, String confirm) {
-        if (confirm.equals("Ok")) {
+    public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        List<String> out = new ArrayList<String>();
+        out.add("confirmresponse");
+        XMLSender otherSender = null;
+        if (str.get(1).equals("Ok")) {
             Iterator<Game> iter = ServerMain.waitingGames.iterator();
             while (iter.hasNext()) {
                 Game game = iter.next();
-                if (game.getBlackPlayer().equals(blackPlayer)) {
+                if (game.getBlackPlayer().equals(thisPlayer)) {
                     synchronized (ServerMain.waitingGames) {
                         iter.remove();
                     }
                     synchronized (ServerMain.games) {
                         ServerMain.games.add(game);
                     }
-                    return game;
+                    Player otherPlayer = game.getOtherPlayer(thisPlayer);
+                    Controller otherController = otherPlayer.getController();
+                    otherSender = otherController.getSender();
+                    out.add("Ok");
+                    thisPlayer.getController().setCurrentGame(game);
+                    otherPlayer.getController().setCurrentGame(game);
+                    synchronized (ServerMain.freePlayers) {
+                        ServerMain.freePlayers.remove(thisPlayer);
+                        ServerMain.freePlayers.remove(otherPlayer);
+                    }
+                    synchronized (ServerMain.inGamePlayers) {
+                        ServerMain.inGamePlayers.add(thisPlayer);
+                        ServerMain.inGamePlayers.add(otherPlayer);
+                    }
                 }
             }
         } else {
+            out.add("No");
             Iterator<Game> iter = ServerMain.waitingGames.iterator();
             while (iter.hasNext()) {
                 Game game = iter.next();
-                if (game.getBlackPlayer().equals(blackPlayer)) {
+                if (game.getBlackPlayer().equals(thisPlayer)) {
                     synchronized (ServerMain.waitingGames) {
                         iter.remove();
                     }
-                    return game;
+
                 }
             }
 
         }
-        return null;
+        otherSender.send(out);
     }
 
-    public static List<String> steps(Game game, int x, int y)  {
+    public static List<String> steps(Game game, int x, int y) {
         Cell cell = game.getCell(x, y);
         System.out.println(cell.getFigure());
         //System.out.println(cell.getFigure().allAccessibleMove().size() * 2);
@@ -69,6 +103,11 @@ public class GameService {
         if (cell.isFigure()) {
             List<String> array = new ArrayList<String>();
             array.add("steps");
+            System.out.println(game.getCurrentStep());
+            System.out.println(game.getBoard()[x][y].getFigure().getType());
+            if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
+                return array;
+            }
             int i = 0;
             for (Cell c : cell.getFigure().allAccessibleMove()) {
                 array.add(c.getY() + "" + c.getX());
@@ -83,10 +122,17 @@ public class GameService {
 
     public static List<String> move(Game game, List<String> str, Player player, Player otherPlayer) {
         List<String> answer = new ArrayList<String>();
+        List<String> out = new ArrayList<String>();
+        XMLSender otherSender = otherPlayer.getController().getSender();
+        XMLSender sender = player.getController().getSender();
         int[] array = new int[4];
         System.out.println("move");
         //out.println("enter coordinates of figure - x and y");
         int x1 = Integer.parseInt(str.get(1));
+        System.out.println(str.get(1));
+        System.out.println(str.get(2));
+        System.out.println(str.get(3));
+        System.out.println(str.get(4));
         array[0] = x1;
         int y1 = Integer.parseInt(str.get(2));
         array[1] = y1;
@@ -114,6 +160,7 @@ public class GameService {
                 if (!figure.allAccessibleMove().contains(game.getBoard()[x2][y2])) {
                     System.out.println("CANCEL MOVE");
                     answer.add("cancel");
+                    sender.send(answer);
                     return answer;
                 }
                 // В ОСТАЛЬНЫХ СЛУЧАЯХ
@@ -142,6 +189,12 @@ public class GameService {
                         } else {
                             answer.add("queenside");
                         }
+                        out.add("castling");
+                        out.add(answer.get(1));
+                        out.add(answer.get(2));
+                        out.add(str.get(5));
+                        System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2));
+                        otherSender.send(out);
                         return answer;
                     }
 
@@ -161,6 +214,7 @@ public class GameService {
                             game.getLastFigureTaken().setCell(game.getBoard()[x2][y2]);
                         }
                         answer.add("cancel");
+                        sender.send(answer);
                         return answer;
                     }
 
@@ -266,21 +320,39 @@ public class GameService {
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                             }
+                            otherSender.send(answer);
+                            sender.send(answer);
                             return answer;
                         }
                     }
 
                     // ВО ВСЕХ ДРУГИХ СЛУЧАЯХ ЗАВЕРШАЕМ ХОД КАК ОБЫЧНО
                     System.out.println("done" + x2 + " " + y2);
-                    game.setCurrentStep(type);
+                    game.setCurrentStep(otherType);
                     System.out.println("CURRENT STEP " + game.getCurrentStep());
                     answer.add("moving");
+                    out.add("rivalMove");
+                    out.add(str.get(1));
+                    out.add(str.get(2));
+                    out.add(str.get(3));
+                    out.add(str.get(4));
+                    out.add(str.get(5));
+                    otherSender.send(out);
                     return answer;
                 }
 
 
             } catch (ReplacePawnException e) {
-                //out.println("pick figure");
+                answer.add("replacePawn");
+                answer.add(String.valueOf(y1));
+                answer.add(String.valueOf(x1));
+                answer.add(y2+""+x2);
+                return answer;
+            } catch (TransformerConfigurationException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
                 e.printStackTrace();
             }
         }

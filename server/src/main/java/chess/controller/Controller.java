@@ -90,80 +90,16 @@ public class Controller extends Thread {
                     sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
                 }
                 if (str.get(0).equals("callPlayer")) {
-                    List<String> out = new ArrayList<String>();
-                    otherPlayer = GameService.callPlayer(getPlayer(), str.get(1));
-                    if (otherPlayer != null) {
-                        Controller otherController = otherPlayer.getController();
-                        XMLSender otherSender = otherController.getSender();
-                        out.add("confirm");
-                        out.add(getPlayer().getLogin());
-                        otherSender.send(out);
-                    } else {
-                        List<String> outList = new ArrayList<String>();
-                        outList.add("notconfirm");
-                        outList.addAll(PlayerService.refresh(player,  sender));
-                        sender.send(outList);
-
-                    }
+                    GameService.callPlayer(getPlayer(), str.get(1));
                 }
                 if (str.get(0).equals("confirm")) {
-                    Game thisGame = GameService.confirmGame(getPlayer(), str.get(1));
-                    List<String> out = new ArrayList<String>();
-                    out.add("confirmresponse");
-                    otherPlayer = thisGame.getOtherPlayer(player);
-                    Controller otherController = otherPlayer.getController();
-                    XMLSender otherSender = otherController.getSender();
-                    if("Ok".equals(str.get(1)) && thisGame!=null) {
-                        out.add("Ok");
-                        setCurrentGame(thisGame);
-                        thisGame.getOtherPlayer(player).getController().setCurrentGame(thisGame);
-                        synchronized (ServerMain.freePlayers) {
-                            ServerMain.freePlayers.remove(player);
-                            ServerMain.freePlayers.remove(thisGame.getOtherPlayer(player));
-                        }
-                        synchronized (ServerMain.inGamePlayers) {
-                            ServerMain.inGamePlayers.add(player);
-                            ServerMain.inGamePlayers.add(thisGame.getOtherPlayer(player));
-                        }
-                    }
-                    if("No".equals(str.get(1)) && thisGame!=null) {
-                        out.add("No");
-                    }
-                    otherSender.send(out);
+                    GameService.confirmGame(getPlayer(), str);
                 }
                 if (str.get(0).equals("drag")) {
                     sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
                 }
                 if (str.get(0).equals("move")) {
-                    int[] steps = new int[0];
-                        List<String> out = new ArrayList<String>();
-                        List<String> result = GameService.move(getCurrentGame(), str, player, otherPlayer);
-                        XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
-                        if ("moving".equals(result.get(0))) {
-                            System.out.println("CONTROLELR: MAKING MOVE");
-                            out.add("rivalMove");
-                            out.add(str.get(1));
-                            out.add(str.get(2));
-                            out.add(str.get(3));
-                            out.add(str.get(4));
-                            out.add(str.get(5));
-                            System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2)+" "+ out.get(3)+" "+ out.get(4));
-                            otherSender.send(out);
-                        } else if ("cancel".equals(result.get(0))) {
-                            sender.send(result);
-                        } else if ("replacePawn".equals(result.get(0))){
-                            sender.send(result);
-                        } else if ("castling".equals(result.get(0))) {
-                            out.add("castling");
-                            out.add(result.get(1));
-                            out.add(result.get(2));
-                            out.add(str.get(5));
-                            System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2));
-                            otherSender.send(out);
-                        } else {
-                            sender.send(result);
-                            otherSender.send(result);
-                        }
+                    GameService.move(getCurrentGame(), str, player, otherPlayer);
                 }
                 if ("replacePawn".equals(str.get(0))) {
                       getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
