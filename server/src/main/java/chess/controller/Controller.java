@@ -153,6 +153,13 @@ public class Controller extends Thread {
                             sender.send(result);
                         } else if ("replacePawn".equals(result.get(0))){
                             sender.send(result);
+                        } else if ("castling".equals(result.get(0))) {
+                            out.add("castling");
+                            out.add(result.get(1));
+                            out.add(result.get(2));
+                            out.add(str.get(5));
+                            System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2));
+                            otherSender.send(out);
                         } else {
                             sender.send(result);
                             otherSender.send(result);

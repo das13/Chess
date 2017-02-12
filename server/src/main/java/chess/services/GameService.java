@@ -2,7 +2,6 @@ package chess.services;
 
 import chess.ServerMain;
 import chess.exceptions.ReplacePawnException;
-import chess.exceptions.RivalFigureException;
 import chess.model.*;
 import chess.model.figures.King;
 import chess.services.xmlService.XMLsaveLoad;
@@ -60,7 +59,7 @@ public class GameService {
         return null;
     }
 
-    public static List<String> steps(Game game, int x, int y) throws RivalFigureException {
+    public static List<String> steps(Game game, int x, int y)  {
         Cell cell = game.getCell(x, y);
         System.out.println(cell.getFigure());
         //System.out.println(cell.getFigure().allAccessibleMove().size() * 2);
@@ -82,7 +81,7 @@ public class GameService {
         }
     }
 
-    public static List<String> move(Game game, List<String> str, Player player, Player otherPlayer) throws RivalFigureException {
+    public static List<String> move(Game game, List<String> str, Player player, Player otherPlayer) {
         List<String> answer = new ArrayList<String>();
         int[] array = new int[4];
         System.out.println("move");
@@ -128,6 +127,22 @@ public class GameService {
                     game.setLastFigureMoved(figure);
                     if (game.getLastFigureTaken() != null) {
                         game.getLastFigureTaken().setCell(null);
+                    }
+                    //ЕСЛИ РОКИРОВКА, ТО ФОРМИРУЕМ ОСОБОЕ СООБЩЕНИЕ
+                    if (figure instanceof King && y1 == y2
+                            && (x2 - x1 == 2 || x1 - x2 == 2)) {
+                        answer.add("castling");
+                        if (y2 == 0) {
+                            answer.add("black");
+                        } else {
+                            answer.add("white");
+                        }
+                        if (x2 == 6) {
+                            answer.add("kingside");
+                        } else {
+                            answer.add("queenside");
+                        }
+                        return answer;
                     }
 
                     game.setAllWhiteMoves();

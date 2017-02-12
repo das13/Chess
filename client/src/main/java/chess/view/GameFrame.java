@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -58,6 +59,7 @@ public class GameFrame extends Stage implements Observer {
     private HBox blackMiniBox;
     private HBox whiteMiniBox;
     private ArrayList<String> playerInfo;
+    private ListView<String> movesRecord;
 
     public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
         ImageView castle;
@@ -144,6 +146,7 @@ public class GameFrame extends Stage implements Observer {
         if (!isWhitePlayer) grid.setDisable(true);
         whiteMiniBox = (HBox) loader.getNamespace().get("whiteMiniBox");
         blackMiniBox = (HBox) loader.getNamespace().get("blackMiniBox");
+        movesRecord = (ListView<String>) scene.lookup("#movesRecord");
 
 
         List<ImageView> sources = new ArrayList<ImageView>();
@@ -191,6 +194,25 @@ public class GameFrame extends Stage implements Observer {
                     lastMoveFromY = Integer.parseInt(getCoordinateY(pane));
                     lastMoveToX = Integer.parseInt(getCoordinateX(target));
                     lastMoveToY = Integer.parseInt(getCoordinateY(target));
+
+                    movesRecord.getItems().add(movesRecord(lastMoveFromX, lastMoveFromY, lastMoveToX, lastMoveToY));
+                    movesRecord.scrollTo(movesRecord.getItems().size()-1);
+
+                    // ЕСЛИ КОРОЛЬ ДЕЛАЕТ РОКИРОВКУ, ТУРА АВТОМАТИЧЕСКИ ПЕРЕМЕЩАЕТСЯ НА НУЖНОЕ МЕСТО
+                    if (lastMovedFigure.getId().contains("king") && lastMoveFromY == lastMoveToY
+                            && (lastMoveToX - lastMoveFromX == 2 || lastMoveFromX - lastMoveToX == 2)) {
+                        String where = "";
+                        if (lastMoveToX == 6) {
+                            moveFromTo(7,lastMoveToY, 5, lastMoveToY);
+                        }
+                        if (lastMoveToX == 2) {
+                            moveFromTo(0, lastMoveToY, 3, lastMoveToY);
+                            where = "-O";
+                        }
+                        movesRecord.getItems().remove(movesRecord.getItems().size()-1);
+                        movesRecord.getItems().add("O-O" + where);
+                        movesRecord.scrollTo(movesRecord.getItems().size()-1);
+                    }
 
                     System.out.print("Drag from cell: ");
                     System.out.print("X:" + x);
@@ -252,7 +274,6 @@ public class GameFrame extends Stage implements Observer {
 
             DragDetected(ImageView source) {
                 this.source = source;
-                lastMovedFigure = source;
             }
 
             public void handle(MouseEvent event) {
@@ -275,6 +296,7 @@ public class GameFrame extends Stage implements Observer {
                 content.putString(y + "" + x);
                 content.putImage(source.getImage());
                 System.out.println(y + "" + x);
+                lastMovedFigure = source;
                 db.setContent(content);
                 currentEvent.consume();
 
@@ -388,7 +410,8 @@ public class GameFrame extends Stage implements Observer {
                     grid.setDisable(false);
                     count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4)));
-                    //opponentTimer.setText(listIn.get(5));
+                    movesRecord.getItems().add("соперник: " + movesRecord(Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4))));
+                    opponentTimer.setText(listIn.get(5));
                 } else if ("steps".equals(listIn.get(0))) {
                     targets.clear();
                     System.out.println("client sizeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+listIn.size());
@@ -436,7 +459,29 @@ public class GameFrame extends Stage implements Observer {
                     alert.setContentText(message);
                     alert.showAndWait();
                     stage.close();
-                    new ProfileFrame(xmLin, xmlOut, playerInfo);
+                    List<String> list = new ArrayList<String>();
+                    list.add("logout");
+                    try {
+                        xmlOut.sendMessage(list);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    List<String> list1 = new ArrayList<String>();
+                    list1.add("auth");
+                    list1.add(playerInfo.get(3));
+                    list1.add(playerInfo.get(4));
+                    try {
+                        xmlOut.sendMessage(list1);
+                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+                        e.printStackTrace();
+                    }
+                    List<String> listForProfile = new ArrayList<>();
+                    try {
+                        listForProfile= xmLin.receive();
+                    } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
+                        e.printStackTrace();
+                    }
+                    new ProfileFrame(xmLin, xmlOut, listForProfile);
                 } else if ("replacePawn".equals(listIn.get(0))) {
                     Stage dialogStage = new Stage();
                     dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -476,7 +521,7 @@ public class GameFrame extends Stage implements Observer {
                     grid.setDisable(false);
                     count.startTimer();
                     moveFromTo(Integer.parseInt(listIn.get(2)), Integer.parseInt(listIn.get(1)), Integer.parseInt(listIn.get(4)), Integer.parseInt(listIn.get(3)));
-                    //opponentTimer.setText(listIn.get(5));
+                    opponentTimer.setText(listIn.get(5));
                     ImageView figure = null;
                     if(listIn.get(5).equals("Castle")) figure = rivalcastle;
                     if(listIn.get(5).equals("Knight")) figure = rivalknight;
@@ -486,6 +531,40 @@ public class GameFrame extends Stage implements Observer {
                     ImageView newFigure = new ImageView(figure.getImage());
                     newFigure.setOnDragDetected(new DragDetected(newFigure));
                     findPane(Integer.parseInt(listIn.get(3)), Integer.parseInt(listIn.get(4))).getChildren().add(newFigure);
+                } else if ("castling".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник выполнил рокировку");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                    count.startTimer();
+                    int fromX, fromY, toX, toY;
+                    if ("white".equals(listIn.get(1))) {
+                        if ("kingside".equals(listIn.get(2))) {
+                            moveFromTo(4, 7, 6, 7);
+                            moveFromTo(7, 7, 5, 7);
+                            movesRecord.getItems().add("соперник: O-O");
+                        } else {
+                            moveFromTo(4, 7, 2, 7);
+                            moveFromTo(0, 7, 3, 7);
+                            movesRecord.getItems().add("соперник: О-O-O");
+                        }
+                    } else {
+                        if ("kingside".equals(listIn.get(2))) {
+                            moveFromTo(4, 0, 6, 0);
+                            moveFromTo(7, 0, 5, 0);
+                            movesRecord.getItems().add("соперник: O-O");
+                        } else {
+                            moveFromTo(4, 0, 2, 0);
+                            moveFromTo(0, 0, 3, 0);
+                            movesRecord.getItems().add("соперник: О-O-O");
+                        }
+                    }
+                    movesRecord.scrollTo(movesRecord.getItems().size()-1);
+                    opponentTimer.setText(listIn.get(3));
                 }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());
@@ -683,6 +762,13 @@ public class GameFrame extends Stage implements Observer {
             lastTakenFigure.setLayoutX(1);
         }
 
+    }
+
+    public String movesRecord(int fromX, int fromY, int toX, int toY) {
+        String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H"};
+        int y1 = 8-fromY;
+        int y2 = 8-toY;
+        return letters[fromX] + y1 + " - " + letters[toX] + y2;
     }
 
 

@@ -85,22 +85,26 @@ public class King extends Figure {
 
     @Override
     public void move(Cell destination) throws ReplacePawnException {
-        setFirstMove(false);
         if (allAccessibleMove().contains(destination) && castlingKingSideAllowed(destination)) {
             castlingKingside();
+            setFirstMove(false);
         } else if (allAccessibleMove().contains(destination) && castlingQueenSideAllowed(destination)) {
             castlingQueenside();
+            setFirstMove(false);
         } else {
             this.getCell().setFigure(null);
             this.setCell(destination);
             this.getCell().setFigure(this);
             getCell().getParentGame().changeCurrentStep();
+            setFirstMove(false);
         }
     }
 
     public boolean castlingKingSideAllowed(Cell destination) {
         // if destination cell is proper for castling
         if (!(destination.getX() == 6 && destination.getY() == this.getCell().getY())) return false;
+        //if castle is not on place
+        if (game.getCell(7, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
@@ -114,6 +118,8 @@ public class King extends Figure {
     public boolean castlingQueenSideAllowed(Cell destination) {
         // if destination cell is proper for castling
         if (!(destination.getX() == 2 && destination.getY() == this.getCell().getY())) return false;
+        //if castle is not on place
+        if (game.getCell(0, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
@@ -126,6 +132,7 @@ public class King extends Figure {
     public void castlingKingside() {
         try {
             Castle castle = (Castle) game.getCell(7, this.getCell().getY()).getFigure();
+            System.out.println("IS CASTLE NULL? " + castle == null);
             castle.getCell().setFigure(null);
             castle.setCell(game.getCell(5, this.getCell().getY()));
             game.getCell(5, this.getCell().getY()).setFigure(castle);
