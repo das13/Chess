@@ -75,6 +75,9 @@ public class Controller extends Thread {
                 if (str.get(0).equals("auth")) {
                     PlayerService.auth(player, str.get(1), str.get(2), sender);
                 }
+                if ("reenter".equals(str.get(0))) {
+                    PlayerService.reenter(player, str.get(1), str.get(2), sender);
+                }
                 if (str.get(0).equals("refresh")) {
                     List<String> outList = new ArrayList<String>();
                     outList.add("refresh");

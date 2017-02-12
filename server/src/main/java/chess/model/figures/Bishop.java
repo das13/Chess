@@ -92,10 +92,10 @@ public class Bishop extends Figure {
                 validCells.remove(i);
             }
         }
-        for (Cell cell: validCells) {
-            System.out.print(cell.getX() + "." + cell.getY() + " ");
-        }
-        System.out.println();
+//        for (Cell cell: validCells) {
+//            System.out.print(cell.getX() + "." + cell.getY() + " ");
+//        }
+//        System.out.println();
 
         return validCells;
 

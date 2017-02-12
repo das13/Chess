@@ -31,9 +31,9 @@ public class ServerMain {
         try {
             XMLsaveLoad.loadPlayers();
             //System.out.println("players restored from file");
-            for (Player p: freePlayers) {
-                System.out.println("player restored from file: " + p.getLogin());
-            }
+//            for (Player p: freePlayers) {
+//                System.out.println("player restored from file: " + p.getLogin());
+//            }
         } catch (ParserConfigurationException e) {
             logger.error("Failed loading players from file ", e);
         } catch (IOException e) {
@@ -43,15 +43,15 @@ public class ServerMain {
         }
         Game game = new Game();
         List<Cell> cells = game.getBoard()[3][0].getFigure().allAccessibleMove();
-        System.out.println(game.getBoard()[3][0].getFigure().getClass().getName());
+        //System.out.println(game.getBoard()[3][0].getFigure().getClass().getName());
         /*try {
             game.getBoard()[0][6].getFigure().move(game.getBoard()[0][7]);
         } catch (ReplacePawnException e) {
             logger.debug("ReplacePawnException, probably it's fine ", e);
             System.out.println("pick figure");
         }*/
-        for(Cell c: cells)
-            System.out.println(c.getX()+"."+c.getY());
+//        for(Cell c: cells)
+//            System.out.println(c.getX()+"."+c.getY());
         new Server();
 
     }

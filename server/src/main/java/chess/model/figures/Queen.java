@@ -33,7 +33,7 @@ public class Queen extends Figure {
                 if (!getCell().isFriendlyCell(game.getCell(i, j).getFigure())) {
                     validCells.add(game.getCell(i, j));
                     if (game.getCell(i, j).isFigure()) {
-                        System.out.println(game.getCell(i, j).getFigure().getClass().getName());
+                        //System.out.println(game.getCell(i, j).getFigure().getClass().getName());
                         break;
                     }
                 }else{

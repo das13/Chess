@@ -70,7 +70,7 @@ public class Game extends Thread {
         }
         setAllWhiteMoves();
         setAllBlackMoves();
-        System.out.println("THIS IS NEW GAME AND WHITE MOVES ARE: " + allWhiteMoves.size() + " AND BLACK ARE: " + allBlackMoves.size());
+        //System.out.println("THIS IS NEW GAME AND WHITE MOVES ARE: " + allWhiteMoves.size() + " AND BLACK ARE: " + allBlackMoves.size());
     }
 
     public Game() {
@@ -268,7 +268,7 @@ public class Game extends Thread {
             figure.setCell(board[y][x]);
             figure.setType(board[y][x].getFigure().getType());
             board[y][x].setFigure(figure);
-            System.out.println(board[y][x].getFigure().getClass().getName()+" "+y+" "+x);
+            //System.out.println(board[y][x].getFigure().getClass().getName()+" "+y+" "+x);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

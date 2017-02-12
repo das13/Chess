@@ -41,13 +41,50 @@ public class PlayerService {
 //        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
+    public static void reenter(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+
+        List<String> out = new ArrayList<String>();
+
+        if (ServerMain.inGamePlayers.contains(player)) {
+            player.setStatus(Status.FREE);
+            ServerMain.inGamePlayers.remove(player);
+        }
+        if (login.equals("superuser") && password.equals("3141592")) {
+            out.add("admin");
+        } else {
+            for (Player p : ServerMain.allPlayers) {
+                if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
+                    player.setId(p.getId());
+                    player.setRank(p.getRank());
+                    out.add("Ok");
+                    out.add(String.valueOf(p.getId()));
+                    out.add(login);
+                    out.add(password);
+                    out.add(String.valueOf(p.getRank()));
+                    p.setStatus(Status.FREE);
+                    break;
+                }
+            }
+
+            for (Player p : ServerMain.freePlayers) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+            }
+            synchronized (ServerMain.freePlayers) {
+                ServerMain.freePlayers.add(player);
+            }
+
+        }
+        sender.send(out);
+    }
+
     public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         boolean check = false;
         List<String> out = new ArrayList<String>();
         player.setLogin(login);
         player.setPassword(password);
         out.add("reg");
-        if(ServerMain.freePlayers.contains(player) || ServerMain.inGamePlayers.contains(player)){
+        if (ServerMain.freePlayers.contains(player) || ServerMain.inGamePlayers.contains(player)) {
             out.add("online");
             sender.send(out);
             return;
@@ -83,6 +120,7 @@ public class PlayerService {
         }
         sender.send(out);
     }
+
     public static List<String> refresh(Player player, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
         out.add("Ok");
@@ -92,7 +130,7 @@ public class PlayerService {
         out.add(String.valueOf(player.getRank()));
         player.setStatus(Status.FREE);
         for (Player p : ServerMain.freePlayers) {
-            if(!player.equals(p)) {
+            if (!player.equals(p)) {
                 out.add(p.getLogin());
                 out.add(String.valueOf(p.getRank()));
             }
@@ -105,8 +143,8 @@ public class PlayerService {
         List<String> list = new ArrayList<String>();
         list.add("saveconfirm");
         try {
-            player=findPlayerByIdAll(id);
-            System.out.println(login+" "+password+" "+id);
+            player = findPlayerByIdAll(id);
+            System.out.println(login + " " + password + " " + id);
             list.add("Ok");
             player.setLogin(login);
             player.setPassword(password);
@@ -120,10 +158,10 @@ public class PlayerService {
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             list.add("error");
         }
-     return list;
+        return list;
     }
 
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -137,7 +175,7 @@ public class PlayerService {
             list.add("exists");
         } else {
             player = new Player(login, password, Status.OFFLINE, ipadress);
-            player.setId(ServerMain.getFreePlayers().size()+1);
+            player.setId(ServerMain.getFreePlayers().size() + 1);
             ServerMain.getFreePlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
             System.out.println("Player " + login + " " + password + " " + ipadress + " created");
@@ -161,24 +199,27 @@ public class PlayerService {
         System.out.println("was looking for player login " + login + ", result is FALSE");
         return null;
     }
+
     public static Player findPlayerById(int id) {
         for (Player p : ServerMain.freePlayers) {
-            if (p.getId()==id) {
+            if (p.getId() == id) {
                 return p;
             }
         }
         System.out.println("was looking for player id " + id + ", result is FALSE");
         return null;
     }
+
     public static Player findPlayerByIdAll(int id) {
         for (Player p : ServerMain.allPlayers) {
-            if (p.getId()==id) {
+            if (p.getId() == id) {
                 return p;
             }
         }
         System.out.println("was looking for player id " + id + ", result is FALSE");
         return null;
     }
+
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> list = new ArrayList<String>();
         list.add("admin_getPlayers");
@@ -192,4 +233,7 @@ public class PlayerService {
         sender.send(list);
     }
 
+//    public static void reenter(Player player, XMLSender sender) {
+//        System.out.println(findPlayer(player.getLogin()));
+//    }
 }

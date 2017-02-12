@@ -168,6 +168,7 @@ public class ProfileFrame extends Stage {
         this.show();
 
 
+
         class MyTask<Void> extends Task<Void> {
             @Override
             public Void call() throws Exception {

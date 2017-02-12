@@ -37,9 +37,9 @@ public abstract class Figure {
             this.cell = destination;
             this.cell.setFigure(this);
             firstMove = false;
-            System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
+            //System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
             cell.getParentGame().changeCurrentStep();
-            System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
+            //System.out.println("---------------------------"+cell.getParentGame().getCurrentStep());
         }
     }
 

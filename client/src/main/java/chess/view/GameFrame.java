@@ -142,7 +142,7 @@ public class GameFrame extends Stage implements Observer {
         if (!isWhitePlayer) count.stopTimer();
 
         grid = (GridPane) scene.lookup("#grid");
-        System.out.println("IS GRID NULL " + grid);
+        //System.out.println("IS GRID NULL " + grid);
         if (!isWhitePlayer) grid.setDisable(true);
         whiteMiniBox = (HBox) loader.getNamespace().get("whiteMiniBox");
         blackMiniBox = (HBox) loader.getNamespace().get("blackMiniBox");
@@ -214,12 +214,12 @@ public class GameFrame extends Stage implements Observer {
                         movesRecord.scrollTo(movesRecord.getItems().size()-1);
                     }
 
-                    System.out.print("Drag from cell: ");
-                    System.out.print("X:" + x);
-                    System.out.println(" Y:" + y);
-                    System.out.print("Drop on cell: ");
-                    System.out.print("X:" + x1);
-                    System.out.println(" Y:" + y1);
+//                    System.out.print("Drag from cell: ");
+//                    System.out.print("X:" + x);
+//                    System.out.println(" Y:" + y);
+//                    System.out.print("Drop on cell: ");
+//                    System.out.print("X:" + x1);
+//                    System.out.println(" Y:" + y1);
                     list.add(String.valueOf(x));
                     list.add(String.valueOf(y));
                     list.add(String.valueOf(x1));
@@ -282,8 +282,8 @@ public class GameFrame extends Stage implements Observer {
                 list.add("drag");
                 String x = getCoordinateX(source.getParent());
                 String y = getCoordinateY(source.getParent());
-                System.out.print("accessible x " + x);
-                System.out.println(" accessible y " + y);
+//                System.out.print("accessible x " + x);
+//                System.out.println(" accessible y " + y);
                 list.add(x);
                 list.add(y);
                 try {
@@ -295,7 +295,7 @@ public class GameFrame extends Stage implements Observer {
                 ClipboardContent content = new ClipboardContent();
                 content.putString(y + "" + x);
                 content.putImage(source.getImage());
-                System.out.println(y + "" + x);
+//                System.out.println(y + "" + x);
                 lastMovedFigure = source;
                 db.setContent(content);
                 currentEvent.consume();
@@ -323,17 +323,17 @@ public class GameFrame extends Stage implements Observer {
                         sources.add(source);
                     }
                 }
-                System.out.print(GridPane.getColumnIndex(node) + " ");
-                System.out.println(GridPane.getRowIndex(node));
+//                System.out.print(GridPane.getColumnIndex(node) + " ");
+//                System.out.println(GridPane.getRowIndex(node));
             }
         }
         this.setScene(scene);
         this.show();
         Iterator<Map.Entry<String, Pane>> iter = board.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<String, Pane> entry = iter.next();
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
+//        while (iter.hasNext()) {
+//            Map.Entry<String, Pane> entry = iter.next();
+//            System.out.println(entry.getKey() + " " + entry.getValue());
+//        }
         class ReplaceButtonHandler implements EventHandler<ActionEvent> {
             private Pane pane;
             private ImageView figure;
@@ -414,7 +414,7 @@ public class GameFrame extends Stage implements Observer {
                     opponentTimer.setText(listIn.get(5));
                 } else if ("steps".equals(listIn.get(0))) {
                     targets.clear();
-                    System.out.println("client sizeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+listIn.size());
+//                    System.out.println("client sizeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"+listIn.size());
                     for (String s : listIn) {
                         if (!s.equals("steps")) {
                             targets.add(board.get(s));
@@ -459,29 +459,21 @@ public class GameFrame extends Stage implements Observer {
                     alert.setContentText(message);
                     alert.showAndWait();
                     stage.close();
-                    List<String> list = new ArrayList<String>();
-                    list.add("logout");
-                    try {
-                        xmlOut.sendMessage(list);
-                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-                        e.printStackTrace();
-                    }
-                    List<String> list1 = new ArrayList<String>();
-                    list1.add("auth");
-                    list1.add(playerInfo.get(3));
-                    list1.add(playerInfo.get(4));
-                    try {
-                        xmlOut.sendMessage(list1);
-                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-                        e.printStackTrace();
-                    }
-                    List<String> listForProfile = new ArrayList<>();
-                    try {
-                        listForProfile= xmLin.receive();
-                    } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                    new ProfileFrame(xmLin, xmlOut, listForProfile);
+                    stage.close();
+//                    List<String> list = new ArrayList<String>();
+//                    list.add("reenter");
+//                    list.add(playerInfo.get(3));
+//                    list.add(playerInfo.get(4));
+//                    try {
+//                        xmlOut.sendMessage(list);
+//                    } catch (ParserConfigurationException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    } catch (TransformerConfigurationException e) {
+//                        e.printStackTrace();
+//                    }
+//                    new ProfileFrame(xmLin, xmlOut, playerInfo);
                 } else if ("replacePawn".equals(listIn.get(0))) {
                     Stage dialogStage = new Stage();
                     dialogStage.initModality(Modality.APPLICATION_MODAL);
@@ -665,8 +657,8 @@ public class GameFrame extends Stage implements Observer {
 //            x = translateForBlack(x);
 //            y = translateForBlack(y);
 //        }
-        System.out.print("X:" + x);
-        System.out.println(" Y:" + y);
+//        System.out.print("X:" + x);
+//        System.out.println(" Y:" + y);
     }
 
     private int translateForBlack(int coordinate) {
@@ -681,13 +673,13 @@ public class GameFrame extends Stage implements Observer {
         ImageView mini = null;
         ImageView image = new ImageView();
         Label label = null;
-        System.out.println("TARGET CHILDREN: " + target.getChildren().size());
+//        System.out.println("TARGET CHILDREN: " + target.getChildren().size());
 
         for (Node node : target.getChildren()) {
             if (node instanceof Label) {
                 label = (Label) node;
             } else if (node instanceof ImageView) {
-                System.out.println("THIS IS IMAGE");
+//                System.out.println("THIS IS IMAGE");
                 mini = (ImageView) node;
             }
         }
@@ -710,15 +702,15 @@ public class GameFrame extends Stage implements Observer {
             x = translateForBlack(x);
             y = translateForBlack(y);
         }
-        System.out.println("looking for pane with X:" + x + " Y:" + y);
+//        System.out.println("looking for pane with X:" + x + " Y:" + y);
         GridPane grid = (GridPane) scene.lookup("#grid");
         Pane pane = null;
         ObservableList<Node> children = grid.getChildren();
         if (x == 0 && y == 0) {
             for (Node node : children) {
                 if (GridPane.getColumnIndex(node) == null && GridPane.getRowIndex(node) == null) {
-                    System.out.println(GridPane.getColumnIndex(node));
-                    System.out.println(GridPane.getRowIndex(node));
+//                    System.out.println(GridPane.getColumnIndex(node));
+//                    System.out.println(GridPane.getRowIndex(node));
                     pane = (Pane) node;
                     break;
                 }
@@ -761,7 +753,6 @@ public class GameFrame extends Stage implements Observer {
             lastTakenFigure.setLayoutY(1);
             lastTakenFigure.setLayoutX(1);
         }
-
     }
 
     public String movesRecord(int fromX, int fromY, int toX, int toY) {
@@ -773,7 +764,7 @@ public class GameFrame extends Stage implements Observer {
 
 
     public void sendToMiniBox(ImageView figure) {
-        System.out.println("inside of sendtominibox");
+//        System.out.println("inside of sendtominibox");
         if (figure == null) return;
         figure.setPreserveRatio(true);
 //        if (figure.getId().contains("White") && isWhitePlayer) return;

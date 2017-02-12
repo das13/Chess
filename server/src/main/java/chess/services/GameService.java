@@ -95,7 +95,7 @@ public class GameService {
 
     public static List<String> steps(Game game, int x, int y) {
         Cell cell = game.getCell(x, y);
-        System.out.println(cell.getFigure());
+        //System.out.println(cell.getFigure());
         //System.out.println(cell.getFigure().allAccessibleMove().size() * 2);
         /*if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
             throw new RivalFigureException();
@@ -103,8 +103,8 @@ public class GameService {
         if (cell.isFigure()) {
             List<String> array = new ArrayList<String>();
             array.add("steps");
-            System.out.println(game.getCurrentStep());
-            System.out.println(game.getBoard()[x][y].getFigure().getType());
+//            System.out.println(game.getCurrentStep());
+//            System.out.println(game.getBoard()[x][y].getFigure().getType());
             if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
                 return array;
             }
@@ -112,7 +112,7 @@ public class GameService {
             for (Cell c : cell.getFigure().allAccessibleMove()) {
                 array.add(c.getY() + "" + c.getX());
             }
-            System.out.println(array.size());
+            //System.out.println(array.size());
             return array;
         } else {
             System.out.println("нет фигуры");
@@ -127,13 +127,13 @@ public class GameService {
         XMLSender otherSender = otherPlayer.getController().getSender();
         XMLSender sender = player.getController().getSender();
         int[] array = new int[4];
-        System.out.println("move");
+        //System.out.println("move");
         //out.println("enter coordinates of figure - x and y");
         int x1 = Integer.parseInt(str.get(1));
-        System.out.println(str.get(1));
-        System.out.println(str.get(2));
-        System.out.println(str.get(3));
-        System.out.println(str.get(4));
+//        System.out.println(str.get(1));
+//        System.out.println(str.get(2));
+//        System.out.println(str.get(3));
+//        System.out.println(str.get(4));
         array[0] = x1;
         int y1 = Integer.parseInt(str.get(2));
         array[1] = y1;
@@ -159,14 +159,14 @@ public class GameService {
 
                 // ЕСЛИ ПЫТАЕМСЯ ПОЙТИ НА НЕРАЗРЕШЕННУЮ КЛЕТКУ
                 if (!figure.allAccessibleMove().contains(game.getBoard()[x2][y2])) {
-                    System.out.println("CANCEL MOVE");
+                    //System.out.println("CANCEL MOVE");
                     answer.add("cancel");
                     sender.send(answer);
                     return answer;
                 }
                 // В ОСТАЛЬНЫХ СЛУЧАЯХ
                 else {
-                    System.out.println("begin" + x2 + " " + y2);
+                    //System.out.println("begin" + x2 + " " + y2);
 
                     // ПЕРЕМЕЩАЕМ ФИГУРУ
                     game.setLastFigureTaken(game.getBoard()[x2][y2].getFigure());
@@ -194,7 +194,7 @@ public class GameService {
                         out.add(answer.get(1));
                         out.add(answer.get(2));
                         out.add(str.get(5));
-                        System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2));
+                        //System.out.println(out.get(0)+" "+out.get(1)+" "+ out.get(2));
                         otherSender.send(out);
                         return answer;
                     }
@@ -204,7 +204,7 @@ public class GameService {
 
                     // ЕСЛИ ОКАЗЫВАЕТСЯ, ЧТО КОРОЛЬ ИГРОКА ОТКРЫВАЕТСЯ ДЛЯ АТАКИ, ОТМЕНЯЕМ ХОД
                     if (game.isPlayersKingAttacked(type)) {
-                        System.out.println(type + " KING IS ATTACKED");
+                        //System.out.println(type + " KING IS ATTACKED");
 
                         game.getBoard()[x1][y1].setFigure(game.getLastFigureMoved());
                         game.getLastFigureMoved().setCell(game.getBoard()[x1][y1]);
@@ -223,7 +223,7 @@ public class GameService {
                     // ЕСЛИ КОРОЛЬ СОПЕРНИКА АТАКОВАН, ПРОВЕРЯЕМ, ЕСТЬ ЛИ МАТ
                     else if (game.isPlayersKingAttacked(otherType)) {
 
-                        System.out.println(otherType + " KING IS ATTACKED");
+                        //System.out.println(otherType + " KING IS ATTACKED");
 
                         isCheckmate = true; // ПО УМОЛЧАНИЮ СЧИТАЕМ, ЧТО РАЗ НАПАЛИ НА КОРОЛЯ, ТО ДА
                         // ПРОВЕРЯЕМ ВСЕ ФИГУРЫ СОПЕРНИКА, МОГУТ ЛИ ОНИ УБРАТЬ ШАХ СВОИМИ ХОДАМИ
@@ -303,7 +303,7 @@ public class GameService {
                         }
                         // В СЛУЧАЕ МАТА ПОНИЖАЕМ/ПОВЫШАЕМ РЕЙТИНГИ ИГРОКОВ И РАССЫЛАЕМ
                         if (isCheckmate) {
-                            System.out.println("CHECKMATE");
+                            //System.out.println("CHECKMATE");
                             answer.add("checkmate");
                             answer.add(String.valueOf(type));
                             player.setRank(player.getRank() + 5);
@@ -328,9 +328,9 @@ public class GameService {
                     }
 
                     // ВО ВСЕХ ДРУГИХ СЛУЧАЯХ ЗАВЕРШАЕМ ХОД КАК ОБЫЧНО
-                    System.out.println("done" + x2 + " " + y2);
+                    //System.out.println("done" + x2 + " " + y2);
                     game.setCurrentStep(otherType);
-                    System.out.println("CURRENT STEP " + game.getCurrentStep());
+                    //System.out.println("CURRENT STEP " + game.getCurrentStep());
                     answer.add("moving");
                     out.add("rivalMove");
                     out.add(str.get(1));
