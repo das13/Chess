@@ -16,13 +16,16 @@ import java.util.List;
  */
 public class King extends Figure {
     Game game;
+
     public King() {
     }
+
     List<Cell> validCells;
 
     public King(Type type) {
         super(type);
     }
+
     public King(Type type, Cell cell) {
         super(type, cell);
     }
@@ -48,14 +51,19 @@ public class King extends Figure {
             if (isFirstMove()
                     && !game.isPlayersKingAttacked(this.getType())
                     && game.getCell(1, b).getFigure() == null
+                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(1, b))
                     && game.getCell(2, b).getFigure() == null
-                    && game.getCell(3, b).getFigure() == null) {
+                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(2, b))
+                    && game.getCell(3, b).getFigure() == null
+                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(3, b))) {
                 validCells.add(game.getCell(2, b));
             }
             if (isFirstMove()
                     && !game.isPlayersKingAttacked(this.getType())
                     && game.getCell(5, b).getFigure() == null
-                    && game.getCell(6, b).getFigure() == null) {
+                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))
+                    && game.getCell(6, b).getFigure() == null
+                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))) {
                 validCells.add(game.getCell(6, b));
             }
 
@@ -102,30 +110,31 @@ public class King extends Figure {
 
     public boolean castlingKingSideAllowed(Cell destination) {
         // if destination cell is proper for castling
-        if (!(destination.getX() == 6 && destination.getY() == this.getCell().getY())) return false;
+        //if (!(destination.getX() == 6 && destination.getY() == this.getCell().getY())) return false;
         //if castle is not on place
         if (game.getCell(7, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY()))) return false;
+        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY()))) return false;
         // if king's destination cell is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return false;
+        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return false;
+        System.out.println("ENEMY MOVES CONTAIN CELL 6." + this.getCell().getY() + " ? " + game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY())));
         return true;
     }
 
 
     public boolean castlingQueenSideAllowed(Cell destination) {
         // if destination cell is proper for castling
-        if (!(destination.getX() == 2 && destination.getY() == this.getCell().getY())) return false;
+        //if (!(destination.getX() == 2 && destination.getY() == this.getCell().getY())) return false;
         //if castle is not on place
         if (game.getCell(0, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
         // if cell king is going to pass is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(3, this.getCell().getY()))) return false;
+        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(3, this.getCell().getY()))) return false;
         // if king's destination cell is under attack
-        if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return false;
+        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return false;
         return true;
     }
 
