@@ -99,7 +99,7 @@ public class Controller extends Thread {
                     sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
                 }
                 if (str.get(0).equals("move")) {
-                    GameService.move(getCurrentGame(), str, player, otherPlayer);
+                    GameService.move(getCurrentGame(), str, player);
                 }
                 if ("replacePawn".equals(str.get(0))) {
                       getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));

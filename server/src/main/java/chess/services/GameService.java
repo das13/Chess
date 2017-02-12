@@ -120,9 +120,10 @@ public class GameService {
         }
     }
 
-    public static List<String> move(Game game, List<String> str, Player player, Player otherPlayer) {
+    public static List<String> move(Game game, List<String> str, Player player) {
         List<String> answer = new ArrayList<String>();
         List<String> out = new ArrayList<String>();
+        Player otherPlayer = game.getOtherPlayer(player);
         XMLSender otherSender = otherPlayer.getController().getSender();
         XMLSender sender = player.getController().getSender();
         int[] array = new int[4];
