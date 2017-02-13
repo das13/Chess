@@ -112,7 +112,7 @@ public class GameService {
             for (Cell c : cell.getFigure().allAccessibleMove()) {
                 array.add(c.getY() + "" + c.getX());
             }
-            //System.out.println(array.size());
+            //`System.out.println(array.size());
             return array;
         } else {
             System.out.println("нет фигуры");

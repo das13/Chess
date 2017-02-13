@@ -27,7 +27,7 @@ import java.util.List;
  * Created by Admin on 26.01.2017.
  */
 public class AuthFrame extends Stage {
-    Stage stage = this;
+    private final Stage stage = this;
 
     public AuthFrame(XMLin xmLin, XMLout xmlOut) {
         this.setTitle("Шахматы онлайн");
@@ -100,7 +100,7 @@ public class AuthFrame extends Stage {
                         ProfileFrame profileFrame = new ProfileFrame(xmLin, xmlOut, listIn);
                     } else if ("admin".equals(listIn.get(1))) {
                         stage.close();
-                        new AdminFrame(xmLin, xmlOut);
+                        new AdminFrame(xmLin, xmlOut, listIn);
                     } else if ("error".equals(listIn.get(1))) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.getDialogPane().getStylesheets().add("Skin.css");
@@ -116,7 +116,7 @@ public class AuthFrame extends Stage {
                         alert.setContentText("Вы уже вошли из другого приложения");
                         alert.showAndWait();
                     }
-                } catch (ParserConfigurationException | SAXException | IOException | TransformerConfigurationException e1) {
+                } catch (ParserConfigurationException | SAXException | IOException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -150,20 +150,7 @@ public class AuthFrame extends Stage {
                 loginInput.requestFocus();
                 event.consume();
             }
-
         });
-//        this.addEventHandler(KeyEvent.KEY_PRESSED, eve -> {
-//            if (eve.getCode() == KeyCode.TAB) {
-//                System.out.println(loginInput.getCaretPosition());
-//                if (loginInput.getCaretPosition() == 0) {
-//                    System.out.println("YES");
-//                    passInput.positionCaret(0);
-//                } else if (passInput.getCaretPosition() > 0) {
-//                    loginInput.positionCaret(0);
-//                }
-//                eve.consume();
-//            }
-//        });
         this.show();
     }
 }

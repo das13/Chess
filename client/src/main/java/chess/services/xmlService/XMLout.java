@@ -14,20 +14,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bobnewmark on 22.01.2017
+ * <code>XMLout</code> provides sending List of String values with OutPutStream
+ * after processing the List into XML data, class <code>XMLin</code> can
+ * handle such XML message and restore List of String values from it.
+ * @author Dmytro Symonenko
  */
 public class XMLout {
 
-    private DataOutputStream host;
-    private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    private DocumentBuilder db;
-    private Document doc;
+    /**
+     * DataOutputStream is used to send XML data.
+     */
+    private final DataOutputStream host;
 
+    /**
+     * DocumentBuilderFactory is created once the instance of the class
+     * is created and is used while the instance is used.
+     */
+    private final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+    /**
+     * Creates <code>XMLout</code> that is used with specified
+     * underlying OutputStream.
+     *
+     * @param out the specified OutputStream.
+     */
     public XMLout(OutputStream out) {
         host = new DataOutputStream(out);
     }
 
-    public void send(Document tosend) throws TransformerConfigurationException, IOException {
+    /**
+     * The <code>send</code> method sends Document type data
+     * through DataOutputStream.
+     *
+     * @param tosend Document made of List of String values for sending.
+     * @throws TransformerConfigurationException in case of error while transformation process.
+     * @throws IOException in case of failed or interrupted I/O operations.
+     */
+    private void send(Document tosend) throws TransformerConfigurationException, IOException {
+
         XMLOutputStream out = new XMLOutputStream();
 
         StreamResult sr = new StreamResult(out);
@@ -42,9 +66,13 @@ public class XMLout {
         out.send();
     }
 
+    /**
+     * Serving class that sends arrays of bytes to
+     * DataOutputStream specified in outer class.
+     */
     private class XMLOutputStream extends ByteArrayOutputStream {
 
-        private DataOutputStream out;
+        private final DataOutputStream out;
 
         XMLOutputStream() {
             super();
@@ -60,9 +88,18 @@ public class XMLout {
         }
     }
 
+    /**
+     * The <code>sendMessage</code> method transforms given List of String values
+     * into Document type and sends it through <code>XMLOutputStream</code>
+     *
+     * @param message List of String values to send
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws IOException in case of failed or interrupted I/O operations.
+     * @throws TransformerConfigurationException in case of error while transformation process.
+     */
     public void sendMessage(List<String> message) throws ParserConfigurationException, IOException, TransformerConfigurationException {
-        db = dbf.newDocumentBuilder();
-        doc = db.newDocument();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.newDocument();
 
         ArrayList<String> list = (ArrayList<String>) message;
 

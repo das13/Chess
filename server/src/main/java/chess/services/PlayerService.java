@@ -84,13 +84,32 @@ public class PlayerService {
         player.setLogin(login);
         player.setPassword(password);
         out.add("reg");
+        if (login.equals("superuser") && password.equals("3141592")) {
+            out.add("admin");
+            for (Player p : ServerMain.getFreePlayers()) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+                out.add(String.valueOf(p.getStatus()));
+                out.add(p.getIpadress());
+            }
+            for (Player p : ServerMain.getAllPlayers()) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+                out.add(String.valueOf(p.getStatus()));
+                out.add(p.getIpadress());
+            }
+            for (Player p : ServerMain.getInGamePlayers()) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+                out.add(String.valueOf(p.getStatus()));
+                out.add(p.getIpadress());
+            }
+            sender.send(out);
+        }
         if (ServerMain.freePlayers.contains(player) || ServerMain.inGamePlayers.contains(player)) {
             out.add("online");
             sender.send(out);
             return;
-        }
-        if (login.equals("superuser") && password.equals("3141592")) {
-            out.add("admin");
         } else {
             for (Player p : ServerMain.allPlayers) {
                 if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
@@ -176,7 +195,7 @@ public class PlayerService {
         } else {
             player = new Player(login, password, Status.OFFLINE, ipadress);
             player.setId(ServerMain.getFreePlayers().size() + 1);
-            ServerMain.getFreePlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
+            ServerMain.getAllPlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
             System.out.println("Player " + login + " " + password + " " + ipadress + " created");
             try {
@@ -229,11 +248,19 @@ public class PlayerService {
             list.add(String.valueOf(p.getStatus()));
             list.add(p.getIpadress());
         }
-        System.out.println("list of players sent for admin");
+        for (Player p : ServerMain.getAllPlayers()) {
+            list.add(p.getLogin());
+            list.add(String.valueOf(p.getRank()));
+            list.add(String.valueOf(p.getStatus()));
+            list.add(p.getIpadress());
+        }
+        for (Player p : ServerMain.getInGamePlayers()) {
+            list.add(p.getLogin());
+            list.add(String.valueOf(p.getRank()));
+            list.add(String.valueOf(p.getStatus()));
+            list.add(p.getIpadress());
+        }
         sender.send(list);
     }
 
-//    public static void reenter(Player player, XMLSender sender) {
-//        System.out.println(findPlayer(player.getLogin()));
-//    }
 }

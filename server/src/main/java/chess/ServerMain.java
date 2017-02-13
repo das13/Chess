@@ -58,8 +58,9 @@ public class ServerMain {
     public static List<Player> getFreePlayers() {
         return freePlayers;
     }
-    public static void setFreePlayers(List<Player> list) {
-        freePlayers = list;
+
+    public static List<Player> getInGamePlayers() {
+        return inGamePlayers;
     }
 
     public static List<Player> getAllPlayers() {

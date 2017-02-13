@@ -17,30 +17,61 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bobnewmark on 22.01.2017
+ * <code>XMLin</code> provides receiving XML data from InputStream
+ * and returns a List of String values after processing received data.
+ * @author Dmytro Symonenko
  */
 public class XMLin {
 
-    private DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-    private DocumentBuilder docBuilder;
-    private Document doc;
+    /**
+     * DocumentBuilderFactory is created once the instance of the class
+     * is created and is used while the instance is used.
+     */
+    private final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
 
-    private InputStream input;
+    /**
+     * InputStream that is used to get XML data to process.
+     */
+    private final InputStream input;
 
+    /**
+     * Creates a XMLin that is used with specified
+     * underlying InputStream.
+     *
+     * @param input the specified InputStream
+     */
     public XMLin(InputStream input) {
         this.input = input;
     }
 
+    /**
+     * Serving class that operates with array of bytes from
+     * InputStream specified in outer class.
+     */
     private class XMLInputStream extends ByteArrayInputStream {
 
-        private DataInputStream in;
+        /**
+         * DataInputStream that specifies InputStream of outer class
+         * for building arrays of received data.
+         */
+        private final DataInputStream in;
 
+        /**
+         * Creates a <code>XMLInputStream</code> with initializing
+         * DataInputStream with InputStream of outer class.
+         */
         XMLInputStream() {
             super(new byte[2]);
             this.in = new DataInputStream(input);
         }
 
-        void recive() throws IOException {
+        /**
+         * The <code>receive</code> method reads data from DataInputStream
+         * by arrays of received bytes.
+         * @throws IOException if the first byte cannot be read, stream
+         * is closed or other IO error occurs.
+         */
+        void receive() throws IOException {
             int i = in.readInt();
             byte[] data = new byte[i];
             in.read(data, 0, i);
@@ -51,12 +82,24 @@ public class XMLin {
         }
     }
 
-    public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
 
-        docBuilder = docBuilderFact.newDocumentBuilder();
+    /**
+     * Recieves XML from InputStream specified in class constructor
+     * and transforms it into List of String values.
+     * @return List of String values from received XML nodes.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws IOException in case of failed or interrupted I/O operations.
+     * @throws SAXException when there are errors or warnings in parsing XML data.
+     */
+    public List<String> receive() throws ParserConfigurationException,  IOException, SAXException {
+
+        /**
+         *
+         */
+        DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
-        xmlin.recive();
-        doc = docBuilder.parse(xmlin);
+        xmlin.receive();
+        Document doc = docBuilder.parse(xmlin);
 
         List<String> list = new ArrayList<String>();
 

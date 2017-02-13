@@ -12,24 +12,23 @@ import java.net.Socket;
 
 
 public class ClientMain extends Application {
-    final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
-    private Socket socket;
+
+    private final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
     private XMLout xmlOut;
     private XMLin xmLin;
+
     public ClientMain() throws IOException {
-        socket = new Socket(Constants.HOST, Constants.PORT);
+        Socket socket = new Socket(Constants.HOST, Constants.PORT);
         xmlOut = new XMLout(socket.getOutputStream());
         xmLin = new XMLin(socket.getInputStream());
     }
 
     public static void main(String[] args) throws IOException {
         launch(args);
-
     }
 
     public void start(Stage primaryStage) throws Exception {
-           primaryStage=new AuthFrame(xmLin, xmlOut);
+        new AuthFrame(xmLin, xmlOut);
         logger.info("Client launched");
     }
-
 }

@@ -29,108 +29,125 @@ import java.util.List;
 /**
  * Created by viacheslav koshchii on 24.01.2017.
  */
-public class ProfileFrame extends Stage {
+class ProfileFrame extends Stage {
     private String firstConf;
     private String secondConf;
-    private String myName;
-    private String myPass;
     private List<String> listIn;
 
-    public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
+    ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
         Stage stage = this;
         Pane grid = new Pane();
-        //grid.setAlignment(Pos.TOP_LEFT);
-        //grid.setHgap(0);
-        //grid.setVgap(0);
         grid.setPadding(new Insets(0, 25, 25, 50));
         Scene scene = new Scene(grid, 480, 350);
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
+
+        //Setting main title
         Text profiletitle = new Text("Мой Профиль");
         profiletitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         profiletitle.relocate(70, 10);
+
+        //And title for free players list
         Text freetitle = new Text("Свободные игроки");
         freetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         freetitle.relocate(260, 10);
+
         grid.getChildren().add(profiletitle);
         grid.getChildren().add(freetitle);
+
+        //Creating pane for current player's profile data
         Pane profile = new Pane();
         profile.relocate(10, 30);
         profile.setPrefSize(230, 180);
         profile.setBorder(new Border(new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
         profile.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
+
+        //Player's nickname (editable)
+        Text loginname = new Text("Никнейм");
+        loginname.setFont(Font.font(14));
+        loginname.relocate(15, 20);
+        TextField login = new TextField(freePlayers.get(3));
+        String myName = login.getText();
+        login.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
+        login.relocate(85, 15);
+        login.setPrefWidth(130);
+
+        //Player's password (editable)
+        Text passwordname = new Text("Пароль");
+        passwordname.setFont(Font.font(14));
+        passwordname.relocate(15, 60);
+        TextField password = new TextField(freePlayers.get(4));
+        String myPass = password.getText();
+        password.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
+        password.relocate(85, 55);
+        password.setPrefWidth(130);
+
+        //Player's rank
+        Text myrankname = new Text("Рейтинг");
+        myrankname.setFont(Font.font(14));
+        myrankname.relocate(15, 100);
+        Text myrank = new Text(freePlayers.get(5));
+        myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
+        myrank.relocate(130, 100);
+
+        /*Button for saving player's data if it is edited
+        and player wants to save changes*/
+        Button saveBtn = new Button("Сохранить");
+        saveBtn.setMinWidth(90);
+        saveBtn.setMinHeight(25);
+        saveBtn.relocate(70, 140);
+        saveBtn.setDisable(true);
+        saveBtn.setOnAction(e -> {
+            List<String> list = new ArrayList<String>();
+            list.add("saveProfile");
+            list.add(freePlayers.get(2));
+            list.add(login.getText());
+            list.add(password.getText());
+            try {
+                xmlOut.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        //Adding all set elements to profile Pane
+        profile.getChildren().add(loginname);
+        profile.getChildren().add(login);
+        profile.getChildren().add(passwordname);
+        profile.getChildren().add(password);
+        profile.getChildren().add(myrankname);
+        profile.getChildren().add(myrank);
+        profile.getChildren().add(saveBtn);
+
+        //Creating pane for displaying free players
         Pane freeplayer = new Pane();
         freeplayer.relocate(250, 30);
         freeplayer.setPrefSize(220, 280);
         freeplayer.setBorder(new Border(new BorderStroke(Color.GREY, BorderStrokeStyle.SOLID, new CornerRadii(3), new BorderWidths(2))));
         freeplayer.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(3), Insets.EMPTY)));
-        Text loginname = new Text("Никнейм");
-        loginname.setFont(Font.font(14));
-        loginname.relocate(15, 20);
-        profile.getChildren().add(loginname);
-        TextField login = new TextField(freePlayers.get(3));
-        myName = login.getText();
-        login.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        login.relocate(85, 15);
-        login.setPrefWidth(130);
-        profile.getChildren().add(login);
-        Text passwordname = new Text("Пароль");
-        passwordname.setFont(Font.font(14));
-        passwordname.relocate(15, 60);
-        profile.getChildren().add(passwordname);
-        TextField password = new TextField(freePlayers.get(4));
-        myPass = password.getText();
-        password.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
-        password.relocate(85, 55);
-        password.setPrefWidth(130);
-        profile.getChildren().add(password);
-        Text myrankname = new Text("Рейтинг");
-        myrankname.setFont(Font.font(14));
-        myrankname.relocate(15, 100);
-        profile.getChildren().add(myrankname);
-        Text myrank = new Text(freePlayers.get(5));
-        myrank.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
-        myrank.relocate(130, 100);
-        profile.getChildren().add(myrank);
-        Button saveBtn = new Button("Сохранить");
-        //saveBtn.setPadding(new Insets(0));
-        saveBtn.setMinWidth(90);
-        saveBtn.setMinHeight(25);
-        saveBtn.relocate(70, 140);
-        saveBtn.setDisable(true);
-        saveBtn.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                List<String> list = new ArrayList<String>();
-                list.add("saveProfile");
-                list.add(freePlayers.get(2));
-                list.add(login.getText());
-                list.add(password.getText());
-                try {
-                    xmlOut.sendMessage(list);
-                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
-        profile.getChildren().add(saveBtn);
+
+        //Filling free players pane with free players' logins and ratings
         for (int i = 6; i < freePlayers.size(); i += 2) {
             final String name = freePlayers.get(i);
+
+            //Setting each free player's name
             Text player = new Text(freePlayers.get(i));
             player.setFont(Font.font("Tahoma", FontWeight.NORMAL, 14));
             player.relocate(20, 12 * (i - 5));
-            freeplayer.getChildren().add(player);
+
+            //Setting each free player's rank
             Text rank = new Text(freePlayers.get(i + 1));
             rank.setFont(Font.font("Tahoma", FontWeight.BOLD, 14));
             rank.setFill(Color.valueOf("#47484a"));
             rank.relocate(95, 12 * (i - 5));
-            freeplayer.getChildren().add(rank);
+
+            //Setting button to call particular player to play
             Button btn = new Button("Играть");
             btn.setPadding(new Insets(0));
             btn.setPrefWidth(60.0);
             btn.setPrefHeight(20.0);
             btn.relocate(150, 12 * (i - 5));
-            //grid.getChildren().add(hbBtn);
             btn.setOnAction(new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent e) {
                     List<String> list = new ArrayList<String>();
@@ -143,21 +160,25 @@ public class ProfileFrame extends Stage {
                     }
                 }
             });
+
+            //Adding elements to freeplayer Pane
+            freeplayer.getChildren().add(player);
+            freeplayer.getChildren().add(rank);
             freeplayer.getChildren().add(btn);
         }
+
+        //Button for refreshing freeplayer Pane
         Button refreshButton = new Button("Обновить список игроков");
         refreshButton.setMinWidth(100);
         refreshButton.setMinHeight(20);
         refreshButton.relocate(270, 320);
-        refreshButton.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                List<String> list = new ArrayList<String>();
-                list.add("refresh");
-                try {
-                    xmlOut.sendMessage(list);
-                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
-                }
+        refreshButton.setOnAction(e -> {
+            List<String> list = new ArrayList<>();
+            list.add("refresh");
+            try {
+                xmlOut.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                e1.printStackTrace();
             }
         });
         grid.getChildren().add(freeplayer);
@@ -168,7 +189,7 @@ public class ProfileFrame extends Stage {
         this.show();
 
 
-
+        //Class for receiving List of String values from XMLin
         class MyTask<Void> extends Task<Void> {
             @Override
             public Void call() throws Exception {
@@ -177,19 +198,16 @@ public class ProfileFrame extends Stage {
                     firstConf = list.get(0);
                     secondConf = list.get(1);
                     listIn=list;
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (TransformerConfigurationException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
+                } catch (ParserConfigurationException | SAXException | IOException e) {
                     e.printStackTrace();
                 }
                 return null;
             }
         }
+
         MyTask<Void> task = new MyTask<Void>();
+
+        //In case of different possible answers from server
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
@@ -212,7 +230,6 @@ public class ProfileFrame extends Stage {
                         }
                         stage.close();
                         new GameFrame(xmLin, xmlOut, false, freePlayers);
-
                     }
                     if (alert.getResult() == ButtonType.CANCEL) {
                         list.add("No");
@@ -294,7 +311,6 @@ public class ProfileFrame extends Stage {
                     stage.close();
                     new ProfileFrame(xmLin, xmlOut, listIn);
                 }
-
             }
         }
         login.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -308,5 +324,4 @@ public class ProfileFrame extends Stage {
         thread.setDaemon(true);
         thread.start();
     }
-
 }
