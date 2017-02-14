@@ -120,7 +120,7 @@ public class GameService {
         }
     }
 
-    public static void move(Game game, List<String> str, Player player) {
+    public static List<String> move(Game game, List<String> str, Player player) {
         List<String> answer = new ArrayList<String>();
         List<String> out = new ArrayList<String>();
         Player otherPlayer = game.getOtherPlayer(player);
@@ -153,6 +153,7 @@ public class GameService {
             if (!figure.allAccessibleMove().contains(game.getBoard()[x2][y2])) {
                 answer.add("cancel");
                 sender.send(answer);
+                return answer;
             }
             // В ОСТАЛЬНЫХ СЛУЧАЯХ
             else {
@@ -184,6 +185,7 @@ public class GameService {
                     out.add(answer.get(2));
                     out.add(str.get(5));
                     otherSender.send(out);
+                    return answer;
                 }
 
                 game.setAllWhiteMoves();
@@ -201,6 +203,7 @@ public class GameService {
                     }
                     answer.add("cancel");
                     sender.send(answer);
+                    return answer;
                 }
 
                 // ЕСЛИ КОРОЛЬ СОПЕРНИКА АТАКОВАН, ПРОВЕРЯЕМ, ЕСТЬ ЛИ МАТ
@@ -293,6 +296,7 @@ public class GameService {
                         }
                         otherSender.send(answer);
                         sender.send(answer);
+                        return answer;
                     }
                 }
 
@@ -306,14 +310,19 @@ public class GameService {
                 out.add(str.get(4));
                 out.add(str.get(5));
                 otherSender.send(out);
+                return answer;
             }
+
+
         } catch (ReplacePawnException e) {
             answer.add("replacePawn");
             answer.add(String.valueOf(y1));
             answer.add(String.valueOf(x1));
             answer.add(y2 + "" + x2);
+            return answer;
         } catch (TransformerConfigurationException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
         }
+        return answer;
     }
 }

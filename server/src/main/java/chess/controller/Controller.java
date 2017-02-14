@@ -23,12 +23,13 @@ import java.util.List;
  */
 public class Controller extends Thread {
 
-    private final Socket socket;
+    private Socket socket;
     private InputStream in;
     private OutputStream out;
     private DataInputStream input;
     private DataOutputStream output;
     private Player player;
+    private Player otherPlayer;
     private XMLSender sender;
     private XMLReciever reciever;
 
@@ -104,7 +105,7 @@ public class Controller extends Thread {
                     GameService.move(getCurrentGame(), str, player);
                 }
                 if ("replacePawn".equals(str.get(0))) {
-                      getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
+                    getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
                     XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
                     List<String> out = new ArrayList<String>();
                     out.add("rivalReplace");
@@ -136,7 +137,11 @@ public class Controller extends Thread {
         return sender;
     }
 
-    private void close() {
+    public void setSender(XMLSender sender) {
+        this.sender = sender;
+    }
+
+    public void close() {
         try {
             in.close();
             out.close();
@@ -157,11 +162,19 @@ public class Controller extends Thread {
         player.setCurrentGame(game);
     }
 
-    private Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
-    private Game getCurrentGame() {
+    public Player getOtherPlayer() {
+        return otherPlayer;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public Game getCurrentGame() {
         return getPlayer().getCurrentGame();
     }
 
@@ -173,11 +186,25 @@ public class Controller extends Thread {
         player.setPassword(password);
     }
 
+
+
     public void setPlayerIpadress(String ipadress) {
         player.setIpadress(ipadress);
     }
 
     public void setPlayerStatus(Status status) {
         player.setStatus(status);
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public DataInputStream getInput() {
+        return input;
+    }
+
+    public DataOutputStream getOutput() {
+        return output;
     }
 }
