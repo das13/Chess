@@ -210,7 +210,6 @@ public class GameFrame extends Stage implements Observer {
                     list.add(String.valueOf(x1));
                     list.add(String.valueOf(y1));
                     list.add(count.getTime());
-                    grid.setDisable(true);
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -236,6 +235,7 @@ public class GameFrame extends Stage implements Observer {
                         }
                     }
                     success = true;
+                    grid.setDisable(true);
                 }
                 resetSelected();
                 event.setDropCompleted(success);
@@ -390,7 +390,7 @@ public class GameFrame extends Stage implements Observer {
                             targets.add(board.get(s));
                         }
                     }
-                    
+
                     for (Pane pane : targets) {
                         pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
                         pane.setOnDragOver(new DragOver(pane));
@@ -642,6 +642,7 @@ public class GameFrame extends Stage implements Observer {
             }
         }
         target.getChildren().add(image);
+        
 
     }
 
@@ -709,7 +710,6 @@ public class GameFrame extends Stage implements Observer {
             lastTakenFigure.setLayoutX(1);
         }
         grid.setDisable(false);
-
     }
 
     /**
