@@ -40,8 +40,8 @@ class AdminFrame extends Stage {
     private String secondConf;
     private List<String> listIn;
     private final ObservableList<PlayerRow> players;
-    private final List<String> info;
-    private final TableView<PlayerRow> table;
+    private List<String> info;
+    private TableView<PlayerRow> table;
 
     AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
         Stage stage = this;
@@ -104,7 +104,7 @@ class AdminFrame extends Stage {
             public void handle(Event event) {
                 if ("reg".equals(listIn.get(0))) {
                     Platform.runLater(() -> {
-                        table.setItems(getPlayers(listIn));
+                        table.setItems(getPlayers());
                     });
                     MyTask myTask = new MyTask<Void>();
                     myTask.setOnSucceeded(new MyHandler());
@@ -114,7 +114,7 @@ class AdminFrame extends Stage {
                 }
                 if ("admin_getPlayers".equals(listIn.get(0))) {
                     Platform.runLater(() -> {
-                        table.setItems(getPlayers(listIn));
+                        table.setItems(getPlayers());
                     });
                     MyTask myTask = new MyTask<Void>();
                     myTask.setOnSucceeded(new MyHandler());
@@ -165,7 +165,7 @@ class AdminFrame extends Stage {
     }
 
     //Class for receiving List of String values from XMLin
-    private class MyTask<Void> extends Task<Void> {
+    class MyTask<Void> extends Task<Void> {
         @Override
         public Void call() throws Exception {
             try {
@@ -180,11 +180,11 @@ class AdminFrame extends Stage {
         }
     }
 
-    private ObservableList<PlayerRow> getPlayers(List<String> list) {
+    private ObservableList<PlayerRow> getPlayers() {
         players.clear();
-        if ("admin_getPlayers".equals(list.get(0))) {
-            for (int i = 2; i < list.size(); i += 4) {
-                players.add(new PlayerRow(list.get(i), list.get(i + 1), list.get(i + 2), list.get(i + 3)));
+        if ("admin_getPlayers".equals(listIn.get(0))) {
+            for (int i = 2; i < listIn.size(); i += 4) {
+                players.add(new PlayerRow(listIn.get(i), listIn.get(i + 1), listIn.get(i + 2), listIn.get(i + 3)));
             }
         }
         return players;
@@ -204,7 +204,7 @@ class AdminFrame extends Stage {
             this.ip = ip;
         }
 
-        String getLogin() {
+        public String getLogin() {
             return login;
         }
 
