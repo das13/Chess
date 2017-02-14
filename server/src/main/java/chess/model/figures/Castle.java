@@ -13,14 +13,8 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Castle extends Figure {
-    public Castle() {
-    }
 
-    List<Cell> validCells;
-
-    public Castle(Type type) {
-        super(type);
-    }
+    private List<Cell> validCells;
 
     public Castle(Type type, Cell cell) {
         super(type, cell);
@@ -36,7 +30,6 @@ public class Castle extends Figure {
 
         validCells.clear();
         if (getCell() == null) return validCells;
-        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();
@@ -91,15 +84,6 @@ public class Castle extends Figure {
                 break;
             }
         }
-
-        //all cells that have figures of the same Type as this are removed here
-//        for (int i = 0; i < validCells.size(); i++) {
-//            if (validCells.get(i).getFigure() != null && validCells.get(i).isFriendlyCell(this)) {
-//                validCells.remove(i);
-//            }
-//        }
         return validCells;
-
-
     }
 }

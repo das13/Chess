@@ -1,6 +1,5 @@
 package chess.model.figures;
 
-import chess.Constants;
 import chess.exceptions.ReplacePawnException;
 import chess.model.Cell;
 import chess.model.Figure;
@@ -8,23 +7,13 @@ import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class King extends Figure {
-    Game game;
-
-    public King() {
-    }
-
-    List<Cell> validCells;
-
-    public King(Type type) {
-        super(type);
-    }
+    private Game game;
 
     public King(Type type, Cell cell) {
         super(type, cell);
@@ -35,68 +24,63 @@ public class King extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        Type otherType = this.getType() == Type.WHITE ? Type.BLACK : Type.WHITE;
-        validCells = new ArrayList<Cell>();
-
-        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
+        List<Cell> validCells = new ArrayList<>();
         game = getCell().getParentGame();
         int a = getCell().getX();
         int b = getCell().getY();
 
         /* adding all cells to the validCells list as long as they don't have figures
         * and as we have a cell with a figure we add it and check another direction */
-
-        synchronized (validCells) {
-            validCells.clear();
-            if (isFirstMove()
-                    && !game.isPlayersKingAttacked(this.getType())
-                    && game.getCell(1, b).getFigure() == null
-                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(1, b))
-                    && game.getCell(2, b).getFigure() == null
-                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(2, b))
-                    && game.getCell(3, b).getFigure() == null
-                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(3, b))) {
-                validCells.add(game.getCell(2, b));
-            }
-            if (isFirstMove()
-                    && !game.isPlayersKingAttacked(this.getType())
-                    && game.getCell(5, b).getFigure() == null
-                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))
-                    && game.getCell(6, b).getFigure() == null
-                    && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))) {
-                validCells.add(game.getCell(6, b));
-            }
-
-            for (int x = a - 1; x <= a + 1; x++) {
-                for (int y = b - 1; y <= b + 1; y++) {
-                    if (x < 0 || x > 7) {
-                        continue;
-                    }
-                    if (y < 0 || y > 7) {
-                        continue;
-                    }
-                    if (game.getCell(x, y).getFigure() == this) {
-                        continue;
-                    }
-                    if (game.getCell(x, y).isFriendlyCell(this)) {
-                        continue;
-                    }
-                    if (game.getEnemyMoves(this.getType()).contains(game.getCell(x, y))) {
-                        continue;
-                    }
-                    validCells.add(game.getCell(x, y));
-                }
-            }
-            return validCells;
+        validCells.clear();
+        if (isFirstMove()
+                && !game.isPlayersKingAttacked(this.getType())
+                && game.getCell(1, b).getFigure() == null
+                && !game.getEnemyMoves(this.getType()).contains(game.getCell(1, b))
+                && game.getCell(2, b).getFigure() == null
+                && !game.getEnemyMoves(this.getType()).contains(game.getCell(2, b))
+                && game.getCell(3, b).getFigure() == null
+                && !game.getEnemyMoves(this.getType()).contains(game.getCell(3, b))) {
+            validCells.add(game.getCell(2, b));
         }
+        if (isFirstMove()
+                && !game.isPlayersKingAttacked(this.getType())
+                && game.getCell(5, b).getFigure() == null
+                && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))
+                && game.getCell(6, b).getFigure() == null
+                && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))) {
+            validCells.add(game.getCell(6, b));
+        }
+
+        for (int x = a - 1; x <= a + 1; x++) {
+            for (int y = b - 1; y <= b + 1; y++) {
+                if (x < 0 || x > 7) {
+                    continue;
+                }
+                if (y < 0 || y > 7) {
+                    continue;
+                }
+                if (game.getCell(x, y).getFigure() == this) {
+                    continue;
+                }
+                if (game.getCell(x, y).isFriendlyCell(this)) {
+                    continue;
+                }
+                if (game.getEnemyMoves(this.getType()).contains(game.getCell(x, y))) {
+                    continue;
+                }
+                validCells.add(game.getCell(x, y));
+            }
+        }
+        return validCells;
     }
+
 
     @Override
     public void move(Cell destination) throws ReplacePawnException {
-        if (allAccessibleMove().contains(destination) && castlingKingSideAllowed(destination)) {
+        if (allAccessibleMove().contains(destination) && castlingKingSideAllowed()) {
             castlingKingside();
             setFirstMove(false);
-        } else if (allAccessibleMove().contains(destination) && castlingQueenSideAllowed(destination)) {
+        } else if (allAccessibleMove().contains(destination) && castlingQueenSideAllowed()) {
             castlingQueenside();
             setFirstMove(false);
         } else {
@@ -108,52 +92,40 @@ public class King extends Figure {
         }
     }
 
-    public boolean castlingKingSideAllowed(Cell destination) {
-        // if destination cell is proper for castling
-        //if (!(destination.getX() == 6 && destination.getY() == this.getCell().getY())) return false;
+    private boolean castlingKingSideAllowed() {
         //if castle is not on place
         if (game.getCell(7, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
-        // if cell king is going to pass is under attack
-        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY()))) return false;
-        // if king's destination cell is under attack
         //if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return false;
         System.out.println("ENEMY MOVES CONTAIN CELL 6." + this.getCell().getY() + " ? " + game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY())));
         return true;
     }
 
 
-    public boolean castlingQueenSideAllowed(Cell destination) {
-        // if destination cell is proper for castling
-        //if (!(destination.getX() == 2 && destination.getY() == this.getCell().getY())) return false;
+    private boolean castlingQueenSideAllowed() {
         //if castle is not on place
         if (game.getCell(0, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
-        // if cell king is going to pass is under attack
-        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(3, this.getCell().getY()))) return false;
-        // if king's destination cell is under attack
         //if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return false;
         return true;
     }
 
-    public void castlingKingside() {
+    private void castlingKingside() {
         try {
             Castle castle = (Castle) game.getCell(7, this.getCell().getY()).getFigure();
-            //System.out.println("IS CASTLE NULL? " + castle == null);
             castle.getCell().setFigure(null);
             castle.setCell(game.getCell(5, this.getCell().getY()));
             game.getCell(5, this.getCell().getY()).setFigure(castle);
             castle.setFirstMove(false);
             this.move(game.getCell(6, this.getCell().getY()));
-            //System.out.println("CASTLING KINGSIDE");
         } catch (ReplacePawnException e) {
             //ignore
         }
     }
 
-    public void castlingQueenside() {
+    private void castlingQueenside() {
         try {
             Castle castle = (Castle) game.getCell(0, this.getCell().getY()).getFigure();
             castle.getCell().setFigure(null);
@@ -161,7 +133,6 @@ public class King extends Figure {
             game.getCell(3, this.getCell().getY()).setFigure(castle);
             castle.setFirstMove(false);
             this.move(game.getCell(2, this.getCell().getY()));
-            //System.out.println("CASTLING QUEENSIDE");
         } catch (ReplacePawnException e) {
             //ignore
         }

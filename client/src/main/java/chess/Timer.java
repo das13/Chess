@@ -3,7 +3,6 @@ package chess;
 import chess.view.GameFrame;
 
 import java.util.Observable;
-import java.util.Observer;
 
 import static java.lang.Thread.sleep;
 
@@ -14,10 +13,9 @@ public class Timer extends Observable implements Runnable {
 
     private int time = 30 * 60;
     private boolean active = true;
-    private GameFrame game;
-    int minutes;
-    int seconds;
-    String sec;
+    private int minutes;
+    private int seconds;
+    private String sec;
 
     public Timer(GameFrame game) {
         addObserver(game);
@@ -42,7 +40,6 @@ public class Timer extends Observable implements Runnable {
             String message = minutes + ":" + sec;
             setChanged();
             notifyObservers(message);
-            //System.out.println(minutes + ":" + sec);
 
             try {
                 sleep(1000);
@@ -55,7 +52,7 @@ public class Timer extends Observable implements Runnable {
         System.out.println("You lose!");
     }
 
-    public boolean getActivity() {
+    private boolean getActivity() {
         return active;
     }
 
@@ -69,19 +66,5 @@ public class Timer extends Observable implements Runnable {
 
     public String getTime() {
         return minutes + ":" + sec;
-    }
-
-    public int getTimeForServer(){
-        return time;
-    }
-
-    @Override
-    public synchronized void addObserver(Observer o) {
-        super.addObserver(o);
-    }
-
-    @Override
-    public void notifyObservers(Object arg) {
-        super.notifyObservers(arg);
     }
 }

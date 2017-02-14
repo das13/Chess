@@ -12,15 +12,15 @@ import java.util.List;
 public class Game extends Thread {
     private Player whitePlayer;
     private Player blackPlayer;
-    private King whiteKing;
-    private King blackKing;
+    private final King whiteKing;
+    private final King blackKing;
     private Figure lastFigureMoved;
     private Figure lastFigureTaken = null;
-    private Cell[][] board = new Cell[8][8];
-    private List<Figure> whiteFigures = new ArrayList<Figure>();
-    private List<Figure> blackFigures = new ArrayList<Figure>();
-    private List<Cell> allWhiteMoves = new ArrayList<Cell>();
-    private List<Cell> allBlackMoves = new ArrayList<Cell>();
+    private final Cell[][] board = new Cell[8][8];
+    private final List<Figure> whiteFigures = new ArrayList<Figure>();
+    private final List<Figure> blackFigures = new ArrayList<Figure>();
+    private final List<Cell> allWhiteMoves = new ArrayList<Cell>();
+    private final List<Cell> allBlackMoves = new ArrayList<Cell>();
     private Type currentStep = Type.WHITE;
 
     public Game(Player whitePlayer, Player blackPlayer) {
@@ -70,43 +70,6 @@ public class Game extends Thread {
         }
         setAllWhiteMoves();
         setAllBlackMoves();
-        //System.out.println("THIS IS NEW GAME AND WHITE MOVES ARE: " + allWhiteMoves.size() + " AND BLACK ARE: " + allBlackMoves.size());
-    }
-
-    public Game() {
-        this.currentStep = Type.WHITE;
-        for (int i = 0; i < Constants.BOARDSIZE; i++) {
-            for (int j = 0; j < Constants.BOARDSIZE; j++) {
-                board[i][j] = new Cell(i, j, this);
-            }
-        }
-        blackKing = new King(Type.BLACK, board[4][0]);
-        whiteKing = new King(Type.WHITE, board[4][7]);
-        board[0][0].setFigure(new Castle(Type.BLACK, board[0][0]));
-        board[1][0].setFigure(new Knight(Type.BLACK, board[1][0]));
-        board[2][0].setFigure(new Bishop(Type.BLACK, board[2][0]));
-        board[3][0].setFigure(new Queen(Type.BLACK, board[3][0]));
-        board[4][0].setFigure(blackKing);
-        board[5][0].setFigure(new Bishop(Type.BLACK, board[5][0]));
-        board[6][0].setFigure(new Knight(Type.BLACK, board[6][0]));
-        board[7][0].setFigure(new Castle(Type.BLACK, board[7][0]));
-        board[0][7].setFigure(new Castle(Type.WHITE, board[0][7]));
-        board[1][7].setFigure(new Knight(Type.WHITE, board[1][7]));
-        board[2][7].setFigure(new Bishop(Type.WHITE, board[2][7]));
-        board[3][7].setFigure(new Queen(Type.WHITE, board[3][7]));
-        board[4][7].setFigure(whiteKing);
-        board[5][7].setFigure(new Bishop(Type.WHITE, board[5][7]));
-        board[6][7].setFigure(new Knight(Type.WHITE, board[6][7]));
-        board[7][7].setFigure(new Castle(Type.WHITE, board[7][7]));
-        for (int i = 0; i < Constants.BOARDSIZE; i++) {
-            board[i][1].setFigure(new Pawn(Type.BLACK, board[i][1]));
-            //board[1][2].setFigure(new Pawn(Type.BLACK, board[0][2]));
-            //board[0][6].setFigure(new Pawn(Type.WHITE, board[0][6]));
-            board[i][6].setFigure(new Pawn(Type.WHITE, board[i][6]));
-        }
-        setAllWhiteMoves();
-        setAllBlackMoves();
-
     }
 
     public Cell getCell(int x, int y) {
@@ -135,20 +98,8 @@ public class Game extends Thread {
         return board;
     }
 
-    public Player getWhitePlayer() {
-        return whitePlayer;
-    }
-
-    public void setWhitePlayer(Player whitePlayer) {
-        this.whitePlayer = whitePlayer;
-    }
-
     public Player getBlackPlayer() {
         return blackPlayer;
-    }
-
-    public void setBlackPlayer(Player blackPlayer) {
-        this.blackPlayer = blackPlayer;
     }
 
     public Player getOtherPlayer(Player player) {
@@ -165,25 +116,6 @@ public class Game extends Thread {
         } else {
             return blackFigures;
         }
-    }
-
-    public void deleteFigure(Figure figure) {
-        if(figure == null) return;
-        if (figure.getType() == Type.WHITE) {
-            whiteFigures.remove(figure);
-        } else {
-            blackFigures.remove(figure);
-        }
-    }
-
-    // возвращает true если белый король под шахом
-    public boolean isWhiteKingAttacked() {
-        return allBlackMoves.contains(whiteKing.getCell());
-    }
-
-    // возвращает true если черный король под шахом
-    public boolean isBlackKingAttacked() {
-        return allWhiteMoves.contains(blackKing.getCell());
     }
 
     // возвращает true если белый король под шахом
@@ -227,17 +159,6 @@ public class Game extends Thread {
             return allWhiteMoves;
         }
     }
-
-    // возвращает множество потенциальных ходов соперника
-    public List<Cell> getPlayerMoves(Type type) {
-        if (type == Type.WHITE) {
-            return allWhiteMoves;
-        } else {
-            return allBlackMoves;
-        }
-    }
-
-
 
     // составляет множество всех потенциальных ходов игрока белыми
     public void setAllWhiteMoves() {

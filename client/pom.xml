@@ -42,7 +42,6 @@
         <version>1.0</version>
     </parent>
 
-    <groupId>chessMain</groupId>
     <artifactId>client</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>

@@ -8,7 +8,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -93,15 +92,12 @@ public class XMLin {
      */
     public List<String> receive() throws ParserConfigurationException,  IOException, SAXException {
 
-        /**
-         *
-         */
         DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.receive();
         Document doc = docBuilder.parse(xmlin);
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         Element element = doc.getDocumentElement();
         String root = element.getAttribute("function");

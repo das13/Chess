@@ -263,7 +263,7 @@ public class GameFrame extends Stage implements Observer {
 
             public void handle(MouseEvent event) {
                 currentEvent = event;
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("drag");
                 String x = getCoordinateX(source.getParent());
                 String y = getCoordinateY(source.getParent());
@@ -333,7 +333,7 @@ public class GameFrame extends Stage implements Observer {
                 ImageView newFigure = new ImageView(figure.getImage());
                 newFigure.setOnDragDetected(new DragDetected(newFigure));
                 pane.getChildren().add(newFigure);
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("replacePawn");
                 String x1 = getCoordinateX(pane);
                 String y1 = getCoordinateY(pane);
@@ -364,7 +364,7 @@ public class GameFrame extends Stage implements Observer {
             }
         }
         /*Creating MyTask for receiving messages from server*/
-        MyTask<Void> task = new MyTask<Void>();
+        MyTask<Void> task = new MyTask<>();
 
         /*Serving class for reacting according to what server sent*/
         class MyHandler implements EventHandler {

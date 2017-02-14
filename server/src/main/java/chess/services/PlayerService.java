@@ -1,5 +1,6 @@
 package chess.services;
 
+import chess.Constants;
 import chess.ServerMain;
 import chess.controller.Controller;
 import chess.model.Player;
@@ -19,26 +20,11 @@ import java.util.List;
  * Created by viacheslav koshchii on 20.01.2017.
  */
 public class PlayerService {
-    public static void reg(Controller controller, String login, String password, String ipadress) throws IOException {
-        /*
-        * Изменил аргументы метода, вместо Player теперь Controller
-        *
-        * bobnewmark 22.01
-        *
-        * */
+    public static void reg(Controller controller, String login, String password, String ipadress) {
         controller.setPlayerLogin(login);
         controller.setPlayerPassword(password);
         controller.setPlayerIpadress(ipadress);
         controller.setPlayerStatus(Status.OFFLINE);
-
-//        out.println("enter your nickname");
-//        controller.setPlayerNickname(in.readLine());
-//        out.println("enter your login");
-//        controller.setPlayerLogin(in.readLine());
-//        out.println("enter your password");
-//        controller.setPlayerPassword(in.readLine());
-//        out.println("You are offline. Get auth");
-//        controller.getPlayer().setStatus(Status.OFFLINE);
     }
 
     public static void reenter(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -49,7 +35,7 @@ public class PlayerService {
             player.setStatus(Status.FREE);
             ServerMain.inGamePlayers.remove(player);
         }
-        if (login.equals("superuser") && password.equals("3141592")) {
+        if (login.equals(Constants.ADMIN_NAME) && password.equals(Constants.ADMIN_PASS)) {
             out.add("admin");
             sender.send(out);
         } else {
@@ -130,8 +116,8 @@ public class PlayerService {
         sender.send(out);
     }
 
-    public static List<String> refresh(Player player, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
-        List<String> out = new ArrayList<String>();
+    public static List<String> refresh(Player player, XMLSender sender) {
+        List<String> out = new ArrayList<>();
         out.add("Ok");
         out.add(String.valueOf(player.getId()));
         out.add(player.getLogin());
@@ -147,24 +133,22 @@ public class PlayerService {
         return out;
     }
 
-    public static List<String> saveProfile(String login, String password, int id) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+    public static List<String> saveProfile(String login, String password, int id) {
         Player player;
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("saveconfirm");
         try {
             player = findPlayerByIdAll(id);
             System.out.println(login + " " + password + " " + id);
             list.add("Ok");
-            player.setLogin(login);
-            player.setPassword(password);
+            if (player != null) {
+                player.setLogin(login);
+                player.setPassword(password);
+            }
             try {
                 XMLsaveLoad.savePlayers();
                 System.out.println("Players saved succsessfully");
-            } catch (TransformerException e) {
-                e.printStackTrace();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (ParserConfigurationException e) {
+            } catch (TransformerException | ParserConfigurationException | FileNotFoundException e) {
                 e.printStackTrace();
             }
         } catch (NullPointerException e) {
@@ -199,13 +183,12 @@ public class PlayerService {
     }
 
     // дополнительный метод для поиска, стоит использовать при авторизации, регистрации и т.д.
-    public static Player findPlayer(String login) {
+    private static Player findPlayer(String login) {
         for (Player p : ServerMain.freePlayers) {
             if (p.getLogin().equals(login)) {
                 return p;
             }
         }
-        System.out.println("was looking for player login " + login + ", result is FALSE");
         return null;
     }
 
@@ -215,22 +198,20 @@ public class PlayerService {
                 return p;
             }
         }
-        System.out.println("was looking for player id " + id + ", result is FALSE");
         return null;
     }
 
-    public static Player findPlayerByIdAll(int id) {
+    private static Player findPlayerByIdAll(int id) {
         for (Player p : ServerMain.allPlayers) {
             if (p.getId() == id) {
                 return p;
             }
         }
-        System.out.println("was looking for player id " + id + ", result is FALSE");
         return null;
     }
 
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("admin_getPlayers");
         list.add("all");
         for (Player p : ServerMain.getAllPlayers()) {

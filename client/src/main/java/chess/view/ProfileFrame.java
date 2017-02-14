@@ -3,7 +3,6 @@ package chess.view;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -99,7 +98,7 @@ class ProfileFrame extends Stage {
         saveBtn.relocate(70, 140);
         saveBtn.setDisable(true);
         saveBtn.setOnAction(e -> {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add("saveProfile");
             list.add(freePlayers.get(2));
             list.add(login.getText());
@@ -148,16 +147,14 @@ class ProfileFrame extends Stage {
             btn.setPrefWidth(60.0);
             btn.setPrefHeight(20.0);
             btn.relocate(150, 12 * (i - 5));
-            btn.setOnAction(new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent e) {
-                    List<String> list = new ArrayList<String>();
-                    list.add("callPlayer");
-                    list.add(name);
-                    try {
-                        xmlOut.sendMessage(list);
-                    } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                        e1.printStackTrace();
-                    }
+            btn.setOnAction(e -> {
+                List<String> list = new ArrayList<>();
+                list.add("callPlayer");
+                list.add(name);
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
                 }
             });
 
@@ -205,7 +202,7 @@ class ProfileFrame extends Stage {
             }
         }
 
-        MyTask<Void> task = new MyTask<Void>();
+        MyTask<Void> task = new MyTask<>();
 
         //In case of different possible answers from server
         class MyHandler implements EventHandler {
@@ -218,7 +215,7 @@ class ProfileFrame extends Stage {
                     alert.setTitle("Приглашение");
                     alert.setHeaderText(null);
                     alert.setContentText("Вас приглашает " + secondConf);
-                    List<String> list = new ArrayList<String>();
+                    List<String> list = new ArrayList<>();
                     list.add("confirm");
                     alert.showAndWait();
                     if (alert.getResult() == ButtonType.OK) {

@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Server {
+class Server {
 
-    private static List<Player> players =
+    private static final List<Player> players =
             Collections.synchronizedList(new ArrayList<Player>());
     private ServerSocket server;
 
@@ -25,9 +25,6 @@ public class Server {
                 Socket socket = server.accept();
                 Controller controller = new Controller(socket);
                 controller.start();
-//                Player player = new Player(socket);
-//                player.start();
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,18 +36,8 @@ public class Server {
     private void closeAll() {
         try {
             server.close();
-//            synchronized(players) {
-//                Iterator<Player> iter = players.iterator();
-//                while(iter.hasNext()) {
-//                    ((Player) iter.next()).close();
-//                }
-//            }
         } catch (Exception e) {
             System.err.println("Threads did not close!");
         }
-    }
-
-    public static List<Player> getPlayers() {
-        return players;
     }
 }

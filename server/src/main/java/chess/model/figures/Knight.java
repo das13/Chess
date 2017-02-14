@@ -14,22 +14,15 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Knight extends Figure {
-    public Knight() {
-    }
-    List<Cell> validCells;
-    public Knight(Type type) {
-        super(type);
-    }
 
     public Knight(Type type, Cell cell) {
         super(type, cell);
     }
 
     public List<Cell> allAccessibleMove()  {
-        validCells = new ArrayList<Cell>();
+        List<Cell> validCells = new ArrayList<Cell>();
             validCells.clear();
             if(getCell() == null) return validCells;
-            //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
             Game game = getCell().getParentGame();
             if(getCell().getX() + 2<8 && getCell().getY() + 1<8)
                 validCells.add(game.getCell(getCell().getX() + 2, getCell().getY() + 1));
@@ -58,7 +51,5 @@ public class Knight extends Figure {
                 }
             }
             return validCells;
-
-
     }
 }

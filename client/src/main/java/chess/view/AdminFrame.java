@@ -40,8 +40,8 @@ class AdminFrame extends Stage {
     private String secondConf;
     private List<String> listIn;
     private final ObservableList<PlayerRow> players;
-    private List<String> info;
-    private TableView<PlayerRow> table;
+    private final List<String> info;
+    private final TableView<PlayerRow> table;
 
     AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
         Stage stage = this;
@@ -96,7 +96,7 @@ class AdminFrame extends Stage {
         this.show();
         refreshButton.fire();
 
-        MyTask<Void> task = new MyTask<Void>();
+        MyTask<Void> task = new MyTask<>();
 
         //In case of different possible answers from server
         class MyHandler implements EventHandler {
@@ -165,7 +165,7 @@ class AdminFrame extends Stage {
     }
 
     //Class for receiving List of String values from XMLin
-    class MyTask<Void> extends Task<Void> {
+    private class MyTask<Void> extends Task<Void> {
         @Override
         public Void call() throws Exception {
             try {
@@ -182,9 +182,9 @@ class AdminFrame extends Stage {
 
     private ObservableList<PlayerRow> getPlayers(List<String> list) {
         players.clear();
-        if ("admin_getPlayers".equals(listIn.get(0))) {
-            for (int i = 2; i < listIn.size(); i += 4) {
-                players.add(new PlayerRow(listIn.get(i), listIn.get(i + 1), listIn.get(i + 2), listIn.get(i + 3)));
+        if ("admin_getPlayers".equals(list.get(0))) {
+            for (int i = 2; i < list.size(); i += 4) {
+                players.add(new PlayerRow(list.get(i), list.get(i + 1), list.get(i + 2), list.get(i + 3)));
             }
         }
         return players;
@@ -204,7 +204,7 @@ class AdminFrame extends Stage {
             this.ip = ip;
         }
 
-        public String getLogin() {
+        String getLogin() {
             return login;
         }
 

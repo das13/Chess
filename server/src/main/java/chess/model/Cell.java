@@ -5,9 +5,9 @@ package chess.model;
  */
 public class Cell {
     private Figure figure;
-    private int x;
-    private int y;
-    private Game game;
+    private final int x;
+    private final int y;
+    private final Game game;
     public Cell( int x, int y, Game game){
         this.x=x;
         this.y=y;
@@ -41,7 +41,6 @@ public class Cell {
         return game;
     }
     public boolean isFigure(){
-        if(figure==null) return false;
-        return true;
+        return figure != null;
     }
 }

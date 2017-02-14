@@ -23,13 +23,12 @@ import java.util.List;
  */
 public class Controller extends Thread {
 
-    private Socket socket;
+    private final Socket socket;
     private InputStream in;
     private OutputStream out;
     private DataInputStream input;
     private DataOutputStream output;
     private Player player;
-    private Player otherPlayer;
     private XMLSender sender;
     private XMLReciever reciever;
 
@@ -137,11 +136,7 @@ public class Controller extends Thread {
         return sender;
     }
 
-    public void setSender(XMLSender sender) {
-        this.sender = sender;
-    }
-
-    public void close() {
+    private void close() {
         try {
             in.close();
             out.close();
@@ -162,19 +157,11 @@ public class Controller extends Thread {
         player.setCurrentGame(game);
     }
 
-    public Player getPlayer() {
+    private Player getPlayer() {
         return player;
     }
 
-    public Player getOtherPlayer() {
-        return otherPlayer;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Game getCurrentGame() {
+    private Game getCurrentGame() {
         return getPlayer().getCurrentGame();
     }
 
@@ -186,27 +173,11 @@ public class Controller extends Thread {
         player.setPassword(password);
     }
 
-    public void setPlayerNickname(String nickname) {
-        player.setNickname(nickname);
-    }
-
     public void setPlayerIpadress(String ipadress) {
         player.setIpadress(ipadress);
     }
 
     public void setPlayerStatus(Status status) {
         player.setStatus(status);
-    }
-
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public DataInputStream getInput() {
-        return input;
-    }
-
-    public DataOutputStream getOutput() {
-        return output;
     }
 }

@@ -20,17 +20,15 @@ import java.util.List;
  */
 public class XMLReciever {
 
-    private DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-    private DocumentBuilder docBuilder;
-    private Document doc;
-    private InputStream input;
+    private final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
+    private final InputStream input;
 
     public XMLReciever(InputStream input) {
         this.input = input;
     }
 
     private class XMLInputStream extends ByteArrayInputStream {
-        private DataInputStream in;
+        private final DataInputStream in;
 
         XMLInputStream() {
             super(new byte[2]);
@@ -50,10 +48,10 @@ public class XMLReciever {
     // method returns Document that is built from InputStream
     public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
 
-        docBuilder = docBuilderFact.newDocumentBuilder();
+        DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.recive();
-        doc = docBuilder.parse(xmlin);
+        Document doc = docBuilder.parse(xmlin);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Result output = new StreamResult(new File("input.xml"));
         Source input = new DOMSource(doc);

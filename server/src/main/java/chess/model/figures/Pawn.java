@@ -14,14 +14,6 @@ import java.util.List;
  * Created by viacheslav koshchii on 17.01.2017.
  */
 public class Pawn extends Figure {
-    public Pawn() {
-
-    }
-    List<Cell> validCells;
-
-    public Pawn(Type type) {
-        super(type);
-    }
 
     public Pawn(Type type, Cell cell) {
         super(type, cell);
@@ -36,11 +28,10 @@ public class Pawn extends Figure {
     }
 
     public List<Cell> allAccessibleMove() {
-        validCells = new ArrayList<Cell>();
+        List<Cell> validCells = new ArrayList<Cell>();
 
         validCells.clear();
         if (getCell() == null) return validCells;
-        //if(!getCell().getParentGame().getCurrentStep().equals(getType())) return validCells;
         Game game = getCell().getParentGame();
         int koef = 1;
         if (getType() == Type.WHITE) {
@@ -71,5 +62,4 @@ public class Pawn extends Figure {
         }
         return validCells;
     }
-
 }

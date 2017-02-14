@@ -83,7 +83,7 @@ public class AuthFrame extends Stage {
                 alert.showAndWait();
 
             } else {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("auth");
                 list.add(loginInput.getText());
                 list.add(passInput.getText());

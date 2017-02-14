@@ -17,17 +17,15 @@ import java.util.List;
  */
 public class XMLSender {
 
-    private OutputStream output;
-    private DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    private DocumentBuilder db;
-    private Document doc;
+    private final OutputStream output;
+    private final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
     public XMLSender(OutputStream output) {
         this.output = output;
     }
     private class XMLOutputStream extends ByteArrayOutputStream {
 
-        private DataOutputStream out;
+        private final DataOutputStream out;
 
         XMLOutputStream() {
             super();
@@ -55,56 +53,23 @@ public class XMLSender {
         } catch (TransformerException ex) {
             ex.printStackTrace();
         }
-       /* Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Result output = new StreamResult(new File("outputserver.xml"));
-        Source input = new DOMSource(doc);
-        try {
-            transformer.transform(input, output);
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        }*/
         out.send();
     }
 
     public void send(List<String> message) throws ParserConfigurationException, IOException, TransformerConfigurationException {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
-        List<String> list = message;
 
         Element root = doc.createElement("root");
-        root.setAttribute("function", list.get(0));
+        root.setAttribute("function", message.get(0));
         doc.appendChild(root);
         Element args1 = doc.createElement("args");
         root.appendChild(args1);
-        for (int i = 1; i < list.size(); i++) {
+        for (int i = 1; i < message.size(); i++) {
             Element el = doc.createElement("arg");
-            el.appendChild(doc.createTextNode(list.get(i)));
+            el.appendChild(doc.createTextNode(message.get(i)));
             args1.appendChild(el);
         }
         send(doc);
     }
-
-//    public void sendFreePlayers() throws ParserConfigurationException, IOException, TransformerConfigurationException {
-//        db = dbf.newDocumentBuilder();
-//        doc = db.newDocument();
-//        Element root = doc.createElement("freePlayers");
-//        doc.appendChild(root);
-//        Element memberList = doc.createElement("players");
-//        root.appendChild(memberList);
-//        List<Player> temp = ServerMain.getFreePlayers();
-//        for (int i = 0; i < temp.size(); i++) {
-//            Player player = temp.get(i);
-//            if (player.getStatus() == Status.FREE) {
-//                Element member = doc.createElement("player");
-//                memberList.appendChild(member);
-//                Element nickname = doc.createElement("nickname");
-//                nickname.appendChild(doc.createTextNode(player.getNickname()));
-//                member.appendChild(nickname);
-//                Element rank = doc.createElement("rank");
-//                rank.appendChild(doc.createTextNode(String.valueOf(player.getRank())));
-//                member.appendChild(rank);
-//            }
-//        }
-//        send(doc);
-//    }
 }

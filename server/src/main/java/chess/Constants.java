@@ -3,8 +3,11 @@ package chess;
 /**
  * Created by slava on 09.02.17.
  */
-public interface Constants {
-    static String HOST="localhost";
-    static int PORT=2544;
-    static int BOARDSIZE=8;
+public class Constants {
+    public final static String HOST = "localhost";
+    public final static int PORT = 2544;
+    public final static int BOARDSIZE = 8;
+    public final static int START_RANK = 50;
+    public final static String ADMIN_NAME = "superuser";
+    public final static String ADMIN_PASS = "3141592";
 }

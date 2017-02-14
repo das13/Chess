@@ -80,7 +80,7 @@ class RegFrame extends Stage {
                 alert.setContentText("Заполните поля логин/пароль");
                 alert.showAndWait();
             } else {
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("reg");
                 list.add(loginInput.getText());
                 list.add(passInput.getText());

@@ -30,14 +30,9 @@ import java.util.List;
 public class XMLsaveLoad {
 
     private static List<Player> players = new ArrayList<Player>();
-    //static volatile File filePlayers = new File("server/Resources/savedPlayers.xml");
-    static volatile File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
-    static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-
-
-    public XMLsaveLoad() throws ParserConfigurationException {
-    }
+    private static final File filePlayers = new File("server/Resources/savedPlayers.xml");
+    //static volatile File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
+    private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
     public static void savePlayers() throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
