@@ -1,8 +1,8 @@
 package chess.view;
 
-import chess.Constants;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -11,7 +11,10 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -38,6 +41,7 @@ class AdminFrame extends Stage {
     private List<String> listIn;
     private final ObservableList<PlayerRow> players;
     private List<String> info;
+    private TableView<PlayerRow> table;
 
     AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
         Stage stage = this;
@@ -67,6 +71,7 @@ class AdminFrame extends Stage {
         refreshButton.setOnAction(e -> refreshButtonClicked());
         Button banButton = new Button("Забанить/разбанить");
         banButton.setOnAction(e -> banButtonClicked());
+        banButton.setDisable(true);
         Button offerButton = new Button("Играть");
         offerButton.setOnAction(e -> offerButtonClicked());
         Button exitButton = new Button("Выход");
@@ -78,7 +83,7 @@ class AdminFrame extends Stage {
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().addAll(refreshButton, banButton, offerButton, exitButton);
 
-        TableView<PlayerRow> table = new TableView<>();
+        table = new TableView<>();
         table.getColumns().addAll(loginColumn, rankColumn, statusColumn, ipColumn);
         table.setItems(players);
 
@@ -89,22 +94,7 @@ class AdminFrame extends Stage {
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.show();
-
-        //Class for receiving List of String values from XMLin
-        class MyTask<Void> extends Task<Void> {
-            @Override
-            public Void call() throws Exception {
-                try {
-                    List<String> list = xmLin.receive();
-                    firstConf = list.get(0);
-                    secondConf = list.get(1);
-                    listIn=list;
-                } catch (ParserConfigurationException | SAXException | IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }
+        refreshButton.fire();
 
         MyTask<Void> task = new MyTask<Void>();
 
@@ -112,39 +102,25 @@ class AdminFrame extends Stage {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                if ("confirm".equals(firstConf)) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Приглашение");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Вас приглашает " + secondConf);
-                    List<String> list = new ArrayList<>();
-                    list.add("confirm");
-                    alert.showAndWait();
-                    if (alert.getResult() == ButtonType.OK) {
-                        list.add("Ok");
-                        try {
-                            xmlOut.sendMessage(list);
-                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        stage.close();
-                        new GameFrame(xmLin, xmlOut, false, info);
-                    }
-                    if (alert.getResult() == ButtonType.CANCEL) {
-                        list.add("No");
-                        try {
-                            xmlOut.sendMessage(list);
-                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
-                    }
+                if ("reg".equals(listIn.get(0))) {
+                    Platform.runLater(() -> {
+                        table.setItems(getPlayers(listIn));
+                    });
+                    MyTask myTask = new MyTask<Void>();
+                    myTask.setOnSucceeded(new MyHandler());
+                    Thread thread1 = new Thread(myTask);
+                    thread1.setDaemon(true);
+                    thread1.start();
+                }
+                if ("admin_getPlayers".equals(listIn.get(0))) {
+                    Platform.runLater(() -> {
+                        table.setItems(getPlayers(listIn));
+                    });
+                    MyTask myTask = new MyTask<Void>();
+                    myTask.setOnSucceeded(new MyHandler());
+                    Thread thread1 = new Thread(myTask);
+                    thread1.setDaemon(true);
+                    thread1.start();
                 }
                 if ("notconfirm".equals(firstConf)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -176,30 +152,37 @@ class AdminFrame extends Stage {
                         thread1.start();
                     }
                 }
-                if("refresh".equals(firstConf)){
+                if ("refresh".equals(firstConf)) {
                     stage.close();
                     new AdminFrame(xmLin, xmlOut, info);
                 }
             }
         }
+        task.setOnSucceeded(new MyHandler());
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    private ObservableList<PlayerRow> getPlayers() {
+    //Class for receiving List of String values from XMLin
+    class MyTask<Void> extends Task<Void> {
+        @Override
+        public Void call() throws Exception {
+            try {
+                List<String> list = xmLin.receive();
+                firstConf = list.get(0);
+                secondConf = list.get(1);
+                listIn = list;
+            } catch (ParserConfigurationException | SAXException | IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private ObservableList<PlayerRow> getPlayers(List<String> list) {
         players.clear();
-        List<String> list = new ArrayList<>();
-        list.add("admin_getPlayers");
-        try {
-            xmLout.sendMessage(list);
-        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-            e.printStackTrace();
-        }
-        List<String> listIn = null;
-        try {
-            listIn = xmLin.receive();
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
-        }
-        if (listIn != null && "admin_getPlayers".equals(listIn.get(0))) {
+        if ("admin_getPlayers".equals(listIn.get(0))) {
             for (int i = 2; i < listIn.size(); i += 4) {
                 players.add(new PlayerRow(listIn.get(i), listIn.get(i + 1), listIn.get(i + 2), listIn.get(i + 3)));
             }
@@ -207,7 +190,7 @@ class AdminFrame extends Stage {
         return players;
     }
 
-    private class PlayerRow {
+    public class PlayerRow {
 
         private String login;
         private String rank;
@@ -257,6 +240,13 @@ class AdminFrame extends Stage {
 
     private void refreshButtonClicked() {
         players.clear();
+        List<String> list = new ArrayList<>();
+        list.add("admin_getPlayers");
+        try {
+            xmLout.sendMessage(list);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
     private void banButtonClicked() {
@@ -264,11 +254,17 @@ class AdminFrame extends Stage {
     }
 
     private void offerButtonClicked() {
-        this.close();
+        List<String> list = new ArrayList<>();
+        list.add("callPlayer");
+        PlayerRow row = table.getSelectionModel().getSelectedItem();
+        String name = row.getLogin();
+        list.add(name);
+        System.out.println(name);
         try {
-            GameFrame game = new GameFrame(xmLin, xmLout, true, null);
-        } catch (Exception e) {
-            e.printStackTrace();
+            xmLout.sendMessage(list);
+            System.out.println("offer sent");
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+            e1.printStackTrace();
         }
     }
 

@@ -51,6 +51,7 @@ public class PlayerService {
         }
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
+            sender.send(out);
         } else {
             for (Player p : ServerMain.allPlayers) {
                 if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
@@ -86,25 +87,14 @@ public class PlayerService {
         out.add("reg");
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
-            for (Player p : ServerMain.getFreePlayers()) {
-                out.add(p.getLogin());
-                out.add(String.valueOf(p.getRank()));
-                out.add(String.valueOf(p.getStatus()));
-                out.add(p.getIpadress());
-            }
             for (Player p : ServerMain.getAllPlayers()) {
                 out.add(p.getLogin());
                 out.add(String.valueOf(p.getRank()));
                 out.add(String.valueOf(p.getStatus()));
                 out.add(p.getIpadress());
             }
-            for (Player p : ServerMain.getInGamePlayers()) {
-                out.add(p.getLogin());
-                out.add(String.valueOf(p.getRank()));
-                out.add(String.valueOf(p.getStatus()));
-                out.add(p.getIpadress());
-            }
             sender.send(out);
+            return;
         }
         if (ServerMain.freePlayers.contains(player) || ServerMain.inGamePlayers.contains(player)) {
             out.add("online");
@@ -242,19 +232,8 @@ public class PlayerService {
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> list = new ArrayList<String>();
         list.add("admin_getPlayers");
-        for (Player p : ServerMain.getFreePlayers()) {
-            list.add(p.getLogin());
-            list.add(String.valueOf(p.getRank()));
-            list.add(String.valueOf(p.getStatus()));
-            list.add(p.getIpadress());
-        }
+        list.add("all");
         for (Player p : ServerMain.getAllPlayers()) {
-            list.add(p.getLogin());
-            list.add(String.valueOf(p.getRank()));
-            list.add(String.valueOf(p.getStatus()));
-            list.add(p.getIpadress());
-        }
-        for (Player p : ServerMain.getInGamePlayers()) {
             list.add(p.getLogin());
             list.add(String.valueOf(p.getRank()));
             list.add(String.valueOf(p.getStatus()));
@@ -262,5 +241,4 @@ public class PlayerService {
         }
         sender.send(list);
     }
-
 }
