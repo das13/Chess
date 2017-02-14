@@ -390,6 +390,7 @@ public class GameFrame extends Stage implements Observer {
                             targets.add(board.get(s));
                         }
                     }
+                    
                     for (Pane pane : targets) {
                         pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
                         pane.setOnDragOver(new DragOver(pane));
