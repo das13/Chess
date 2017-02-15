@@ -183,8 +183,8 @@ public class PlayerService {
     }
 
     // дополнительный метод для поиска, стоит использовать при авторизации, регистрации и т.д.
-    private static Player findPlayer(String login) {
-        for (Player p : ServerMain.freePlayers) {
+    public static Player findPlayer(String login) {
+        for (Player p : ServerMain.allPlayers) {
             if (p.getLogin().equals(login)) {
                 return p;
             }
@@ -199,6 +199,14 @@ public class PlayerService {
             }
         }
         return null;
+    }
+
+    public static void updatePlayer(Player fresh) {
+        for (int i = 0; i < ServerMain.allPlayers.size(); i++) {
+            if (ServerMain.allPlayers.get(i).getLogin().equals(fresh.getLogin())) {
+                ServerMain.allPlayers.get(i).setRank(fresh.getRank());
+            }
+        }
     }
 
     private static Player findPlayerByIdAll(int id) {
