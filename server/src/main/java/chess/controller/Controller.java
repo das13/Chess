@@ -158,6 +158,7 @@ public class Controller extends Thread {
         }
     }
 
+
     public void setCurrentGame(Game game) {
         player.setCurrentGame(game);
     }
