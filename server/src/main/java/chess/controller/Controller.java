@@ -212,6 +212,17 @@ public class Controller extends Thread {
                 if ("admin_getPlayers".equals(str.get(0))) {
                     PlayerService.adminGetPlayers(sender);
                 }
+                if ("offerDraw".equals(str.get(0))) {
+                    Player otherPlayer = player.getCurrentGame().getOtherPlayer(player);
+                    XMLSender otherSender = otherPlayer.getController().getSender();
+                    otherSender.send(str);
+                }
+                if ("acceptDraw".equals(str.get(0))) {
+                    GameService.draw(player);
+                }
+                if ("resign".equals(str.get(0))) {
+                    GameService.endGame(str.get(0), player, player.getCurrentGame().getOtherPlayer(player));
+                }
             }
 
         } catch (IOException e) {

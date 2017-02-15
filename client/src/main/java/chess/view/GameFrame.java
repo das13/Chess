@@ -14,10 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -137,12 +134,35 @@ public class GameFrame extends Stage implements Observer {
         grid = (GridPane) scene.lookup("#grid");
         Button offerDrawButton = (Button) scene.lookup("#offerDrawButton");
         offerDrawButton.setOnMouseClicked(e -> {
-            count.stopTimer();
+            List<String> list = new ArrayList<>();
+            list.add("offerDraw");
+            try {
+                xmlOut.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                e1.printStackTrace();
+            }
         });
 
         Button resignButton = (Button) scene.lookup("#resignButton");
         resignButton.setOnMouseClicked(e -> {
-            moveFromTo(lastMoveToX, lastMoveToY, lastMoveFromX, lastMoveFromY);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initOwner(stage);
+            alert.getDialogPane().getStylesheets().add("Skin.css");
+            alert.setTitle("Сдаться?");
+            alert.setHeaderText(null);
+            alert.setContentText("Хотите сдаться? (Рейтинг -10)");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                List<String> list = new ArrayList<>();
+                list.add("resign");
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                alert.close();
+            }
         });
 
         count = new Timer(this);
@@ -162,9 +182,11 @@ public class GameFrame extends Stage implements Observer {
         /*Serving class for drag and drop of pieces*/
         class DragOver implements EventHandler<DragEvent> {
             private Pane target;
+
             DragOver(Pane target) {
                 this.target = target;
             }
+
             public void handle(DragEvent event) {
                 if (event.getGestureSource() != target &&
                         event.getDragboard().hasImage()) {
@@ -413,68 +435,62 @@ public class GameFrame extends Stage implements Observer {
                         pane.setOnDragDropped(new DragDropped(pane));
                     }
                 } else if ("cancel".equals(listIn.get(0))) {
-                        grid.setDisable(false);
-                        cancelLastMove();
+                    grid.setDisable(false);
+                    cancelLastMove();
                 } else if ("checkmate".equals(listIn.get(0))) {
-                        String message;
-                        String rank = "";
-                        if (playerInfo.get(3).equals(listIn.get(2))) {
-                            int result = parseInt(playerInfo.get(5));
-                            int correction = parseInt(listIn.get(3));
-                            result += correction;
-                            rank = String.valueOf(result);
-                            playerInfo.set(5, rank);
-                        }
-                        if (playerInfo.get(3).equals(listIn.get(4))) {
-                            int result = parseInt(playerInfo.get(5));
-                            int correction = parseInt(listIn.get(5));
-                            result += correction;
-                            rank = String.valueOf(result);
-                            playerInfo.set(5, rank);
-                        }
-                        if ("WHITE".equals(listIn.get(1))) {
-                            message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
-                        } else {
-                            message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
-                        }
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Конец игры");
-                        alert.setHeaderText(null);
-                        alert.setContentText(message);
-                        alert.showAndWait();
-                        stage.close();
-                        new ProfileFrame(xmLin, xmlOut, listIn);
-                        return;
+                    String message;
+                    String rank = "";
+                    if (playerInfo.get(3).equals(listIn.get(3))) {
+                        rank = listIn.get(5);
+                        playerInfo.set(5, rank);
+                    }
+                    if (playerInfo.get(3).equals(listIn.get(4))) {
+                        rank = listIn.get(8);
+                        playerInfo.set(5, rank);
+                    }
+                    if ("WHITE".equals(listIn.get(1))) {
+                        message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
+                    } else {
+                        message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
+                    }
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Конец игры");
+                    alert.setHeaderText(null);
+                    alert.setContentText(message);
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                    return;
                 } else if ("replacePawn".equals(listIn.get(0))) {
-                        Stage dialogStage = new Stage();
-                        dialogStage.initModality(Modality.APPLICATION_MODAL);
-                        dialogStage.setTitle("Выберите фигуру для замены");
-                        Button castlebutton = new Button("Тура");
-                        Button knightbutton = new Button("Конь");
-                        Button bishopbutton = new Button("Офицер");
-                        Button queenbutton = new Button("Ферзь");
-                        castlebutton.setOnAction(new ReplaceButtonHandler(castle, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Castle", dialogStage));
-                        knightbutton.setOnAction(new ReplaceButtonHandler(knight, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Knight", dialogStage));
-                        bishopbutton.setOnAction(new ReplaceButtonHandler(bishop, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Bishop", dialogStage));
-                        queenbutton.setOnAction(new ReplaceButtonHandler(queen, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Queen", dialogStage));
-                        VBox vbox1 = new VBox(castle, castlebutton);
-                        VBox vbox2 = new VBox(knight, knightbutton);
-                        VBox vbox3 = new VBox(bishop, bishopbutton);
-                        VBox vbox4 = new VBox(queen, queenbutton);
-                        vbox1.setAlignment(Pos.CENTER);
-                        vbox1.setPadding(new Insets(15));
-                        vbox2.setAlignment(Pos.CENTER);
-                        vbox2.setPadding(new Insets(15));
-                        vbox3.setAlignment(Pos.CENTER);
-                        vbox3.setPadding(new Insets(15));
-                        vbox4.setAlignment(Pos.CENTER);
-                        vbox4.setPadding(new Insets(15));
-                        HBox hbox = new HBox(vbox1, vbox2, vbox3, vbox4);
-                        dialogStage.setScene(new Scene(hbox));
-                        dialogStage.initOwner(stage);
-                        dialogStage.show();
+                    Stage dialogStage = new Stage();
+                    dialogStage.initModality(Modality.APPLICATION_MODAL);
+                    dialogStage.setTitle("Выберите фигуру для замены");
+                    Button castlebutton = new Button("Тура");
+                    Button knightbutton = new Button("Конь");
+                    Button bishopbutton = new Button("Офицер");
+                    Button queenbutton = new Button("Ферзь");
+                    castlebutton.setOnAction(new ReplaceButtonHandler(castle, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Castle", dialogStage));
+                    knightbutton.setOnAction(new ReplaceButtonHandler(knight, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Knight", dialogStage));
+                    bishopbutton.setOnAction(new ReplaceButtonHandler(bishop, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Bishop", dialogStage));
+                    queenbutton.setOnAction(new ReplaceButtonHandler(queen, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Queen", dialogStage));
+                    VBox vbox1 = new VBox(castle, castlebutton);
+                    VBox vbox2 = new VBox(knight, knightbutton);
+                    VBox vbox3 = new VBox(bishop, bishopbutton);
+                    VBox vbox4 = new VBox(queen, queenbutton);
+                    vbox1.setAlignment(Pos.CENTER);
+                    vbox1.setPadding(new Insets(15));
+                    vbox2.setAlignment(Pos.CENTER);
+                    vbox2.setPadding(new Insets(15));
+                    vbox3.setAlignment(Pos.CENTER);
+                    vbox3.setPadding(new Insets(15));
+                    vbox4.setAlignment(Pos.CENTER);
+                    vbox4.setPadding(new Insets(15));
+                    HBox hbox = new HBox(vbox1, vbox2, vbox3, vbox4);
+                    dialogStage.setScene(new Scene(hbox));
+                    dialogStage.initOwner(stage);
+                    dialogStage.show();
                 } else if ("rivalReplace".equals(listIn.get(0))) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
@@ -497,7 +513,7 @@ public class GameFrame extends Stage implements Observer {
                     newFigure.setOnDragDetected(new DragDetected(newFigure));
                     findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
                     findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
-                }else if("4minute".equals(listIn.get(0))){
+                } else if ("4minute".equals(listIn.get(0))) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
@@ -505,7 +521,7 @@ public class GameFrame extends Stage implements Observer {
                     alert.setHeaderText(null);
                     alert.setContentText("Вы бездействуете 4 минут, через 1 минуту вам будет защитан проиграш");
                     alert.showAndWait();
-                }else if("5minute".equals(listIn.get(0))){
+                } else if ("5minute".equals(listIn.get(0))) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
@@ -516,13 +532,90 @@ public class GameFrame extends Stage implements Observer {
                     stage.close();
                     new ProfileFrame(xmLin, xmlOut, listIn);
                     return;
-                }else if("5minuteRival".equals(listIn.get(0))){
+                } else if ("5minuteRival".equals(listIn.get(0))) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.initOwner(stage);
                     alert.getDialogPane().getStylesheets().add("Skin.css");
                     alert.setTitle("время вышло");
                     alert.setHeaderText(null);
                     alert.setContentText("У вашего соперника вышло время! Вы выиграли!");
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                    return;
+                } else if ("offerDraw".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ничья");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник предлагает ничью, согласны? (Рейтинг -5)");
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK){
+                        List<String> list = new ArrayList<>();
+                        list.add("acceptDraw");
+                        try {
+                            xmlOut.sendMessage(list);
+                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        alert.close();
+                    }
+                } else if ("draw".equals(listIn.get(0))) {
+                    String message;
+                    String rank = "";
+                    if (playerInfo.get(3).equals(listIn.get(3))) {
+                        rank = listIn.get(5);
+                        playerInfo.set(5, rank);
+                    }
+                    if (playerInfo.get(3).equals(listIn.get(6))) {
+                        rank = listIn.get(8);
+                        playerInfo.set(5, rank);
+                    }
+                    if ("WHITE".equals(listIn.get(1))) {
+                        message = "Ничья, ваш новый рейтинг: " + rank;
+                    } else {
+                        message = "Ничья, ваш новый рейтинг: " + rank;
+                    }
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Конец игры");
+                    alert.setHeaderText(null);
+                    alert.setContentText(message);
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                    return;
+                } else if ("resign".equals(listIn.get(0))) {
+                    String rank = "";
+                    String message;
+                    int was;
+                    int became = 0;
+                    was = Integer.parseInt(playerInfo.get(5));
+                    if (playerInfo.get(3).equals(listIn.get(3))) {
+                        rank = listIn.get(5);
+                        became = Integer.parseInt(rank);
+                        playerInfo.set(5, rank);
+                    }
+                    if (playerInfo.get(3).equals(listIn.get(6))) {
+                        rank = listIn.get(8);
+                        became = Integer.parseInt(rank);
+                        playerInfo.set(5, rank);
+                    }
+                    if (became < was) {
+                        message = "Вы решили сдаться, ваш новый рейтинг: " + rank;
+                    } else {
+                        message = "Соперник решил сдаться, ваш новый рейтинг: " + rank;
+                    }
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Конец игры");
+                    alert.setHeaderText(null);
+                    alert.setContentText(message);
                     alert.showAndWait();
                     stage.close();
                     new ProfileFrame(xmLin, xmlOut, listIn);
@@ -688,7 +781,7 @@ public class GameFrame extends Stage implements Observer {
             }
         }
         target.getChildren().add(image);
-        
+
 
     }
 

@@ -58,6 +58,10 @@ public class GameService {
 
     }
 
+    public static void draw(Player thisPlayer) {
+        endGame("draw", thisPlayer, thisPlayer.getCurrentGame().getOtherPlayer(thisPlayer));
+    }
+
     /**
      *
      * @param thisPlayer
@@ -95,7 +99,6 @@ public class GameService {
                         ServerMain.inGamePlayers.add(otherPlayer);
                     }
                 }
-
         } else {
             out.add("No");
             synchronized (ServerMain.waitingGames) {
@@ -208,7 +211,6 @@ public class GameService {
                     return answer;
                 }
 
-
                 else if (game.isPlayersKingAttacked(otherType)) {
                     isCheckmate = true;
                     for (Figure enemyFigure : game.getFigures(otherType)) {
@@ -272,51 +274,8 @@ public class GameService {
                         }
                     }
                     if (isCheckmate) {
-                        answer.add("checkmate");
-                        out.add("checkmate");
-                        answer.add("Ok");
-                        out.add("Ok");
-                        player.setRank(player.getRank() + 5);
-                        otherPlayer.setRank(otherPlayer.getRank() - 5);
-                        answer.add(String.valueOf(player.getId()));
-                        answer.add(player.getLogin());
-                        answer.add(player.getPassword());
-                        answer.add(String.valueOf(player.getRank()));
-                        out.add(String.valueOf(otherPlayer.getId()));
-                        out.add(otherPlayer.getLogin());
-                        out.add(otherPlayer.getPassword());
-                        out.add(String.valueOf(otherPlayer.getRank()));
-                        PlayerService.updatePlayer(player);
-                        PlayerService.updatePlayer(otherPlayer);
-                        XMLsaveLoad.savePlayers();
-                        player.setCurrentGame(null);
-                        otherPlayer.setCurrentGame(null);
-                        synchronized (ServerMain.inGamePlayers) {
-                            ServerMain.inGamePlayers.remove(player);
-                            ServerMain.inGamePlayers.remove(otherPlayer);
-                        }
-                        synchronized (ServerMain.freePlayers) {
-                            ServerMain.freePlayers.add(otherPlayer);
-                            ServerMain.freePlayers.add(player);
-                        }
-                        synchronized (ServerMain.games) {
-                            ServerMain.games.remove(game);
-                        }
-                        for (Player p : ServerMain.freePlayers) {
-                            if (!player.equals(p)) {
-                                answer.add(p.getLogin());
-                                answer.add(String.valueOf(p.getRank()));
-                            }
-                            if (!otherPlayer.equals(p)) {
-                                out.add(p.getLogin());
-                                out.add(String.valueOf(p.getRank()));
-                            }
-                        }
-
-                        otherSender.send(out);
-                        sender.send(answer);
+                        endGame("checkmate", player, otherPlayer);
                         return answer;
-
                     }
                 }
 
@@ -332,7 +291,6 @@ public class GameService {
                 return answer;
             }
 
-
         } catch (ReplacePawnException e) {
             answer.add("replacePawn");
             answer.add(String.valueOf(y1));
@@ -340,25 +298,79 @@ public class GameService {
             answer.add(y2 + "" + x2);
             try {
                 sender.send(answer);
-            } catch (ParserConfigurationException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            } catch (TransformerConfigurationException e1) {
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                 e1.printStackTrace();
             }
             return answer;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
+        } catch (TransformerException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
         }
         return answer;
+    }
+
+    public static void endGame(String reason, Player player, Player otherPlayer) {
+        List<String> answer = new ArrayList<String>();
+        List<String> out = new ArrayList<String>();
+        otherPlayer = player.getCurrentGame().getOtherPlayer(player);
+        XMLSender otherSender = otherPlayer.getController().getSender();
+        XMLSender sender = player.getController().getSender();
+        answer.add(reason);
+        out.add(reason);
+        answer.add("Ok");
+        out.add("Ok");
+        if ("checkmate".equals(reason)) {
+            player.setRank(player.getRank() + 10);
+            otherPlayer.setRank(otherPlayer.getRank() - 10);
+        } else if ("draw".equals(reason)) {
+            player.setRank(player.getRank() - 5);
+            otherPlayer.setRank(otherPlayer.getRank() - 5);
+        } else if ("resign".equals(reason)) {
+            player.setRank(player.getRank() - 10);
+            otherPlayer.setRank(otherPlayer.getRank() + 5);
+        }
+        answer.add("WHITE");
+        answer.add(player.getLogin());
+        answer.add(player.getPassword());
+        answer.add(String.valueOf(player.getRank()));
+        out.add("BLACK");
+        out.add(otherPlayer.getLogin());
+        out.add(otherPlayer.getPassword());
+        out.add(String.valueOf(otherPlayer.getRank()));
+        PlayerService.updatePlayer(player);
+        PlayerService.updatePlayer(otherPlayer);
+        try {
+            XMLsaveLoad.savePlayers();
+        } catch (ParserConfigurationException | FileNotFoundException | TransformerException e) {
+            e.printStackTrace();
+        }
+        player.setCurrentGame(null);
+        otherPlayer.setCurrentGame(null);
+        synchronized (ServerMain.inGamePlayers) {
+            ServerMain.inGamePlayers.remove(player);
+            ServerMain.inGamePlayers.remove(otherPlayer);
+        }
+        synchronized (ServerMain.freePlayers) {
+            ServerMain.freePlayers.add(otherPlayer);
+            ServerMain.freePlayers.add(player);
+        }
+        synchronized (ServerMain.games) {
+            ServerMain.games.remove(player.getCurrentGame());
+        }
+        for (Player p : ServerMain.freePlayers) {
+            if (!player.equals(p)) {
+                answer.add(p.getLogin());
+                answer.add(String.valueOf(p.getRank()));
+            }
+            if (!otherPlayer.equals(p)) {
+                out.add(p.getLogin());
+                out.add(String.valueOf(p.getRank()));
+            }
+        }
+        try {
+            otherSender.send(out);
+            sender.send(answer);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

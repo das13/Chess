@@ -30,8 +30,8 @@ import java.util.List;
 public class XMLsaveLoad {
 
     private static List<Player> players = new ArrayList<Player>();
-    //private static final File filePlayers = new File("server/Resources/savedPlayers.xml");
-    static volatile File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
+    private static final File filePlayers = new File("server/Resources/savedPlayers.xml");
+    //static volatile File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
     public static void savePlayers() throws ParserConfigurationException, TransformerException, FileNotFoundException {
@@ -43,8 +43,6 @@ public class XMLsaveLoad {
         players = ServerMain.allPlayers;
         doc.appendChild(root);
         for (Player player: players) {
-            System.out.println("Saving player " + player.getLogin() + " " + player.getRank() + " "
-                    + player.getStatus() + " " + player.getId());
             Element el = doc.createElement("player");
             el.setAttribute("id", String.valueOf(player.getId()));
             root.appendChild(el);
