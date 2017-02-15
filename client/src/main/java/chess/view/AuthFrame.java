@@ -26,9 +26,15 @@ import java.util.List;
 /**
  * Created by Admin on 26.01.2017.
  */
+
 public class AuthFrame extends Stage {
     private final Stage stage = this;
 
+    /**
+     *
+     * @param xmLin
+     * @param xmlOut
+     */
     public AuthFrame(XMLin xmLin, XMLout xmlOut) {
         this.setTitle("Шахматы онлайн");
 

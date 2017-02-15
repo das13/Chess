@@ -18,7 +18,8 @@ public class Pawn extends Figure {
     public Pawn(Type type, Cell cell) {
         super(type, cell);
     }
-
+    public Pawn() {
+    }
     @Override
     public void move(Cell destination) throws ReplacePawnException {
         super.move(destination);

@@ -98,7 +98,7 @@ class AdminFrame extends Stage {
 
         MyTask<Void> task = new MyTask<>();
 
-        //In case of different possible answers from server
+        /**In case of different possible answers from server*/
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
@@ -164,7 +164,7 @@ class AdminFrame extends Stage {
         thread.start();
     }
 
-    //Class for receiving List of String values from XMLin
+    /**Class for receiving List of String values from XMLin*/
     class MyTask<Void> extends Task<Void> {
         @Override
         public Void call() throws Exception {

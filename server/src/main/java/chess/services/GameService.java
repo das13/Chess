@@ -17,9 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 20.01.2017.
+ * <code>GameService</code> is service class with all methods which need for the game of chess.
+ * There are method for a call player, all accessible steps, move figure and looks for a checkmate situation
  */
 public class GameService {
+    /**
+     * <code>callPlayer</code> is method which a call player from a list with free players for a game
+     * @param playerWhite is calling players object
+     * @param nickName is called players name
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerConfigurationException
+     */
     public static void callPlayer(Player playerWhite, String nickName) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
         boolean check = false;
@@ -47,6 +56,14 @@ public class GameService {
 
     }
 
+    /**
+     *
+     * @param thisPlayer
+     * @param str
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws TransformerConfigurationException
+     */
     public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
         out.add("confirmresponse");
@@ -129,25 +146,20 @@ public class GameService {
         if (game.getBoard()[x1][y1].isFigure()) try {
             Figure figure = game.getBoard()[x1][y1].getFigure();
             boolean isFirstMove = figure.isFirstMove();
-            Type type = figure.getType(); // ЦВЕТ ФИГУРЫ КОТОРОЙ ХОДИМ
-            Type otherType = null;        // ЦВЕТ ФИГУРЫ СОПЕРНИКА
+            Type type = figure.getType();
+            Type otherType = null;
             if (type == Type.WHITE) {
                 otherType = Type.BLACK;
             } else {
                 otherType = Type.WHITE;
             }
-
-            // ЕСЛИ ПЫТАЕМСЯ ПОЙТИ НА НЕРАЗРЕШЕННУЮ КЛЕТКУ
             if (!figure.allAccessibleMove().contains(game.getBoard()[x2][y2])) {
                 answer.add("cancel");
                 game.setCurrentStep(type);
                 sender.send(answer);
                 return answer;
             }
-            // В ОСТАЛЬНЫХ СЛУЧАЯХ
             else {
-
-                // ПЕРЕМЕЩАЕМ ФИГУРУ
                 game.setLastFigureTaken(game.getBoard()[x2][y2].getFigure());
                 figure.move(game.getBoard()[x2][y2]);
                 game.getBoard()[x2][y2].setFigure(figure);
@@ -155,7 +167,6 @@ public class GameService {
                 if (game.getLastFigureTaken() != null) {
                     game.getLastFigureTaken().setCell(null);
                 }
-                //ЕСЛИ РОКИРОВКА, ТО ФОРМИРУЕМ ОСОБОЕ СООБЩЕНИЕ
                 if (figure instanceof King && y1 == y2
                         && (x2 - x1 == 2 || x1 - x2 == 2)) {
                     answer.add("castling");
@@ -180,7 +191,6 @@ public class GameService {
                 game.setAllWhiteMoves();
                 game.setAllBlackMoves();
 
-                // ЕСЛИ ОКАЗЫВАЕТСЯ, ЧТО КОРОЛЬ ИГРОКА ОТКРЫВАЕТСЯ ДЛЯ АТАКИ, ОТМЕНЯЕМ ХОД
                 if (game.isPlayersKingAttacked(type)) {
                     game.getBoard()[x1][y1].setFigure(game.getLastFigureMoved());
                     game.getLastFigureMoved().setCell(game.getBoard()[x1][y1]);
@@ -196,13 +206,11 @@ public class GameService {
                     return answer;
                 }
 
-                // ЕСЛИ КОРОЛЬ СОПЕРНИКА АТАКОВАН, ПРОВЕРЯЕМ, ЕСТЬ ЛИ МАТ
+
                 else if (game.isPlayersKingAttacked(otherType)) {
-                    isCheckmate = true; // ПО УМОЛЧАНИЮ СЧИТАЕМ, ЧТО РАЗ НАПАЛИ НА КОРОЛЯ, ТО ДА
-                    // ПРОВЕРЯЕМ ВСЕ ФИГУРЫ СОПЕРНИКА, МОГУТ ЛИ ОНИ УБРАТЬ ШАХ СВОИМИ ХОДАМИ
+                    isCheckmate = true;
                     for (Figure enemyFigure : game.getFigures(otherType)) {
                         if (!isCheckmate) break;
-                        // ЕСЛИ ДАННАЯ ФИГУРА ОКАЗАЛАСЬ КОРОЛЕМ, ПРОВОДИМ ОТДЕЛЬНУЮ ПРОВЕРКУ
                         if (enemyFigure instanceof King) {
                             if (!isCheckmate) break;
                             List<Cell> countingList = enemyFigure.allAccessibleMove();
@@ -212,22 +220,18 @@ public class GameService {
                                     tempFig = kingAccessibleCell.getFigure();
                                     tempFig.setCell(null);
                                 }
-                                // УБИРАЕМ ФИГУРУ ИЗ КЛЕТКИ, ЧТОБ КЛЕТКА МОГЛА ПОПАСТЬ В ВОЗМОЖНЫЕ ХОДЫ СОПЕРНИКА (ТЕКУЩЕГО ИГРОКА)
                                 kingAccessibleCell.setFigure(null);
                                 synchronized (GameService.class) {
                                     game.getEnemyMoves(otherType);
                                 }
-                                // ПЕРЕСЧИТВЫАЕМ ХОДЫ
                                 game.setAllBlackMoves();
                                 game.setAllWhiteMoves();
 
-                                // ЕСЛИ КЛЕТКА ПОД АТАКОЙ ПРОТИВНИКА (ТЕКУЩЕГО ИГРОКА) УБИРАЕМ КЛЕТКУ ИЗ СПИСКА КОРОЛЯ
                                 if (game.getEnemyMoves(otherType).contains(kingAccessibleCell)) {
                                     kingAccessibleCell.setFigure(tempFig);
                                     tempFig.setCell(kingAccessibleCell);
                                     game.getKing(otherType).allAccessibleMove().remove(kingAccessibleCell);
                                 }
-                                // В ОСТАЛЬНЫХ СЛУЧАЯХ ПРЕРЫВАЕМ ЦИКЛ
                                 else {
                                     isCheckmate = false;
                                     break;
@@ -235,7 +239,6 @@ public class GameService {
                             }
                         } else {
                             Cell startCell = enemyFigure.getCell();
-                            // СТАВИМ ФИГУРУ НА КАЖДУЮ КЛЕТКУ
                             for (Cell cell : enemyFigure.allAccessibleMove()) {
                                 Figure tempFigure = null;
                                 if (cell.isFigure()) {
@@ -246,15 +249,12 @@ public class GameService {
                                 enemyFigure.setCell(cell);
                                 game.setAllBlackMoves();
                                 game.setAllWhiteMoves();
-
-                                //ЕСЛИ ХОД НЕ СПАСАЕТ КОРОЛЯ, ВОЗВРАЩАЕМ ФИГУРУ ОБРАТНО
                                 if (game.isPlayersKingAttacked(otherType)) {
                                     enemyFigure.setCell(startCell);
                                     startCell.setFigure(enemyFigure);
                                     cell.setFigure(tempFigure);
 
                                 }
-                                // ЕСЛИ СПАСАЕТ, ОТМЕНЯЕМ МАТ И ПРЕРЫВАЕМ ЦИКЛ
                                 else {
                                     enemyFigure.setCell(startCell);
                                     startCell.setFigure(enemyFigure);
@@ -269,10 +269,8 @@ public class GameService {
                             }
                         }
                     }
-                    // В СЛУЧАЕ МАТА ПОНИЖАЕМ/ПОВЫШАЕМ РЕЙТИНГИ ИГРОКОВ И РАССЫЛАЕМ
                     if (isCheckmate) {
                         answer.add("checkmate");
-                        //answer.add(String.valueOf(type));
                         out.add("checkmate");
                         answer.add("Ok");
                         out.add("Ok");
@@ -320,7 +318,6 @@ public class GameService {
                     }
                 }
 
-                // ВО ВСЕХ ДРУГИХ СЛУЧАЯХ ЗАВЕРШАЕМ ХОД КАК ОБЫЧНО
                 game.setCurrentStep(otherType);
                 answer.add("moving");
                 out.add("rivalMove");
@@ -339,6 +336,15 @@ public class GameService {
             answer.add(String.valueOf(y1));
             answer.add(String.valueOf(x1));
             answer.add(y2 + "" + x2);
+            try {
+                sender.send(answer);
+            } catch (ParserConfigurationException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (TransformerConfigurationException e1) {
+                e1.printStackTrace();
+            }
             return answer;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

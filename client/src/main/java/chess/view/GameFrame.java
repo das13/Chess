@@ -89,6 +89,14 @@ public class GameFrame extends Stage implements Observer {
             rivalknight = new ImageView(new Image("/icons/knightBLACK.png"));
             rivalbishop = new ImageView(new Image("/icons/bishopBLACK.png"));
             rivalqueen = new ImageView(new Image("/icons/queenBLACK.png"));
+            queen.setId("queenWhite1");
+            castle.setId("castleWhite1");
+            knight.setId("knightWhite1");
+            bishop.setId("bishopWhite1");
+            rivalqueen.setId("queenBlack1");
+            rivalcastle.setId("castleBlack1");
+            rivalknight.setId("knightBlack1");
+            rivalbishop.setId("bishopBlack1");
         } else {
             loader = new FXMLLoader(getClass().getResource("/BlackPlayerBoard.fxml"));
             castle = new ImageView(new Image("/icons/castleBLACK.png"));
@@ -99,6 +107,14 @@ public class GameFrame extends Stage implements Observer {
             rivalknight = new ImageView(new Image("/icons/knightWHITE.png"));
             rivalbishop = new ImageView(new Image("/icons/bishopWHITE.png"));
             rivalqueen = new ImageView(new Image("/icons/queenWHITE.png"));
+            queen.setId("queenBlack1");
+            castle.setId("castleBlack1");
+            knight.setId("knightBlack1");
+            bishop.setId("bishopBlack1");
+            rivalqueen.setId("queenWhite1");
+            rivalcastle.setId("castleWhite1");
+            rivalknight.setId("knightWhite1");
+            rivalbishop.setId("bishopWhite1");
         }
 
         Pane root = null;
@@ -279,6 +295,7 @@ public class GameFrame extends Stage implements Observer {
                 content.putString(y + "" + x);
                 content.putImage(source.getImage());
                 lastMovedFigure = source;
+                System.out.println(source.getId());
                 db.setContent(content);
                 currentEvent.consume();
             }
@@ -332,6 +349,7 @@ public class GameFrame extends Stage implements Observer {
                 pane.getChildren().clear();
                 ImageView newFigure = new ImageView(figure.getImage());
                 newFigure.setOnDragDetected(new DragDetected(newFigure));
+                newFigure.setId(figure.getId());
                 pane.getChildren().add(newFigure);
                 List<String> list = new ArrayList<String>();
                 list.add("replacePawn");
@@ -430,6 +448,7 @@ public class GameFrame extends Stage implements Observer {
                         alert.showAndWait();
                         stage.close();
                         new ProfileFrame(xmLin, xmlOut, listIn);
+                        //return;
                         return;
                     } else if ("replacePawn".equals(listIn.get(0))) {
                         Stage dialogStage = new Stage();
@@ -479,6 +498,7 @@ public class GameFrame extends Stage implements Observer {
                         board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
                         ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
                         newFigure.setOnDragDetected(new DragDetected(newFigure));
+                        findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
                     } else if ("castling".equals(listIn.get(0))) {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -490,7 +510,6 @@ public class GameFrame extends Stage implements Observer {
                         alert.showAndWait();
                         grid.setDisable(false);
                         count.startTimer();
-
                     if ("white".equals(listIn.get(1))) {
                         if ("kingside".equals(listIn.get(2))) {
                             moveFromTo(4, 7, 6, 7);
