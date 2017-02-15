@@ -1,13 +1,11 @@
 package chess.model.figures;
 
-import chess.Constants;
 import chess.model.Cell;
 import chess.model.Figure;
 import chess.model.Game;
 import chess.model.Type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +16,8 @@ public class Knight extends Figure {
     public Knight(Type type, Cell cell) {
         super(type, cell);
     }
-
+    public Knight() {
+    }
     public List<Cell> allAccessibleMove()  {
         List<Cell> validCells = new ArrayList<Cell>();
             validCells.clear();

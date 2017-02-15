@@ -17,7 +17,8 @@ public class Queen extends Figure {
     public Queen(Type type, Cell cell) {
         super(type, cell);
     }
-
+    public Queen() {
+    }
     private void checkPath(List<Cell> validCells, int x, int y, int stepX, int stepY) {
         Game game = getCell().getParentGame();
         int i = x + stepX;
