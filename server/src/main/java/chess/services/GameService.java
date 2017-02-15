@@ -44,6 +44,7 @@ public class GameService {
             outList.addAll(PlayerService.refresh(playerWhite,  sender));
             sender.send(outList);
         }
+
     }
 
     public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -87,24 +88,17 @@ public class GameService {
     }
 
     public static List<String> steps(Game game, int x, int y) {
+
         Cell cell = game.getCell(x, y);
-        //System.out.println(cell.getFigure());
-        //System.out.println(cell.getFigure().allAccessibleMove().size() * 2);
-        /*if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
-            throw new RivalFigureException();
-        }*/
         if (cell.isFigure()) {
             List<String> array = new ArrayList<String>();
             array.add("steps");
-//            System.out.println(game.getCurrentStep());
-//            System.out.println(game.getBoard()[x][y].getFigure().getType());
             if (game.getCurrentStep() != game.getBoard()[x][y].getFigure().getType()) {
                 return array;
             }
             int i = 0;
             for (Cell c : cell.getFigure().allAccessibleMove()) {
                 array.add(c.getY() + "" + c.getX());
-                System.out.println(c.getY() + "" + c.getX());
             }
             return array;
         } else {
@@ -146,6 +140,7 @@ public class GameService {
             // ЕСЛИ ПЫТАЕМСЯ ПОЙТИ НА НЕРАЗРЕШЕННУЮ КЛЕТКУ
             if (!figure.allAccessibleMove().contains(game.getBoard()[x2][y2])) {
                 answer.add("cancel");
+                game.setCurrentStep(type);
                 sender.send(answer);
                 return answer;
             }
@@ -196,6 +191,7 @@ public class GameService {
                         game.getLastFigureTaken().setCell(game.getBoard()[x2][y2]);
                     }
                     answer.add("cancel");
+                    game.setCurrentStep(type);
                     sender.send(answer);
                     return answer;
                 }

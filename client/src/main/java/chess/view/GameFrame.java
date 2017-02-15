@@ -370,29 +370,26 @@ public class GameFrame extends Stage implements Observer {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                    if ("rivalMove".equals(listIn.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ход");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Соперник сделал ход");
-                        alert.showAndWait();
-                        System.out.println("1");
-                        grid.setDisable(false);
-                        System.out.println("2");
-                        count.startTimer();
-                        System.out.println("3");
-                        moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
-                        movesRecord.getItems().add("соперник: " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
-                        opponentTimer.setText(listIn.get(5));
-                    } else if ("steps".equals(listIn.get(0))) {
-                        targets.clear();
-                        for (String s : listIn) {
-                            if (!s.equals("steps")) {
-                                targets.add(board.get(s));
-                            }
+                if ("rivalMove".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник сделал ход");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                    count.startTimer();
+                    moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
+                    movesRecord.getItems().add("соперник: " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
+                    opponentTimer.setText(listIn.get(5));
+                } else if ("steps".equals(listIn.get(0))) {
+                    targets.clear();
+                    for (String s : listIn) {
+                        if (!s.equals("steps")) {
+                            targets.add(board.get(s));
                         }
+                    }
 
                         for (Pane pane : targets) {
                             pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
@@ -494,30 +491,30 @@ public class GameFrame extends Stage implements Observer {
                         grid.setDisable(false);
                         count.startTimer();
 
-                        if ("white".equals(listIn.get(1))) {
-                            if ("kingside".equals(listIn.get(2))) {
-                                moveFromTo(4, 7, 6, 7);
-                                moveFromTo(7, 7, 5, 7);
-                                movesRecord.getItems().add("соперник: O-O");
-                            } else {
-                                moveFromTo(4, 7, 2, 7);
-                                moveFromTo(0, 7, 3, 7);
-                                movesRecord.getItems().add("соперник: О-O-O");
-                            }
+                    if ("white".equals(listIn.get(1))) {
+                        if ("kingside".equals(listIn.get(2))) {
+                            moveFromTo(4, 7, 6, 7);
+                            moveFromTo(7, 7, 5, 7);
+                            movesRecord.getItems().add("соперник: O-O");
                         } else {
-                            if ("kingside".equals(listIn.get(2))) {
-                                moveFromTo(4, 0, 6, 0);
-                                moveFromTo(7, 0, 5, 0);
-                                movesRecord.getItems().add("соперник: O-O");
-                            } else {
-                                moveFromTo(4, 0, 2, 0);
-                                moveFromTo(0, 0, 3, 0);
-                                movesRecord.getItems().add("соперник: О-O-O");
-                            }
+                            moveFromTo(4, 7, 2, 7);
+                            moveFromTo(0, 7, 3, 7);
+                            movesRecord.getItems().add("соперник: О-O-O");
                         }
-                        movesRecord.scrollTo(movesRecord.getItems().size() - 1);
-                        opponentTimer.setText(listIn.get(3));
+                    } else {
+                        if ("kingside".equals(listIn.get(2))) {
+                            moveFromTo(4, 0, 6, 0);
+                            moveFromTo(7, 0, 5, 0);
+                            movesRecord.getItems().add("соперник: O-O");
+                        } else {
+                            moveFromTo(4, 0, 2, 0);
+                            moveFromTo(0, 0, 3, 0);
+                            movesRecord.getItems().add("соперник: О-O-O");
+                        }
                     }
+                    movesRecord.scrollTo(movesRecord.getItems().size() - 1);
+                    opponentTimer.setText(listIn.get(3));
+                }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());
                 Thread thread1 = new Thread(myTask);
