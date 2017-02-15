@@ -14,7 +14,6 @@ import javax.xml.transform.TransformerException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -23,6 +22,7 @@ import java.util.List;
 public class GameService {
     public static void callPlayer(Player playerWhite, String nickName) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
+        boolean check = false;
         Controller controller = playerWhite.getController();
         XMLSender sender = controller.getSender();
         for (Player playerBlack : ServerMain.freePlayers) {
@@ -34,28 +34,28 @@ public class GameService {
                 out.add("confirm");
                 out.add(playerWhite.getLogin());
                 otherSender.send(out);
+                check = true;
                 break;
             }
-                List<String> outList = new ArrayList<String>();
-                outList.add("notconfirm");
-                outList.addAll(PlayerService.refresh(playerWhite,  sender));
-                sender.send(outList);
-
         }
-
+        if(!check){
+            List<String> outList = new ArrayList<String>();
+            outList.add("notconfirm");
+            outList.addAll(PlayerService.refresh(playerWhite,  sender));
+            sender.send(outList);
+        }
     }
 
     public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
         out.add("confirmresponse");
         XMLSender otherSender = null;
+        Game game = thisPlayer.getCurrentGame();
         if (str.get(1).equals("Ok")) {
-            Iterator<Game> iter = ServerMain.waitingGames.iterator();
-            while (iter.hasNext()) {
-                Game game = iter.next();
+
                 if (game.getBlackPlayer().equals(thisPlayer)) {
                     synchronized (ServerMain.waitingGames) {
-                        iter.remove();
+                        ServerMain.waitingGames.remove(game);
                     }
                     synchronized (ServerMain.games) {
                         ServerMain.games.add(game);
@@ -75,18 +75,11 @@ public class GameService {
                         ServerMain.inGamePlayers.add(otherPlayer);
                     }
                 }
-            }
+
         } else {
             out.add("No");
-            Iterator<Game> iter = ServerMain.waitingGames.iterator();
-            while (iter.hasNext()) {
-                Game game = iter.next();
-                if (game.getBlackPlayer().equals(thisPlayer)) {
-                    synchronized (ServerMain.waitingGames) {
-                        iter.remove();
-                    }
-
-                }
+            synchronized (ServerMain.waitingGames) {
+                ServerMain.waitingGames.remove(game);
             }
 
         }
@@ -111,8 +104,8 @@ public class GameService {
             int i = 0;
             for (Cell c : cell.getFigure().allAccessibleMove()) {
                 array.add(c.getY() + "" + c.getX());
+                System.out.println(c.getY() + "" + c.getX());
             }
-            //`System.out.println(array.size());
             return array;
         } else {
             System.out.println("нет фигуры");
@@ -122,6 +115,7 @@ public class GameService {
 
     public static List<String> move(Game game, List<String> str, Player player) {
         List<String> answer = new ArrayList<String>();
+        List<String> rivalanswer = new ArrayList<String>();
         List<String> out = new ArrayList<String>();
         Player otherPlayer = game.getOtherPlayer(player);
         XMLSender otherSender = otherPlayer.getController().getSender();
@@ -282,19 +276,46 @@ public class GameService {
                     // В СЛУЧАЕ МАТА ПОНИЖАЕМ/ПОВЫШАЕМ РЕЙТИНГИ ИГРОКОВ И РАССЫЛАЕМ
                     if (isCheckmate) {
                         answer.add("checkmate");
-                        answer.add(String.valueOf(type));
+                        //answer.add(String.valueOf(type));
+                        out.add("checkmate");
+                        answer.add("Ok");
+                        out.add("Ok");
                         player.setRank(player.getRank() + 5);
                         otherPlayer.setRank(otherPlayer.getRank() - 5);
+                        answer.add(String.valueOf(player.getId()));
                         answer.add(player.getLogin());
+                        answer.add(player.getPassword());
                         answer.add(String.valueOf(player.getRank()));
-                        answer.add(otherPlayer.getLogin());
-                        answer.add(String.valueOf(otherPlayer.getRank()));
-                        try {
-                            XMLsaveLoad.savePlayers();
-                        } catch (ParserConfigurationException | FileNotFoundException | TransformerException e) {
-                            e.printStackTrace();
+                        out.add(String.valueOf(otherPlayer.getId()));
+                        out.add(otherPlayer.getLogin());
+                        out.add(otherPlayer.getPassword());
+                        out.add(String.valueOf(otherPlayer.getRank()));
+                        XMLsaveLoad.savePlayers();
+                        player.setCurrentGame(null);
+                        otherPlayer.setCurrentGame(null);
+                        synchronized (ServerMain.inGamePlayers) {
+                            ServerMain.inGamePlayers.remove(player);
+                            ServerMain.inGamePlayers.remove(otherPlayer);
                         }
-                        otherSender.send(answer);
+                        synchronized (ServerMain.freePlayers) {
+                            ServerMain.freePlayers.add(otherPlayer);
+                            ServerMain.freePlayers.add(player);
+                        }
+                        synchronized (ServerMain.games) {
+                            ServerMain.games.remove(game);
+                        }
+                        for (Player p : ServerMain.freePlayers) {
+                            if (!player.equals(p)) {
+                                answer.add(p.getLogin());
+                                answer.add(String.valueOf(p.getRank()));
+                            }
+                            if (!otherPlayer.equals(p)) {
+                                out.add(p.getLogin());
+                                out.add(String.valueOf(p.getRank()));
+                            }
+                        }
+
+                        otherSender.send(out);
                         sender.send(answer);
                         return answer;
                     }
@@ -320,7 +341,15 @@ public class GameService {
             answer.add(String.valueOf(x1));
             answer.add(y2 + "" + x2);
             return answer;
-        } catch (TransformerConfigurationException | ParserConfigurationException | IOException e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
         return answer;
