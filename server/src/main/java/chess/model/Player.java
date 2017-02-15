@@ -3,9 +3,6 @@ package chess.model;
 import chess.Constants;
 import chess.controller.Controller;
 
-import java.io.BufferedReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
@@ -22,6 +19,7 @@ public class Player {
     private Socket socket;
     private Game currentGame;
     private Controller controller;
+    private Type type;
 
     public Player(String login, String password, Status status, String ipadress) {
         this.login = login;
@@ -29,6 +27,14 @@ public class Player {
         this.rank = Constants.START_RANK;
         this.status = status;
         this.ipadress = ipadress;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public Player(Controller controller) {

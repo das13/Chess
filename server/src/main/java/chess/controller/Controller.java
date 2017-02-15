@@ -8,13 +8,16 @@ import chess.services.GameService;
 import chess.services.PlayerService;
 import chess.services.xmlService.XMLReciever;
 import chess.services.xmlService.XMLSender;
+import chess.services.xmlService.XMLsaveLoad;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class Controller extends Thread {
     private Player otherPlayer;
     private XMLSender sender;
     private XMLReciever reciever;
+    private LocalTime timer = LocalTime.now();
 
     public Controller(Socket socket) {
         this.socket = socket;
@@ -43,21 +47,104 @@ public class Controller extends Thread {
             output = new DataOutputStream(socket.getOutputStream());
             sender = new XMLSender(out);
             reciever=new XMLReciever(in);
-
         } catch (IOException e) {
             e.printStackTrace();
             close();
         }
+        Thread thread = new Thread(){
+            @Override
+            public void run() {
+                while(true) {
+                    if(player.getCurrentGame()!=null) {
+                        if (LocalTime.now().getMinute() - timer.getMinute() >= 5 && player.getType() == getCurrentGame().getCurrentStep()) {
+                            List<String> list = new ArrayList<>();
+                            List<String> listrival = new ArrayList<>();
+                            list.add("5minute");
+                            listrival.add("5minuteRival");
+                            try {
+                                list.add("Ok");
+                                listrival.add("Ok");
+                                otherPlayer = getCurrentGame().getOtherPlayer(player);
+                                player.setRank(player.getRank() - 5);
+                                otherPlayer.setRank(otherPlayer.getRank() + 5);
+                                list.add(String.valueOf(player.getId()));
+                                list.add(player.getLogin());
+                                list.add(player.getPassword());
+                                list.add(String.valueOf(player.getRank()));
+                                listrival.add(String.valueOf(otherPlayer.getId()));
+                                listrival.add(otherPlayer.getLogin());
+                                listrival.add(otherPlayer.getPassword());
+                                listrival.add(String.valueOf(otherPlayer.getRank()));
+                                XMLsaveLoad.savePlayers();
+                                player.setCurrentGame(null);
+                                otherPlayer.setCurrentGame(null);
+                                synchronized (ServerMain.inGamePlayers) {
+                                    ServerMain.inGamePlayers.remove(player);
+                                    ServerMain.inGamePlayers.remove(otherPlayer);
+                                }
+                                synchronized (ServerMain.freePlayers) {
+                                    ServerMain.freePlayers.add(otherPlayer);
+                                    ServerMain.freePlayers.add(player);
+                                }
+                                synchronized (ServerMain.games) {
+                                    ServerMain.games.remove(getCurrentGame());
+                                }
+                                for (Player p : ServerMain.freePlayers) {
+                                    if (!player.equals(p)) {
+                                        list.add(p.getLogin());
+                                        list.add(String.valueOf(p.getRank()));
+                                    }
+                                    if (!otherPlayer.equals(p)) {
+                                        listrival.add(p.getLogin());
+                                        listrival.add(String.valueOf(p.getRank()));
+                                    }
+                                }
+                                otherPlayer.getController().getSender().send(listrival);
+                                sender.send(list);
+                                timer = LocalTime.now();
+                            } catch (ParserConfigurationException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (TransformerConfigurationException e) {
+                                e.printStackTrace();
+                            } catch (TransformerException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        if (LocalTime.now().getMinute() - timer.getMinute() >= 4 && player.getType() == getCurrentGame().getCurrentStep()) {
+                            List<String> list = new ArrayList<>();
+                            list.add("4minute");
+                            try {
+                                sender.send(list);
+                            } catch (ParserConfigurationException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } catch (TransformerConfigurationException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    try {
+                        sleep(60*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
     }
 
     @Override
     public void run() {
         try {
             List<String> str = null;
-            List<String> strOut = new ArrayList();
             while (true) {
                 try {
                     str = reciever.receive();
+                    timer=LocalTime.now();
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (TransformerConfigurationException e) {
@@ -88,6 +175,12 @@ public class Controller extends Thread {
                     synchronized (ServerMain.freePlayers) {
                         ServerMain.freePlayers.remove(player);
                     }
+                    List<String> outList = new ArrayList<String>();
+                    outList.add("logout");
+                    outList.add("logout");
+                    sender.send(outList);
+                    System.out.println("Окккккк");
+                    player = new Player(this);
                 }
                 if("saveProfile".equals(str.get(0))){
                     sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));

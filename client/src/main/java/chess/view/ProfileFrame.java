@@ -163,7 +163,6 @@ class ProfileFrame extends Stage {
             freeplayer.getChildren().add(rank);
             freeplayer.getChildren().add(btn);
         }
-
         //Button for refreshing freeplayer Pane
         Button refreshButton = new Button("Обновить список игроков");
         refreshButton.setMinWidth(100);
@@ -178,10 +177,24 @@ class ProfileFrame extends Stage {
                 e1.printStackTrace();
             }
         });
+        //Button for logout
+        Button logout = new Button("выйти");
+        logout.setMinWidth(60);
+        logout.setMinHeight(20);
+        logout.relocate(100, 220);
+        logout.setOnAction(e -> {
+            List<String> list = new ArrayList<>();
+            list.add("logout");
+            try {
+                xmlOut.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                e1.printStackTrace();
+            }
+        });
         grid.getChildren().add(freeplayer);
         grid.getChildren().add(profile);
         grid.getChildren().add(refreshButton);
-
+        grid.getChildren().add(logout);
         this.setResizable(false);
         this.show();
 
@@ -192,6 +205,7 @@ class ProfileFrame extends Stage {
             public Void call() throws Exception {
                 try {
                     List<String> list = xmLin.receive();
+                    System.out.println(list.get(0));
                     firstConf = list.get(0);
                     secondConf = list.get(1);
                     listIn=list;
@@ -208,6 +222,7 @@ class ProfileFrame extends Stage {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
+                System.out.println(firstConf);
                 if ("confirm".equals(firstConf)) {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.initOwner(stage);
@@ -307,6 +322,10 @@ class ProfileFrame extends Stage {
                 if("refresh".equals(firstConf)){
                     stage.close();
                     new ProfileFrame(xmLin, xmlOut, listIn);
+                }
+                if("logout".equals(firstConf)){
+                    stage.close();
+                    new AuthFrame(xmLin, xmlOut);
                 }
             }
         }

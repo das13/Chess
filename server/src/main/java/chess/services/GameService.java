@@ -36,6 +36,8 @@ public class GameService {
         XMLSender sender = controller.getSender();
         for (Player playerBlack : ServerMain.freePlayers) {
             if (playerBlack.getLogin().equals(nickName)) {
+                playerWhite.setType(Type.WHITE);
+                playerBlack.setType(Type.BLACK);
                 Game game = new Game(playerWhite, playerBlack);
                 ServerMain.waitingGames.add(game);
                 Controller otherController = playerBlack.getController();

@@ -295,7 +295,6 @@ public class GameFrame extends Stage implements Observer {
                 content.putString(y + "" + x);
                 content.putImage(source.getImage());
                 lastMovedFigure = source;
-                System.out.println(source.getId());
                 db.setContent(content);
                 currentEvent.consume();
             }
@@ -408,16 +407,15 @@ public class GameFrame extends Stage implements Observer {
                             targets.add(board.get(s));
                         }
                     }
-
-                        for (Pane pane : targets) {
-                            pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
-                            pane.setOnDragOver(new DragOver(pane));
-                            pane.setOnDragDropped(new DragDropped(pane));
-                        }
-                    } else if ("cancel".equals(listIn.get(0))) {
+                    for (Pane pane : targets) {
+                        pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+                        pane.setOnDragOver(new DragOver(pane));
+                        pane.setOnDragDropped(new DragDropped(pane));
+                    }
+                } else if ("cancel".equals(listIn.get(0))) {
                         grid.setDisable(false);
                         cancelLastMove();
-                    } else if ("checkmate".equals(listIn.get(0))) {
+                } else if ("checkmate".equals(listIn.get(0))) {
                         String message;
                         String rank = "";
                         if (playerInfo.get(3).equals(listIn.get(2))) {
@@ -448,9 +446,8 @@ public class GameFrame extends Stage implements Observer {
                         alert.showAndWait();
                         stage.close();
                         new ProfileFrame(xmLin, xmlOut, listIn);
-                        //return;
                         return;
-                    } else if ("replacePawn".equals(listIn.get(0))) {
+                } else if ("replacePawn".equals(listIn.get(0))) {
                         Stage dialogStage = new Stage();
                         dialogStage.initModality(Modality.APPLICATION_MODAL);
                         dialogStage.setTitle("Выберите фигуру для замены");
@@ -478,38 +475,68 @@ public class GameFrame extends Stage implements Observer {
                         dialogStage.setScene(new Scene(hbox));
                         dialogStage.initOwner(stage);
                         dialogStage.show();
-                    } else if ("rivalReplace".equals(listIn.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ход");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Соперник сделал ход");
-                        alert.showAndWait();
-                        grid.setDisable(false);
-                        count.startTimer();
-                        moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(4)), parseInt(listIn.get(3)));
-                        opponentTimer.setText(listIn.get(5));
-                        ImageView figure = null;
-                        if (listIn.get(5).equals("Castle")) figure = rivalcastle;
-                        if (listIn.get(5).equals("Knight")) figure = rivalknight;
-                        if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
-                        if (listIn.get(5).equals("Queen")) figure = rivalqueen;
-                        board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
-                        ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
-                        newFigure.setOnDragDetected(new DragDetected(newFigure));
-                        findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
-                        findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
-                    } else if ("castling".equals(listIn.get(0))) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ход");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Соперник выполнил рокировку");
-                        alert.showAndWait();
-                        grid.setDisable(false);
-                        count.startTimer();
+                } else if ("rivalReplace".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник сделал ход");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                    count.startTimer();
+                    moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(4)), parseInt(listIn.get(3)));
+                    opponentTimer.setText(listIn.get(5));
+                    ImageView figure = null;
+                    if (listIn.get(5).equals("Castle")) figure = rivalcastle;
+                    if (listIn.get(5).equals("Knight")) figure = rivalknight;
+                    if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
+                    if (listIn.get(5).equals("Queen")) figure = rivalqueen;
+                    board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
+                    ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
+                    newFigure.setOnDragDetected(new DragDetected(newFigure));
+                    findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
+                    findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
+                }else if("4minute".equals(listIn.get(0))){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("время вышло");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Вы бездействуете 4 минут, через 1 минуту вам будет защитан проиграш");
+                    alert.showAndWait();
+                }else if("5minute".equals(listIn.get(0))){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("время вышло");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Время вышло! Вы проиграли");
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                    return;
+                }else if("5minuteRival".equals(listIn.get(0))){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("время вышло");
+                    alert.setHeaderText(null);
+                    alert.setContentText("У вашего соперника вышло время! Вы выиграли!");
+                    alert.showAndWait();
+                    stage.close();
+                    new ProfileFrame(xmLin, xmlOut, listIn);
+                    return;
+                } else if ("castling".equals(listIn.get(0))) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.initOwner(stage);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Ход");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Соперник выполнил рокировку");
+                    alert.showAndWait();
+                    grid.setDisable(false);
+                    count.startTimer();
                     if ("white".equals(listIn.get(1))) {
                         if ("kingside".equals(listIn.get(2))) {
                             moveFromTo(4, 7, 6, 7);

@@ -79,6 +79,7 @@ public class AuthFrame extends Stage {
         Button enterButton = new Button("Войти");
         enterButton.setPrefWidth(90);
         enterButton.setOnAction(e -> {
+
             if (loginInput.getText().equals("") || passInput.getText().equals("")) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.getDialogPane().getStylesheets().add("Skin.css");
