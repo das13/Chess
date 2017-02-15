@@ -284,6 +284,8 @@ public class GameService {
                         out.add(otherPlayer.getLogin());
                         out.add(otherPlayer.getPassword());
                         out.add(String.valueOf(otherPlayer.getRank()));
+                        PlayerService.updatePlayer(player);
+                        PlayerService.updatePlayer(otherPlayer);
                         XMLsaveLoad.savePlayers();
                         player.setCurrentGame(null);
                         otherPlayer.setCurrentGame(null);
