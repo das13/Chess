@@ -1,6 +1,5 @@
 package chess.view;
 
-import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.concurrent.Task;
@@ -34,7 +33,7 @@ import java.util.List;
  * on server and offer/accept offers on playing. After finishing
  * a game user is returned to this window.
  */
-class ProfileFrame extends Stage {
+public class ProfileFrame extends Stage {
     private String firstConf;
     private String secondConf;
     private List<String> listIn;
@@ -48,7 +47,7 @@ class ProfileFrame extends Stage {
      * @param xmlOut for sending messages to server.
      * @param freePlayers current user data + list of free players.
      */
-    ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
+    public ProfileFrame(XMLin xmLin, final XMLout xmlOut, List<String> freePlayers) {
         this.setTitle("Шахматы онлайн");
         Stage stage = this;
         Pane grid = new Pane();

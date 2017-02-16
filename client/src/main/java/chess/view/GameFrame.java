@@ -75,7 +75,7 @@ public class GameFrame extends Stage implements Observer {
      * @param info player's information, used to display new rank and additional info
      *             after game is over. Also is used for returning back to <code>ProfileFrame</code>
      */
-    GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
+    public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
         ImageView castle;
         ImageView knight;
         ImageView bishop;

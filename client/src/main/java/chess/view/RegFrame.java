@@ -1,6 +1,5 @@
 package chess.view;
 
-import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.geometry.Insets;
@@ -33,7 +32,7 @@ import java.util.List;
  * password isn't entered, registration doesn't proceed.
  *
  */
-class RegFrame extends Stage {
+public class RegFrame extends Stage {
 
     private final static Logger logger = Logger.getLogger(RegFrame.class.getClass());
     /**
@@ -43,7 +42,7 @@ class RegFrame extends Stage {
      * @param xmLin for receiving messages from server.
      * @param xmlOut for sending messages to server.
      */
-    RegFrame(final XMLin xmLin, final XMLout xmlOut) {
+    public RegFrame(final XMLin xmLin, final XMLout xmlOut) {
         this.setTitle("Регистрация нового игрока");
 
         VBox vBox = new VBox();

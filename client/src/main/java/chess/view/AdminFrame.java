@@ -1,6 +1,5 @@
 package chess.view;
 
-import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.application.Platform;
@@ -35,7 +34,7 @@ import java.util.List;
  * IP addresses and also can ban/un-ban any player excluding himself.
  * User of <code>AdminFrame</code> can play chess with other players as well.
  */
-class AdminFrame extends Stage {
+public class AdminFrame extends Stage {
     private final XMLin xmLin;
     private final XMLout xmLout;
     private String firstConf;
@@ -54,7 +53,7 @@ class AdminFrame extends Stage {
      * @param xmlOut    for sending messages to server.
      * @param adminInfo current user information.
      */
-    AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
+    public AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
         Stage stage = this;
         this.xmLin = xmLin;
         this.xmLout = xmlOut;
