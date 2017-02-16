@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<savedPlayers>
+<player id="1">
+<login>slava</login>
+<password>111</password>
+<rank>60</rank>
+<status>FREE</status>
+<ipadress>/127.0.0.1</ipadress>
+</player>
+<player id="2">
+<login>superuser</login>
+<password>3141592</password>
+<rank>50</rank>
+<status>OFFLINE</status>
+<ipadress>/127.0.0.1</ipadress>
+</player>
+<player id="3">
+<login>andrey</login>
+<password>111</password>
+<rank>50</rank>
+<status>FREE</status>
+<ipadress>/127.0.0.1</ipadress>
+</player>
+<player id="4">
+<login>dima</login>
+<password>111</password>
+<rank>40</rank>
+<status>FREE</status>
+<ipadress>/127.0.0.1</ipadress>
+</player>
+</savedPlayers>

@@ -56,7 +56,9 @@ public class Controller extends Thread {
             public void run() {
                 while(true) {
                     if(player.getCurrentGame()!=null) {
-                        if (LocalTime.now().getMinute() - timer.getMinute() >= 5 && player.getType() == getCurrentGame().getCurrentStep()) {
+                        if(player.getType() != getCurrentGame().getCurrentStep()){
+                            timer=LocalTime.now();
+                        }else if (LocalTime.now().getMinute() - timer.getMinute() >= 5 ) {
                             List<String> list = new ArrayList<>();
                             List<String> listrival = new ArrayList<>();
                             list.add("5minute");
@@ -101,6 +103,7 @@ public class Controller extends Thread {
                                 }
                                 otherPlayer.getController().getSender().send(listrival);
                                 sender.send(list);
+                                XMLsaveLoad.savePlayers();
                                 timer = LocalTime.now();
                             } catch (ParserConfigurationException e) {
                                 e.printStackTrace();
@@ -111,8 +114,7 @@ public class Controller extends Thread {
                             } catch (TransformerException e) {
                                 e.printStackTrace();
                             }
-                        }
-                        if (LocalTime.now().getMinute() - timer.getMinute() >= 4 && player.getType() == getCurrentGame().getCurrentStep()) {
+                        } else if (LocalTime.now().getMinute() - timer.getMinute() >= 4 && player.getType() == getCurrentGame().getCurrentStep()) {
                             List<String> list = new ArrayList<>();
                             list.add("4minute");
                             try {
@@ -179,7 +181,6 @@ public class Controller extends Thread {
                     outList.add("logout");
                     outList.add("logout");
                     sender.send(outList);
-                    System.out.println("Окккккк");
                     player = new Player(this);
                 }
                 if("saveProfile".equals(str.get(0))){

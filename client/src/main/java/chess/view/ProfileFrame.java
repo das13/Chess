@@ -236,7 +236,6 @@ class ProfileFrame extends Stage {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                System.out.println(firstConf);
                 if ("confirm".equals(firstConf)) {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.initOwner(stage);

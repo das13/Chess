@@ -31,6 +31,7 @@ public class ServerMain {
             XMLsaveLoad.loadPlayers();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             logger.error("Failed loading players from file ", e);
+            e.printStackTrace();
         }
         new Server();
     }
