@@ -1,7 +1,7 @@
 package chess;
 
 /**
- * Created by slava on 09.02.17.
+ * Constants for basic client settings
  */
 class Constants {
     static final String HOST = "localhost";
