@@ -1,5 +1,6 @@
 package chess.view;
 
+import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.geometry.Insets;
@@ -33,6 +34,13 @@ import java.util.List;
  */
 class RegFrame extends Stage {
 
+    /**
+     * Creating <code>RegFrame</code> with given XMLin and XMLout
+     * for communicating with remote server.
+     *
+     * @param xmLin for receiving messages from server.
+     * @param xmlOut for sending messages to server.
+     */
     RegFrame(final XMLin xmLin, final XMLout xmlOut) {
         this.setTitle("Регистрация нового игрока");
 
@@ -88,7 +96,7 @@ class RegFrame extends Stage {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Failed to send login/password to server from RegFrame", e1);
                 }
                 List<String> listIn = null;
                 try {
@@ -105,7 +113,7 @@ class RegFrame extends Stage {
                         alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Error on receiving message from server in RegFrame", e1);
                 }
             }
         });
@@ -125,6 +133,7 @@ class RegFrame extends Stage {
         this.setScene(scene);
         this.setResizable(false);
         this.show();
+        ClientMain.logger.info("Registration window build successfully.");
 
         /*On pressing "Enter" yesButton fires automatically*/
         this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {

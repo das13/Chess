@@ -13,7 +13,7 @@ import java.net.Socket;
 
 public class ClientMain extends Application {
 
-    private final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
+    public final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
     private XMLout xmlOut;
     private XMLin xmLin;
 

@@ -1,5 +1,6 @@
 package chess.services.xmlService;
 
+import chess.ClientMain;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -61,7 +62,7 @@ public class XMLout {
         try {
             tf.transform(ds, sr);
         } catch (TransformerException ex) {
-            ex.printStackTrace();
+            ClientMain.logger.error("Transformation data error from XMLout", ex);
         }
         out.send();
     }
@@ -109,7 +110,6 @@ public class XMLout {
         Element args = doc.createElement("args");
         root.appendChild(args);
         for (int i = 1; i < list.size(); i++) {
-            //System.out.println(list.get(i));
             Element el = doc.createElement("arg");
             el.appendChild(doc.createTextNode(list.get(i)));
             args.appendChild(el);

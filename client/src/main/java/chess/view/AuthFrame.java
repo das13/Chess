@@ -1,5 +1,6 @@
 package chess.view;
 
+import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.geometry.Insets;
@@ -24,16 +25,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Admin on 26.01.2017.
+ * <code>AuthFrame</code> is a window for authentication user,
+ * that was created before. This window opens to user first
+ * as client is launched.
  */
 
 public class AuthFrame extends Stage {
     private final Stage stage = this;
 
     /**
+     * Creating <code>AuthFrame</code> with given XMLin and XMLout
+     * for communicating with remote server.
      *
-     * @param xmLin
-     * @param xmlOut
+     * @param xmLin for receiving messages from server.
+     * @param xmlOut for sending messages to server.
      */
     public AuthFrame(XMLin xmLin, XMLout xmlOut) {
         this.setTitle("Шахматы онлайн");
@@ -79,7 +84,6 @@ public class AuthFrame extends Stage {
         Button enterButton = new Button("Войти");
         enterButton.setPrefWidth(90);
         enterButton.setOnAction(e -> {
-
             if (loginInput.getText().equals("") || passInput.getText().equals("")) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.getDialogPane().getStylesheets().add("Skin.css");
@@ -88,7 +92,6 @@ public class AuthFrame extends Stage {
                 alert.setContentText("Заполните поля логин/пароль");
                 System.out.println(alert.getButtonTypes().size());
                 alert.showAndWait();
-
             } else {
                 List<String> list = new ArrayList<>();
                 list.add("auth");
@@ -97,7 +100,7 @@ public class AuthFrame extends Stage {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Failed to send login/password to server from AuthFrame", e1);
                 }
                 List<String> listIn = null;
                 try {
@@ -124,7 +127,7 @@ public class AuthFrame extends Stage {
                         alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Error on receiving message from server in AuthFrame", e1);
                 }
             }
         });
@@ -159,5 +162,6 @@ public class AuthFrame extends Stage {
             }
         });
         this.show();
+        ClientMain.logger.info("Authentication window build successfully.");
     }
 }

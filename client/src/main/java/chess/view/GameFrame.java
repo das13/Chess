@@ -1,5 +1,6 @@
 package chess.view;
 
+import chess.ClientMain;
 import chess.Timer;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
@@ -32,7 +33,7 @@ import java.util.*;
 import static java.lang.Integer.*;
 
 /**
- * GameFrame is a chessboard realization, with timer, moves notation and everything needed.
+ * <code>GameFrame</code> is a chessboard realization, with timer, moves notation and everything needed.
  * Initiator of a game plays white pieces, the opponent plays black. In case of playing black pieces
  * board is considered turned upside down, so server understands moves correctly. While opponent
  * makes his move the board of current player doesn't let pick, drag pieces. Opponent's pieces
@@ -61,6 +62,17 @@ public class GameFrame extends Stage implements Observer {
     private final ArrayList<String> playerInfo;
     private final ListView<String> movesRecord;
 
+    /**
+     * Creates <code>GameFrame</code> with XMLin and XMLout for transfering data from
+     * and to server. Also boolean parameter defines what color of pieces player gets,
+     * if he accepted offer to play, pieces will be black, initiator of game gets white
+     * pieces.
+     * @param xmLin for receiving messages from server.
+     * @param xmlOut for sending messages to server.
+     * @param isWhite defines color of player's pieces on current game
+     * @param info player's information, used to display new rank and additional info
+     *             after game is over. Also is used for returning back to <code>ProfileFrame</code>
+     */
     GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
         ImageView castle;
         ImageView knight;
@@ -139,7 +151,7 @@ public class GameFrame extends Stage implements Observer {
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                e1.printStackTrace();
+                ClientMain.logger.error("Failed to send draw offer from GameFrame", e1);
             }
         });
 
@@ -158,7 +170,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Failed to send resign from GameFrame", e1);
                 }
             } else {
                 alert.close();
@@ -251,7 +263,7 @@ public class GameFrame extends Stage implements Observer {
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                        e1.printStackTrace();
+                        ClientMain.logger.error("Failed to send move message from GameFrame", e1);
                     }
                     Label label = null;
                     lastTakenFigure = null;
@@ -310,7 +322,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Failed to send drag figure data from GameFrame", e1);
                 }
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
                 ClipboardContent content = new ClipboardContent();
@@ -384,7 +396,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    e1.printStackTrace();
+                    ClientMain.logger.error("Failed to send replace pawn message from GameFrame", e1);
                 }
                 stage.close();
             }
@@ -397,7 +409,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     listIn = xmLin.receive();
                 } catch (ParserConfigurationException | SAXException | IOException e) {
-                    e.printStackTrace();
+                    ClientMain.logger.error("Failed to receive a message from server on GameFrame", e);
                 }
                 return null;
             }
@@ -557,7 +569,7 @@ public class GameFrame extends Stage implements Observer {
                         try {
                             xmlOut.sendMessage(list);
                         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-                            e.printStackTrace();
+                            ClientMain.logger.error("Failed to send draw accept from GameFrame", e);
                         }
                     } else {
                         alert.close();
@@ -781,8 +793,6 @@ public class GameFrame extends Stage implements Observer {
             }
         }
         target.getChildren().add(image);
-
-
     }
 
     /**

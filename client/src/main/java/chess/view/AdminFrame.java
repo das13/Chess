@@ -1,5 +1,6 @@
 package chess.view;
 
+import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.application.Platform;
@@ -43,6 +44,14 @@ class AdminFrame extends Stage {
     private List<String> info;
     private TableView<PlayerRow> table;
 
+    /**
+     * Creates <code>AdminFrame</code> with given XMLin and XMLout
+     * for communicating with server and list of superuser information.
+     *
+     * @param xmLin     for receiving messages from server.
+     * @param xmlOut    for sending messages to server.
+     * @param adminInfo current user information.
+     */
     AdminFrame(final XMLin xmLin, final XMLout xmlOut, List<String> adminInfo) {
         Stage stage = this;
         this.xmLin = xmLin;
@@ -94,6 +103,7 @@ class AdminFrame extends Stage {
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.show();
+        ClientMain.logger.info("Administrator window build successfully.");
         refreshButton.fire();
 
         MyTask<Void> task = new MyTask<>();
@@ -164,7 +174,9 @@ class AdminFrame extends Stage {
         thread.start();
     }
 
-    /**Class for receiving List of String values from XMLin*/
+    /**
+     * Class for receiving List of String values from XMLin
+     */
     class MyTask<Void> extends Task<Void> {
         @Override
         public Void call() throws Exception {
@@ -174,7 +186,7 @@ class AdminFrame extends Stage {
                 secondConf = list.get(1);
                 listIn = list;
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                e.printStackTrace();
+                ClientMain.logger.error("Error receiving data from server on AdminFrame", e);
             }
             return null;
         }
@@ -245,7 +257,7 @@ class AdminFrame extends Stage {
         try {
             xmLout.sendMessage(list);
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            e1.printStackTrace();
+            ClientMain.logger.error("Error requesting freeplayers from server on AdminFrame", e1);
         }
     }
 
@@ -259,16 +271,21 @@ class AdminFrame extends Stage {
         PlayerRow row = table.getSelectionModel().getSelectedItem();
         String name = row.getLogin();
         list.add(name);
-        System.out.println(name);
         try {
             xmLout.sendMessage(list);
             System.out.println("offer sent");
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            e1.printStackTrace();
+            ClientMain.logger.error("Error sending game offer to" + name + "from server on AdminFrame", e1);
         }
     }
 
     private void exitButtonClicked() {
-        this.close();
+        List<String> list = new ArrayList<>();
+        list.add("logout");
+        try {
+            xmLout.sendMessage(list);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+            ClientMain.logger.error("Error logging out from AdminFrame", e1);
+        }
     }
 }
