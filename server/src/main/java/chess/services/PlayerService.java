@@ -7,6 +7,7 @@ import chess.model.Player;
 import chess.model.Status;
 import chess.services.xmlService.XMLSender;
 import chess.services.xmlService.XMLsaveLoad;
+import org.apache.log4j.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -17,9 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 20.01.2017.
+ * <code>PlayerService</code> serves to handle user requests
+ * from client, as logging/signing in, getting list of players.
+ * Also it provides service methods ob playersthat are used
+ * by server itself.
  */
 public class PlayerService {
+
+    private final static Logger logger = Logger.getLogger(PlayerService.class.getClass());
     public static void reg(Controller controller, String login, String password, String ipadress) {
         controller.setPlayerLogin(login);
         controller.setPlayerPassword(password);
@@ -27,44 +33,16 @@ public class PlayerService {
         controller.setPlayerStatus(Status.OFFLINE);
     }
 
-    public static void reenter(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
-
-        List<String> out = new ArrayList<String>();
-
-        if (ServerMain.inGamePlayers.contains(player)) {
-            player.setStatus(Status.FREE);
-            ServerMain.inGamePlayers.remove(player);
-        }
-        if (login.equals(Constants.ADMIN_NAME) && password.equals(Constants.ADMIN_PASS)) {
-            out.add("admin");
-            sender.send(out);
-        } else {
-            for (Player p : ServerMain.allPlayers) {
-                if (p.getLogin().equals(login) && p.getPassword().equals(password)) {
-                    player.setId(p.getId());
-                    player.setRank(p.getRank());
-                    out.add("Ok");
-                    out.add(String.valueOf(p.getId()));
-                    out.add(login);
-                    out.add(password);
-                    out.add(String.valueOf(p.getRank()));
-                    p.setStatus(Status.FREE);
-                    break;
-                }
-            }
-
-            for (Player p : ServerMain.freePlayers) {
-                out.add(p.getLogin());
-                out.add(String.valueOf(p.getRank()));
-            }
-            synchronized (ServerMain.freePlayers) {
-                ServerMain.freePlayers.add(player);
-            }
-
-        }
-        sender.send(out);
-    }
-
+    /**
+     * Is used to authenticate player from remote client.
+     * @param player dummy Player instance given by Controller.
+     * @param login login entered by remote user.
+     * @param password password entered by remote user.
+     * @param sender XMLSender for current remote client.
+     * @throws IOException when cannot read from saved players.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws TransformerConfigurationException in case of transforming xml data error.
+     */
     public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         boolean check = false;
         List<String> out = new ArrayList<String>();
@@ -116,6 +94,14 @@ public class PlayerService {
         sender.send(out);
     }
 
+    /**
+     * Sends most new information about free players
+     * to the remote client for refreshing the list.
+     *
+     * @param player current player.
+     * @param sender XMLSender for current remote client.
+     * @return List of String values of logins and ranks.
+     */
     public static List<String> refresh(Player player, XMLSender sender) {
         List<String> out = new ArrayList<>();
         out.add("Ok");
@@ -133,13 +119,19 @@ public class PlayerService {
         return out;
     }
 
+    /**
+     * Saves edited profile of current player by unique id.
+     * @param login new login.
+     * @param password new password.
+     * @param id unique id number of current player.
+     * @return confirmation message.
+     */
     public static List<String> saveProfile(String login, String password, int id) {
         Player player;
         List<String> list = new ArrayList<>();
         list.add("saveconfirm");
         try {
             player = findPlayerByIdAll(id);
-            System.out.println(login + " " + password + " " + id);
             list.add("Ok");
             if (player != null) {
                 player.setLogin(login);
@@ -147,23 +139,33 @@ public class PlayerService {
             }
             try {
                 XMLsaveLoad.savePlayers();
-                System.out.println("Players saved succsessfully");
             } catch (TransformerException | ParserConfigurationException | FileNotFoundException e) {
-                e.printStackTrace();
+                logger.error("Error saving slayers to file", e);
             }
         } catch (NullPointerException e) {
-            list.add("error");
+            logger.error("Could not find player", e);
         }
         return list;
     }
 
+    /**
+     * Registers new player. New player needs to have unique login,
+     * though it may be changed later, but only for another unique login.
+     *
+     * @param login user entered login.
+     * @param password user entered password.
+     * @param ipadress user IP address.
+     * @param sender XMLSender for current remote client.
+     * @throws IOException when cannot save players to file.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws TransformerConfigurationException in case of transforming xml data error.
+     */
     public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         System.out.println("inside reg method");
         Player player;
         List<String> list = new ArrayList<String>();
         list.add("reg");
         if ((findPlayer(login)) != null) {
-            System.out.println("such player found");
             list.add("denied");
             list.add("exists");
         } else {
@@ -171,19 +173,21 @@ public class PlayerService {
             player.setId(ServerMain.getFreePlayers().size() + 1);
             ServerMain.getAllPlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
-            System.out.println("Player " + login + " " + password + " " + ipadress + " created");
             try {
                 XMLsaveLoad.savePlayers();
-                System.out.println("Players saved succsessfully");
             } catch (TransformerException e) {
-                e.printStackTrace();
+                logger.error("Error saving slayers to file", e);
             }
         }
         sender.send(list);
     }
 
-    // дополнительный метод для поиска, стоит использовать при авторизации, регистрации и т.д.
-    public static Player findPlayer(String login) {
+    /**
+     * Finds player by login.
+     * @param login unique login.
+     * @return Player if found, or null.
+     */
+    private static Player findPlayer(String login) {
         for (Player p : ServerMain.allPlayers) {
             if (p.getLogin().equals(login)) {
                 return p;
@@ -192,16 +196,11 @@ public class PlayerService {
         return null;
     }
 
-    public static Player findPlayerById(int id) {
-        for (Player p : ServerMain.freePlayers) {
-            if (p.getId() == id) {
-                return p;
-            }
-        }
-        return null;
-    }
-
-    public static void updatePlayer(Player fresh) {
+    /**
+     * Updates player rank, used after game is over.
+     * @param fresh Player from current controller with updated rank.
+     */
+    static void updatePlayer(Player fresh) {
         for (int i = 0; i < ServerMain.allPlayers.size(); i++) {
             if (ServerMain.allPlayers.get(i).getLogin().equals(fresh.getLogin())) {
                 ServerMain.allPlayers.get(i).setRank(fresh.getRank());
@@ -209,6 +208,11 @@ public class PlayerService {
         }
     }
 
+    /**
+     * Finds player by id.
+     * @param id unique uneditable id.
+     * @return Player if found, or null.
+     */
     private static Player findPlayerByIdAll(int id) {
         for (Player p : ServerMain.allPlayers) {
             if (p.getId() == id) {
@@ -218,6 +222,13 @@ public class PlayerService {
         return null;
     }
 
+    /**
+     * Sends list of all players to remote admin user.
+     * @param sender XMLSender for current remote admin.
+     * @throws IOException when cannot read saved players from file.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws TransformerConfigurationException in case of transforming xml data error.
+     */
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> list = new ArrayList<>();
         list.add("admin_getPlayers");

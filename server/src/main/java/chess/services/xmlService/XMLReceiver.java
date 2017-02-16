@@ -1,5 +1,8 @@
 package chess.services.xmlService;
 
+import chess.ServerMain;
+import chess.services.GameService;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -16,14 +19,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bobnewmark on 21.01.2017
+ * <code>XMLReceiver</code> provides receiving XML data from InputStream
+ * and returns a List of String values after processing received data.
  */
-public class XMLReciever {
+public class XMLReceiver {
 
     private final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
     private final InputStream input;
+    private final static Logger logger = Logger.getLogger(XMLReceiver.class.getClass());
 
-    public XMLReciever(InputStream input) {
+    /**
+     * Creates <code>XMLReceiver</code> with given input, from
+     * where expected xml data will be transferred.
+     *
+     * @param input input stream to use
+     */
+    public XMLReceiver(InputStream input) {
         this.input = input;
     }
 
@@ -34,7 +45,7 @@ public class XMLReciever {
             super(new byte[2]);
             this.in = new DataInputStream(input);
         }
-        void recive() throws IOException {
+        void receive() throws IOException {
             int i = in.readInt();
             byte[] data = new byte[i];
             in.read(data, 0, i);
@@ -50,7 +61,7 @@ public class XMLReciever {
 
         DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
-        xmlin.recive();
+        xmlin.receive();
         Document doc = docBuilder.parse(xmlin);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Result output = new StreamResult(new File("input.xml"));
@@ -58,7 +69,7 @@ public class XMLReciever {
         try {
             transformer.transform(input, output);
         } catch (TransformerException e) {
-            e.printStackTrace();
+            logger.error("Error transforming xml data", e);
         }
         doc.getDocumentElement().normalize();
         List<String> list = new ArrayList<String>();

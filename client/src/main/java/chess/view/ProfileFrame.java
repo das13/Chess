@@ -18,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +38,7 @@ class ProfileFrame extends Stage {
     private String firstConf;
     private String secondConf;
     private List<String> listIn;
+    private final static Logger logger = Logger.getLogger(ProfileFrame.class.getClass());
 
     /**
      * Creates <code>ProfileFrame</code> with given XMLin and XMLout
@@ -119,7 +121,7 @@ class ProfileFrame extends Stage {
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                ClientMain.logger.error("Failed to send login/password to server from ProfileFrame for saving", e1);
+                logger.error("Failed to send login/password to server from ProfileFrame for saving", e1);
             }
         });
 
@@ -167,7 +169,7 @@ class ProfileFrame extends Stage {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send a game offer to " + name + " from ProfileFrame", e1);
+                    logger.error("Failed to send a game offer to " + name + " from ProfileFrame", e1);
                 }
             });
 
@@ -187,7 +189,7 @@ class ProfileFrame extends Stage {
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                ClientMain.logger.error("Failed to refresh players list on ProfileFrame", e1);
+                logger.error("Failed to refresh players list on ProfileFrame", e1);
             }
         });
         //Button for logout
@@ -201,7 +203,7 @@ class ProfileFrame extends Stage {
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                ClientMain.logger.error("Error logging out from ProfileFrame", e1);
+                logger.error("Error logging out from ProfileFrame", e1);
             }
         });
         grid.getChildren().add(freeplayer);
@@ -210,7 +212,7 @@ class ProfileFrame extends Stage {
         grid.getChildren().add(logout);
         this.setResizable(false);
         this.show();
-        ClientMain.logger.info("Player profile window build successfully.");
+        logger.info("Player profile window build successfully.");
 
 
         //Class for receiving List of String values from XMLin
@@ -224,7 +226,7 @@ class ProfileFrame extends Stage {
                     secondConf = list.get(1);
                     listIn = list;
                 } catch (ParserConfigurationException | SAXException | IOException e) {
-                    ClientMain.logger.error("Error receiving data from server on ProfileFrame", e);
+                    logger.error("Error receiving data from server on ProfileFrame", e);
                 }
                 return null;
             }
@@ -251,7 +253,7 @@ class ProfileFrame extends Stage {
                         try {
                             xmlOut.sendMessage(list);
                         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            ClientMain.logger.error("Error confirming game with " + secondConf + " on ProfileFrame", e1);
+                            logger.error("Error confirming game with " + secondConf + " on ProfileFrame", e1);
                         }
                         stage.close();
                         new GameFrame(xmLin, xmlOut, false, freePlayers);
@@ -261,7 +263,7 @@ class ProfileFrame extends Stage {
                         try {
                             xmlOut.sendMessage(list);
                         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            ClientMain.logger.error("Error denying game with " + secondConf + " on ProfileFrame", e1);
+                            logger.error("Error denying game with " + secondConf + " on ProfileFrame", e1);
                         }
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());

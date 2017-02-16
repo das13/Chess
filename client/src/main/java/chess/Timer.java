@@ -1,6 +1,7 @@
 package chess;
 
 import chess.view.GameFrame;
+import org.apache.log4j.Logger;
 
 import java.util.Observable;
 
@@ -18,6 +19,7 @@ public class Timer extends Observable implements Runnable {
     private int minutes;
     private int seconds;
     private String sec;
+    private final static Logger logger = Logger.getLogger(Timer.class.getClass());
 
     /**
      * Creates <code>Timer</code> for a given <code>GameFrame</code>
@@ -52,12 +54,12 @@ public class Timer extends Observable implements Runnable {
             try {
                 sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.info("Interrupted timer, probably end of game.");
             }
             time = time - 1;
         }
         while (time > 0);
-        System.out.println("You lose!");
+        logger.info("Time is up");
     }
 
     private boolean getActivity() {

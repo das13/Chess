@@ -20,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,6 +44,7 @@ class AdminFrame extends Stage {
     private final ObservableList<PlayerRow> players;
     private List<String> info;
     private TableView<PlayerRow> table;
+    private final static Logger logger = Logger.getLogger(AdminFrame.class.getClass());
 
     /**
      * Creates <code>AdminFrame</code> with given XMLin and XMLout
@@ -103,7 +105,7 @@ class AdminFrame extends Stage {
         scene.getStylesheets().add("Skin.css");
         this.setScene(scene);
         this.show();
-        ClientMain.logger.info("Administrator window build successfully.");
+        logger.info("Administrator window build successfully.");
         refreshButton.fire();
 
         MyTask<Void> task = new MyTask<>();
@@ -186,7 +188,7 @@ class AdminFrame extends Stage {
                 secondConf = list.get(1);
                 listIn = list;
             } catch (ParserConfigurationException | SAXException | IOException e) {
-                ClientMain.logger.error("Error receiving data from server on AdminFrame", e);
+                logger.error("Error receiving data from server on AdminFrame", e);
             }
             return null;
         }
@@ -257,7 +259,7 @@ class AdminFrame extends Stage {
         try {
             xmLout.sendMessage(list);
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            ClientMain.logger.error("Error requesting freeplayers from server on AdminFrame", e1);
+            logger.error("Error requesting freeplayers from server on AdminFrame", e1);
         }
     }
 
@@ -275,7 +277,7 @@ class AdminFrame extends Stage {
             xmLout.sendMessage(list);
             System.out.println("offer sent");
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            ClientMain.logger.error("Error sending game offer to" + name + "from server on AdminFrame", e1);
+            logger.error("Error sending game offer to" + name + "from server on AdminFrame", e1);
         }
     }
 
@@ -285,7 +287,7 @@ class AdminFrame extends Stage {
         try {
             xmLout.sendMessage(list);
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            ClientMain.logger.error("Error logging out from AdminFrame", e1);
+            logger.error("Error logging out from AdminFrame", e1);
         }
     }
 }

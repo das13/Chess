@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Bishop</code> figure.
  */
 public class Bishop extends Figure {
     private List<Cell> validCells;

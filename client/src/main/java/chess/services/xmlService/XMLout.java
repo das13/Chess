@@ -1,6 +1,7 @@
 package chess.services.xmlService;
 
 import chess.ClientMain;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +27,7 @@ public class XMLout {
      * DataOutputStream is used to send XML data.
      */
     private final DataOutputStream host;
+    private final static Logger logger = Logger.getLogger(XMLout.class.getClass());
 
     /**
      * DocumentBuilderFactory is created once the instance of the class
@@ -62,7 +64,7 @@ public class XMLout {
         try {
             tf.transform(ds, sr);
         } catch (TransformerException ex) {
-            ClientMain.logger.error("Transformation data error from XMLout", ex);
+            logger.error("Transformation data error", ex);
         }
         out.send();
     }

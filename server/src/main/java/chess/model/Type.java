@@ -1,7 +1,7 @@
 package chess.model;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * Two colors of figures.
  */
 public enum Type {
     WHITE,

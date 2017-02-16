@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,6 +35,7 @@ import java.util.List;
  */
 class RegFrame extends Stage {
 
+    private final static Logger logger = Logger.getLogger(RegFrame.class.getClass());
     /**
      * Creating <code>RegFrame</code> with given XMLin and XMLout
      * for communicating with remote server.
@@ -96,7 +98,7 @@ class RegFrame extends Stage {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send login/password to server from RegFrame", e1);
+                    logger.error("Failed to send login/password to server from RegFrame", e1);
                 }
                 List<String> listIn = null;
                 try {
@@ -113,7 +115,7 @@ class RegFrame extends Stage {
                         alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException e1) {
-                    ClientMain.logger.error("Error on receiving message from server in RegFrame", e1);
+                    logger.error("Error on receiving message from server in RegFrame", e1);
                 }
             }
         });
@@ -133,7 +135,7 @@ class RegFrame extends Stage {
         this.setScene(scene);
         this.setResizable(false);
         this.show();
-        ClientMain.logger.info("Registration window build successfully.");
+        logger.info("Registration window build successfully.");
 
         /*On pressing "Enter" yesButton fires automatically*/
         this.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {

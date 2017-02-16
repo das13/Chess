@@ -1,7 +1,7 @@
 package chess.model;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Cell</code> is class for cells ob game board.
  */
 public class Cell {
     private Figure figure;

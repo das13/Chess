@@ -5,7 +5,7 @@ import chess.exceptions.ReplacePawnException;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Figure</code> is base class for all pieces.
  */
 public abstract class Figure {
     protected Figure(Type type){
@@ -29,7 +29,13 @@ public abstract class Figure {
     public boolean hasMove() {
         return allAccessibleMove().size() > 0;
     }
-    // method checks if destination cell is available and moves a figure to it if so
+
+    /**
+     * Method checks if destination cell is available and moves a figure to it if so
+     * @param destination target Cell to move on.
+     * @throws ReplacePawnException in case when pawn got to the end of board, but error
+     * happened when it was replaced by another figure.
+     */
     public void move(Cell destination) throws ReplacePawnException {
         if (allAccessibleMove().contains(destination)) {
             this.cell.setFigure(null);

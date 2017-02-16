@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>King</code> figure.
  */
 public class King extends Figure {
     private Game game;
@@ -97,8 +97,6 @@ public class King extends Figure {
         if (game.getCell(7, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(7, this.getCell().getY()).getFigure().isFirstMove()) return false;
-        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(6, this.getCell().getY()))) return false;
-        System.out.println("ENEMY MOVES CONTAIN CELL 6." + this.getCell().getY() + " ? " + game.getEnemyMoves(this.getType()).contains(game.getCell(5, this.getCell().getY())));
         return true;
     }
 
@@ -108,7 +106,6 @@ public class King extends Figure {
         if (game.getCell(0, this.getCell().getY()).getFigure() == null) return false;
         // if castle moved
         if (!game.getCell(0, this.getCell().getY()).getFigure().isFirstMove()) return false;
-        //if (game.getEnemyMoves(this.getType()).contains(game.getCell(2, this.getCell().getY()))) return false;
         return true;
     }
 

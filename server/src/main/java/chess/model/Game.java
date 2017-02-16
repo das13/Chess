@@ -2,12 +2,13 @@ package chess.model;
 
 import chess.Constants;
 import chess.model.figures.*;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Game</code> is the base class for playing.
  */
 public class Game extends Thread {
     private Player whitePlayer;
@@ -22,7 +23,13 @@ public class Game extends Thread {
     private final List<Cell> allWhiteMoves = new ArrayList<Cell>();
     private final List<Cell> allBlackMoves = new ArrayList<Cell>();
     private Type currentStep = Type.WHITE;
+    private final static Logger logger = Logger.getLogger(Game.class.getClass());
 
+    /**
+     * Creates instance of Game with two given players.
+     * @param whitePlayer Player who initiated the game.
+     * @param blackPlayer Player who accepted the offer to play.
+     */
     public Game(Player whitePlayer, Player blackPlayer) {
         this.currentStep = Type.WHITE;
         this.whitePlayer = whitePlayer;
@@ -118,7 +125,11 @@ public class Game extends Thread {
         }
     }
 
-    // возвращает true если белый король под шахом
+    /**
+     * Returns true when player's king is under attack.
+     * @param type Type of the player's figures.
+     * @return true if attacked.
+     */
     public boolean isPlayersKingAttacked(Type type) {
         if (type == Type.WHITE) {
             return allBlackMoves.contains(whiteKing.getCell());
@@ -151,7 +162,11 @@ public class Game extends Thread {
         this.lastFigureTaken = lastFigureTaken;
     }
 
-    // возвращает множество потенциальных ходов соперника
+    /**
+     * Returns moves of opponent's figures.
+     * @param type Type of current player figures.
+     * @return List of Cells that can be taken by opponent.
+     */
     public List<Cell> getEnemyMoves(Type type) {
         if (type == Type.WHITE) {
             return allBlackMoves;
@@ -160,7 +175,9 @@ public class Game extends Thread {
         }
     }
 
-    // составляет множество всех потенциальных ходов игрока белыми
+    /**
+     * Sets up all white figures moves.
+     */
     public void setAllWhiteMoves() {
         allWhiteMoves.clear();
         for (Cell[] cells : board) {
@@ -171,8 +188,9 @@ public class Game extends Thread {
             }
         }
     }
-
-    // составляет множество всех потенциальных ходов игрока черными
+    /**
+     * Sets up all black figures moves.
+     */
     public void setAllBlackMoves() {
         allBlackMoves.clear();
         for (Cell[] cells : board) {
@@ -189,13 +207,8 @@ public class Game extends Thread {
             figure.setCell(board[y][x]);
             figure.setType(board[y][x].getFigure().getType());
             board[y][x].setFigure(figure);
-            //System.out.println(board[y][x].getFigure().getClass().getName()+" "+y+" "+x);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (InstantiationException | ClassNotFoundException | IllegalAccessException e) {
+            logger.error("Error replacing pawn", e);
         }
     }
 }

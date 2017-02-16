@@ -16,6 +16,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class AuthFrame extends Stage {
     private final Stage stage = this;
+    private final static Logger logger = Logger.getLogger(AuthFrame.class.getClass());
 
     /**
      * Creating <code>AuthFrame</code> with given XMLin and XMLout
@@ -100,7 +102,7 @@ public class AuthFrame extends Stage {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send login/password to server from AuthFrame", e1);
+                    logger.error("Failed to send login/password to server from AuthFrame", e1);
                 }
                 List<String> listIn = null;
                 try {
@@ -127,7 +129,7 @@ public class AuthFrame extends Stage {
                         alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException e1) {
-                    ClientMain.logger.error("Error on receiving message from server in AuthFrame", e1);
+                    logger.error("Error on receiving message from server in AuthFrame", e1);
                 }
             }
         });
@@ -162,6 +164,6 @@ public class AuthFrame extends Stage {
             }
         });
         this.show();
-        ClientMain.logger.info("Authentication window build successfully.");
+        logger.info("Authentication window build successfully.");
     }
 }

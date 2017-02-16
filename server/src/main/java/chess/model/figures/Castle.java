@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Castle</code> figure.
  */
 public class Castle extends Figure {
 

@@ -10,10 +10,14 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.Socket;
 
-
+/**
+ * <code>ClientMain</code> is the main class for client application.
+ * It establishes connection with server, starts logging and
+ *  creates <code>AuthFrame</code> window.
+ */
 public class ClientMain extends Application {
 
-    public final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
+    private final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
     private XMLout xmlOut;
     private XMLin xmLin;
 

@@ -12,7 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+/**
+ * <code>ServerMain</code> is the main class for server application,
+ * it creates lists for players, restores saved players from file,
+ * and starts <code>Server</code> for communicating with players.
+ */
 public class ServerMain {
     private final static Logger logger = Logger.getLogger(ServerMain.class.getClass());
     public static final List<Player> freePlayers =

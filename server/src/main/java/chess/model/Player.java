@@ -6,13 +6,12 @@ import chess.controller.Controller;
 import java.net.Socket;
 
 /**
- * Created by viacheslav koshchii on 17.01.2017.
+ * <code>Player</code> is the main unit for user.
  */
 public class Player {
     private int id;
     private String login;
     private String password;
-    private String nickname;
     private int rank;
     private String ipadress;
     private Status status;
@@ -21,6 +20,9 @@ public class Player {
     private Controller controller;
     private Type type;
 
+    /**
+     * Creates <code>Player</code> with given information as parameters.
+     */
     public Player(String login, String password, Status status, String ipadress) {
         this.login = login;
         this.password = password;
@@ -112,7 +114,7 @@ public class Player {
     @Override
     public int hashCode() {
         int result = login.hashCode();
-        result = 31 * result + nickname.hashCode();
+        result = 31 * result + login.hashCode();
         return result;
     }
 }

@@ -6,9 +6,10 @@ import chess.model.Player;
 import chess.model.Status;
 import chess.services.GameService;
 import chess.services.PlayerService;
-import chess.services.xmlService.XMLReciever;
+import chess.services.xmlService.XMLReceiver;
 import chess.services.xmlService.XMLSender;
 import chess.services.xmlService.XMLsaveLoad;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bobnewmark on 22.01.2017
+ * <code>Controller</code> is the main communication unit that
+ * handles all remote client messages and provides proper answers.
+ * Though <code>Controller</code> user logs in, registers, finds
+ * other players and plays game.
  */
 public class Controller extends Thread {
 
@@ -34,8 +38,9 @@ public class Controller extends Thread {
     private Player player;
     private Player otherPlayer;
     private XMLSender sender;
-    private XMLReciever reciever;
+    private XMLReceiver receiver;
     private LocalTime timer = LocalTime.now();
+    public final static Logger logger = Logger.getLogger(Controller.class.getClass());
 
     public Controller(Socket socket) {
         this.socket = socket;
@@ -46,16 +51,16 @@ public class Controller extends Thread {
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
             sender = new XMLSender(out);
-            reciever=new XMLReciever(in);
+            receiver = new XMLReceiver(in);
         } catch (IOException e) {
             e.printStackTrace();
             close();
         }
-        Thread thread = new Thread(){
+        Thread thread = new Thread() {
             @Override
             public void run() {
-                while(true) {
-                    if(player.getCurrentGame()!=null) {
+                while (true) {
+                    if (player.getCurrentGame() != null) {
                         if(player.getType() != getCurrentGame().getCurrentStep()){
                             timer=LocalTime.now();
                         }else if (LocalTime.now().getMinute() - timer.getMinute() >= 5 ) {
@@ -105,33 +110,23 @@ public class Controller extends Thread {
                                 sender.send(list);
                                 XMLsaveLoad.savePlayers();
                                 timer = LocalTime.now();
-                            } catch (ParserConfigurationException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (TransformerConfigurationException e) {
-                                e.printStackTrace();
-                            } catch (TransformerException e) {
-                                e.printStackTrace();
+                            } catch (ParserConfigurationException | TransformerException | IOException e) {
+                                logger.error("Error sending " + list.get(0) + " ", e);
                             }
                         } else if (LocalTime.now().getMinute() - timer.getMinute() >= 4 && player.getType() == getCurrentGame().getCurrentStep()) {
                             List<String> list = new ArrayList<>();
                             list.add("4minute");
                             try {
                                 sender.send(list);
-                            } catch (ParserConfigurationException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (TransformerConfigurationException e) {
-                                e.printStackTrace();
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+                                logger.error("Error sending " + list.get(0) + " ", e);
                             }
                         }
                     }
                     try {
-                        sleep(60*1000);
+                        sleep(60 * 1000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.info("Waiting for player activity was interrupted. Probably no error");
                     }
                 }
             }
@@ -145,15 +140,11 @@ public class Controller extends Thread {
             List<String> str = null;
             while (true) {
                 try {
-                    str = reciever.receive();
-                    timer=LocalTime.now();
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                } catch (TransformerConfigurationException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                }catch(SocketException e){
+                    str = receiver.receive();
+                    timer = LocalTime.now();
+                } catch (ParserConfigurationException | SAXException | TransformerConfigurationException e) {
+                    logger.error("Error getting time from xml", e);
+                } catch (SocketException e) {
                     break;
                 }
                 if (str.get(0).equals("exit")) break;
@@ -164,13 +155,10 @@ public class Controller extends Thread {
                 if (str.get(0).equals("auth")) {
                     PlayerService.auth(player, str.get(1), str.get(2), sender);
                 }
-                if ("reenter".equals(str.get(0))) {
-                    PlayerService.reenter(player, str.get(1), str.get(2), sender);
-                }
                 if (str.get(0).equals("refresh")) {
                     List<String> outList = new ArrayList<String>();
                     outList.add("refresh");
-                    outList.addAll(PlayerService.refresh(player,  sender));
+                    outList.addAll(PlayerService.refresh(player, sender));
                     sender.send(outList);
                 }
                 if (str.get(0).equals("logout")) {
@@ -183,7 +171,7 @@ public class Controller extends Thread {
                     sender.send(outList);
                     player = new Player(this);
                 }
-                if("saveProfile".equals(str.get(0))){
+                if ("saveProfile".equals(str.get(0))) {
                     sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
                 }
                 if (str.get(0).equals("callPlayer")) {
@@ -228,11 +216,9 @@ public class Controller extends Thread {
 
         } catch (IOException e) {
             System.out.println("close");
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
+            logger.error("Error saving players", e);
+        } catch (ParserConfigurationException | TransformerConfigurationException e) {
+            logger.error("Error working with xml", e);
         } finally {
             close();
         }
@@ -258,8 +244,7 @@ public class Controller extends Thread {
                 ServerMain.inGamePlayers.remove(player);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Thread did not close!");
+            logger.error("Thread didn't close", e);
         }
     }
 
@@ -291,7 +276,6 @@ public class Controller extends Thread {
     public void setPlayerPassword(String password) {
         player.setPassword(password);
     }
-
 
 
     public void setPlayerIpadress(String ipadress) {

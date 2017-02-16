@@ -23,6 +23,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,6 +62,7 @@ public class GameFrame extends Stage implements Observer {
     private final HBox whiteMiniBox;
     private final ArrayList<String> playerInfo;
     private final ListView<String> movesRecord;
+    private final static Logger logger = Logger.getLogger(GameFrame.class.getClass());
 
     /**
      * Creates <code>GameFrame</code> with XMLin and XMLout for transfering data from
@@ -151,7 +153,7 @@ public class GameFrame extends Stage implements Observer {
             try {
                 xmlOut.sendMessage(list);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                ClientMain.logger.error("Failed to send draw offer from GameFrame", e1);
+                logger.error("Failed to send draw offer from GameFrame", e1);
             }
         });
 
@@ -170,7 +172,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send resign from GameFrame", e1);
+                    logger.error("Failed to send resign from GameFrame", e1);
                 }
             } else {
                 alert.close();
@@ -263,7 +265,7 @@ public class GameFrame extends Stage implements Observer {
                     try {
                         xmlOut.sendMessage(list);
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                        ClientMain.logger.error("Failed to send move message from GameFrame", e1);
+                        logger.error("Failed to send move message from GameFrame", e1);
                     }
                     Label label = null;
                     lastTakenFigure = null;
@@ -322,7 +324,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send drag figure data from GameFrame", e1);
+                    logger.error("Failed to send drag figure data from GameFrame", e1);
                 }
                 Dragboard db = source.startDragAndDrop(TransferMode.ANY);
                 ClipboardContent content = new ClipboardContent();
@@ -396,7 +398,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                    ClientMain.logger.error("Failed to send replace pawn message from GameFrame", e1);
+                    logger.error("Failed to send replace pawn message from GameFrame", e1);
                 }
                 stage.close();
             }
@@ -409,7 +411,7 @@ public class GameFrame extends Stage implements Observer {
                 try {
                     listIn = xmLin.receive();
                 } catch (ParserConfigurationException | SAXException | IOException e) {
-                    ClientMain.logger.error("Failed to receive a message from server on GameFrame", e);
+                    logger.error("Failed to receive a message from server on GameFrame", e);
                 }
                 return null;
             }
@@ -569,7 +571,7 @@ public class GameFrame extends Stage implements Observer {
                         try {
                             xmlOut.sendMessage(list);
                         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-                            ClientMain.logger.error("Failed to send draw accept from GameFrame", e);
+                            logger.error("Failed to send draw accept from GameFrame", e);
                         }
                     } else {
                         alert.close();

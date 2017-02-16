@@ -7,6 +7,7 @@ import chess.model.*;
 import chess.model.figures.King;
 import chess.services.xmlService.XMLSender;
 import chess.services.xmlService.XMLsaveLoad;
+import org.apache.log4j.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -21,6 +22,9 @@ import java.util.List;
  * There are method for a call player, all accessible steps, move figure and looks for a checkmate situation
  */
 public class GameService {
+
+    private final static Logger logger = Logger.getLogger(GameService.class.getClass());
+
     /**
      * <code>callPlayer</code> is method which a call player from a list with free players for a game
      * @param playerWhite is calling players object
@@ -55,20 +59,25 @@ public class GameService {
             outList.addAll(PlayerService.refresh(playerWhite,  sender));
             sender.send(outList);
         }
-
     }
 
+    /**
+     * When game ends with a draw.
+     * @param thisPlayer current player.
+     */
     public static void draw(Player thisPlayer) {
         endGame("draw", thisPlayer, thisPlayer.getCurrentGame().getOtherPlayer(thisPlayer));
     }
 
     /**
+     * Confirms that current player accept the request to play
+     * from another player.
      *
-     * @param thisPlayer
-     * @param str
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerConfigurationException
+     * @param thisPlayer current player.
+     * @param str message sent from another player.
+     * @throws IOException when server cannot read from saved players.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws TransformerConfigurationException in case of transforming xml data error.
      */
     public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
@@ -104,11 +113,19 @@ public class GameService {
             synchronized (ServerMain.waitingGames) {
                 ServerMain.waitingGames.remove(game);
             }
-
         }
         otherSender.send(out);
     }
 
+    /**
+     * Builds List of string values for steps allowed to make
+     * for figure that player wants to move.
+     *
+     * @param game current game.
+     * @param x number of column of board.
+     * @param y number of row of board.
+     * @return all allowed steps.
+     */
     public static List<String> steps(Game game, int x, int y) {
 
         Cell cell = game.getCell(x, y);
@@ -124,11 +141,22 @@ public class GameService {
             }
             return array;
         } else {
-            System.out.println("нет фигуры");
+            logger.error("Cannot find a figure on this cell");
             throw new NullPointerException();
+
         }
     }
 
+    /**
+     * Moving a figure. This action can lead to check, checkmate,
+     * move can be not allowed or can produce castling. All possible
+     * variations of effects of a move are handled here.
+     *
+     * @param game current game.
+     * @param str List of String values for source cell and target cell.
+     * @param player current player.
+     * @return result of the move.
+     */
     public static List<String> move(Game game, List<String> str, Player player) {
         List<String> answer = new ArrayList<String>();
         List<String> rivalanswer = new ArrayList<String>();
@@ -299,15 +327,21 @@ public class GameService {
             try {
                 sender.send(answer);
             } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                e1.printStackTrace();
+                logger.error("Error sending message", e1);
             }
             return answer;
         } catch (TransformerException | ParserConfigurationException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error finishing move", e);
         }
         return answer;
     }
 
+    /**
+     * Finishes current game with result depending on given reason.
+     * @param reason reason of ending the game.
+     * @param player current player.
+     * @param otherPlayer opponent.
+     */
     public static void endGame(String reason, Player player, Player otherPlayer) {
         List<String> answer = new ArrayList<String>();
         List<String> out = new ArrayList<String>();
@@ -341,7 +375,7 @@ public class GameService {
         try {
             XMLsaveLoad.savePlayers();
         } catch (ParserConfigurationException | FileNotFoundException | TransformerException e) {
-            e.printStackTrace();
+            logger.error("Error saving players to file", e);
         }
         player.setCurrentGame(null);
         otherPlayer.setCurrentGame(null);
@@ -370,7 +404,7 @@ public class GameService {
             otherSender.send(out);
             sender.send(answer);
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-            e.printStackTrace();
+            logger.error("Error sending endgame message", e);
         }
     }
 }

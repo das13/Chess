@@ -1,5 +1,7 @@
 package chess.services.xmlService;
 
+import chess.ServerMain;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -13,12 +15,14 @@ import java.io.*;
 import java.util.List;
 
 /**
- * Created by bobnewmark on 21.01.2017
+ * <code>XMLSender</code> provides sending List of String values with OutPutStream
+ * after processing the List into XML data.
  */
 public class XMLSender {
 
     private final OutputStream output;
     private final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    private final static Logger logger = Logger.getLogger(XMLSender.class.getClass());
 
     public XMLSender(OutputStream output) {
         this.output = output;
@@ -51,7 +55,7 @@ public class XMLSender {
         try {
             tf.transform(ds, sr);
         } catch (TransformerException ex) {
-            ex.printStackTrace();
+            logger.error("Error while transforming xml data", ex);
         }
         out.send();
     }

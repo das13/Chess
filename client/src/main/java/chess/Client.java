@@ -50,7 +50,6 @@ class Client {
             out.close();
             socket.close();
         } catch (Exception e) {
-            ClientMain.logger.error("Threads on Client did not close", e);
         }
     }
 
@@ -69,7 +68,6 @@ class Client {
                     System.out.println(str);
                 }
             } catch (IOException e) {
-                ClientMain.logger.error("Connection error on Client", e);
             }
         }
     }
