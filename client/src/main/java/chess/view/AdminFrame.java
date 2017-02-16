@@ -82,8 +82,6 @@ public class AdminFrame extends Stage {
         Button banButton = new Button("Забанить/разбанить");
         banButton.setOnAction(e -> banButtonClicked());
         banButton.setDisable(true);
-        Button offerButton = new Button("Играть");
-        offerButton.setOnAction(e -> offerButtonClicked());
         Button exitButton = new Button("Выход");
         exitButton.setOnAction(e -> exitButtonClicked());
 
@@ -91,7 +89,7 @@ public class AdminFrame extends Stage {
         hBox.setPadding(new Insets(10, 10, 10, 10));
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().addAll(refreshButton, banButton, offerButton, exitButton);
+        hBox.getChildren().addAll(refreshButton, banButton, exitButton);
 
         table = new TableView<>();
         table.getColumns().addAll(loginColumn, rankColumn, statusColumn, ipColumn);
@@ -266,27 +264,8 @@ public class AdminFrame extends Stage {
         System.out.println("BAN!");
     }
 
-    private void offerButtonClicked() {
-        List<String> list = new ArrayList<>();
-        list.add("callPlayer");
-        PlayerRow row = table.getSelectionModel().getSelectedItem();
-        String name = row.getLogin();
-        list.add(name);
-        try {
-            xmLout.sendMessage(list);
-            System.out.println("offer sent");
-        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            logger.error("Error sending game offer to" + name + "from server on AdminFrame", e1);
-        }
-    }
 
     private void exitButtonClicked() {
-        List<String> list = new ArrayList<>();
-        list.add("logout");
-        try {
-            xmLout.sendMessage(list);
-        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-            logger.error("Error logging out from AdminFrame", e1);
-        }
+        this.close();
     }
 }
