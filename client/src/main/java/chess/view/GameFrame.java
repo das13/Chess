@@ -451,6 +451,7 @@ public class GameFrame extends Stage implements Observer {
                 } else if ("cancel".equals(listIn.get(0))) {
                     grid.setDisable(false);
                     cancelLastMove();
+                    movesRecord.getItems().remove(movesRecord.getItems().size()-1);
                 } else if ("checkmate".equals(listIn.get(0))) {
                     String message;
                     String rank = "";
