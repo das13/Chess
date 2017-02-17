@@ -17,7 +17,7 @@ import java.util.List;
  * connected user his own instance of <code>Controller</code>
  * to maintain data transferring.
  */
-class Server {
+public class Server {
 
     private static final List<Player> players = Collections.synchronizedList(new ArrayList<Player>());
     private ServerSocket server;
