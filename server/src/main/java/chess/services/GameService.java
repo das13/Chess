@@ -89,10 +89,11 @@ public class GameService {
     public static void confirmGame(Player thisPlayer, List<String> str) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         List<String> out = new ArrayList<String>();
         out.add("confirmresponse");
-        XMLSender otherSender = null;
         Game game = thisPlayer.getCurrentGame();
+        Player otherPlayer = game.getOtherPlayer(thisPlayer);
+        Controller otherController = otherPlayer.getController();
+        XMLSender otherSender = otherController.getSender();
         if (str.get(1).equals("Ok")) {
-
                 if (game.getBlackPlayer().equals(thisPlayer)) {
                     synchronized (ServerMain.waitingGames) {
                         ServerMain.waitingGames.remove(game);
@@ -100,9 +101,6 @@ public class GameService {
                     synchronized (ServerMain.games) {
                         ServerMain.games.add(game);
                     }
-                    Player otherPlayer = game.getOtherPlayer(thisPlayer);
-                    Controller otherController = otherPlayer.getController();
-                    otherSender = otherController.getSender();
                     out.add("Ok");
                     thisPlayer.getController().setCurrentGame(game);
                     otherPlayer.getController().setCurrentGame(game);
