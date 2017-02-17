@@ -81,7 +81,6 @@ public class AdminFrame extends Stage {
         refreshButton.setOnAction(e -> refreshButtonClicked());
         Button banButton = new Button("Забанить/разбанить");
         banButton.setOnAction(e -> banButtonClicked());
-        banButton.setDisable(true);
         Button exitButton = new Button("Выход");
         exitButton.setOnAction(e -> exitButtonClicked());
 
@@ -103,7 +102,7 @@ public class AdminFrame extends Stage {
         this.setScene(scene);
         this.show();
         logger.info("Administrator window build successfully.");
-        refreshButton.fire();
+        refreshButtonClicked();
 
         MyTask<Void> task = new MyTask<>();
 
@@ -261,9 +260,29 @@ public class AdminFrame extends Stage {
     }
 
     private void banButtonClicked() {
-        System.out.println("BAN!");
-    }
+        PlayerRow row = table.getSelectionModel().getSelectedItem();
+        if (row == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initOwner(this);
+            alert.getDialogPane().getStylesheets().add("Skin.css");
+            alert.setTitle("Игрок не выбран");
+            alert.setHeaderText(null);
+            alert.setContentText("Чтобы забанить/разбанить игрока, выделите его в таблице.");
+            alert.showAndWait();
+        } else {
+            List<String> list = new ArrayList<>();
+            list.add("ban");
+            String ip = row.getIp();
+            list.add(ip);
+            try {
+                xmLout.sendMessage(list);
+            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                logger.error("Error sending ban request of player " + ip + " to server", e1);
+            }
+        }
+        refreshButtonClicked();
 
+    }
 
     private void exitButtonClicked() {
         this.close();

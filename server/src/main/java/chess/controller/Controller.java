@@ -150,7 +150,7 @@ public class Controller extends Thread {
                 if (str.get(0).equals("exit")) break;
                 if (str.get(0).equals("reg")) {
                     String ip = socket.getInetAddress().toString();
-                    PlayerService.reg(str.get(1), str.get(2), ip, sender);
+                    PlayerService.reg(player, str.get(1), str.get(2), ip, sender);
                 }
                 if (str.get(0).equals("auth")) {
                     PlayerService.auth(player, str.get(1), str.get(2), sender);
@@ -211,6 +211,9 @@ public class Controller extends Thread {
                 }
                 if ("resign".equals(str.get(0))) {
                     GameService.endGame(str.get(0), player, player.getCurrentGame().getOtherPlayer(player));
+                }
+                if ("ban".equals(str.get(0))) {
+                    PlayerService.ban(str, sender);
                 }
             }
 

@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +30,18 @@ public class ServerMain {
             Collections.synchronizedList(new ArrayList<Game>());
     public static final List<Game> waitingGames =
             Collections.synchronizedList(new ArrayList<Game>());
+    public static final List<String> bannedIP =
+            Collections.synchronizedList(new ArrayList<String>());
     public static void main(String[] args) {
         logger.info("Server launched");
         try {
             XMLsaveLoad.loadPlayers();
+            XMLsaveLoad.loadBanned();
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            logger.error("Failed loading players from file ", e);
+            logger.error("Failed loading from file ", e);
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            logger.error("Failed reading XML from file ", e);
             e.printStackTrace();
         }
         new Server();

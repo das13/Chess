@@ -220,7 +220,6 @@ public class ProfileFrame extends Stage {
             public Void call() throws Exception {
                 try {
                     List<String> list = xmLin.receive();
-                    System.out.println(list.get(0));
                     firstConf = list.get(0);
                     secondConf = list.get(1);
                     listIn = list;
@@ -341,6 +340,16 @@ public class ProfileFrame extends Stage {
                     stage.close();
                     new AuthFrame(xmLin, xmlOut);
                 }
+                if ("banned".equals(firstConf)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.getDialogPane().getStylesheets().add("Skin.css");
+                    alert.setTitle("Бан!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Ваш IP-адрес в бан-листе. Обратитесь к администратору.");
+                    alert.showAndWait();
+                    stage.close();
+                }
+
             }
         }
         login.textProperty().addListener((observable, oldValue, newValue) -> {

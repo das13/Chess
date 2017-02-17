@@ -1,6 +1,5 @@
 package chess.services;
 
-import chess.Constants;
 import chess.ServerMain;
 import chess.controller.Controller;
 import chess.model.Player;
@@ -26,6 +25,7 @@ import java.util.List;
 public class PlayerService {
 
     private final static Logger logger = Logger.getLogger(PlayerService.class.getClass());
+
     public static void reg(Controller controller, String login, String password, String ipadress) {
         controller.setPlayerLogin(login);
         controller.setPlayerPassword(password);
@@ -35,12 +35,13 @@ public class PlayerService {
 
     /**
      * Is used to authenticate player from remote client.
-     * @param player dummy Player instance given by Controller.
-     * @param login login entered by remote user.
+     *
+     * @param player   dummy Player instance given by Controller.
+     * @param login    login entered by remote user.
      * @param password password entered by remote user.
-     * @param sender XMLSender for current remote client.
-     * @throws IOException when cannot read from saved players.
-     * @throws ParserConfigurationException in case of configuration error.
+     * @param sender   XMLSender for current remote client.
+     * @throws IOException                       when cannot read from saved players.
+     * @throws ParserConfigurationException      in case of configuration error.
      * @throws TransformerConfigurationException in case of transforming xml data error.
      */
     public static void auth(Player player, String login, String password, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -48,6 +49,7 @@ public class PlayerService {
         List<String> out = new ArrayList<String>();
         player.setLogin(login);
         player.setPassword(password);
+        String ipAddress = String.valueOf(player.getController().getSocket().getInetAddress());
         out.add("reg");
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
@@ -57,6 +59,12 @@ public class PlayerService {
                 out.add(String.valueOf(p.getStatus()));
                 out.add(p.getIpadress());
             }
+            sender.send(out);
+            return;
+        }
+
+        if (isBanned(ipAddress)) {
+            out.add("banned");
             sender.send(out);
             return;
         }
@@ -121,9 +129,10 @@ public class PlayerService {
 
     /**
      * Saves edited profile of current player by unique id.
-     * @param login new login.
+     *
+     * @param login    new login.
      * @param password new password.
-     * @param id unique id number of current player.
+     * @param id       unique id number of current player.
      * @return confirmation message.
      */
     public static List<String> saveProfile(String login, String password, int id) {
@@ -152,19 +161,25 @@ public class PlayerService {
      * Registers new player. New player needs to have unique login,
      * though it may be changed later, but only for another unique login.
      *
-     * @param login user entered login.
+     * @param login    user entered login.
      * @param password user entered password.
      * @param ipadress user IP address.
-     * @param sender XMLSender for current remote client.
-     * @throws IOException when cannot save players to file.
-     * @throws ParserConfigurationException in case of configuration error.
+     * @param sender   XMLSender for current remote client.
+     * @throws IOException                       when cannot save players to file.
+     * @throws ParserConfigurationException      in case of configuration error.
      * @throws TransformerConfigurationException in case of transforming xml data error.
      */
-    public static void reg(String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+    public static void reg(Player dummy, String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         System.out.println("inside reg method");
         Player player;
         List<String> list = new ArrayList<String>();
+        String ipAddress = String.valueOf(dummy.getController().getSocket().getInetAddress());
         list.add("reg");
+        if (isBanned(ipAddress)) {
+            list.add("banned");
+            sender.send(list);
+            return;
+        }
         if ((findPlayer(login)) != null) {
             list.add("denied");
             list.add("exists");
@@ -184,6 +199,7 @@ public class PlayerService {
 
     /**
      * Finds player by login.
+     *
      * @param login unique login.
      * @return Player if found, or null.
      */
@@ -198,6 +214,7 @@ public class PlayerService {
 
     /**
      * Updates player rank, used after game is over.
+     *
      * @param fresh Player from current controller with updated rank.
      */
     static void updatePlayer(Player fresh) {
@@ -210,6 +227,7 @@ public class PlayerService {
 
     /**
      * Finds player by id.
+     *
      * @param id unique uneditable id.
      * @return Player if found, or null.
      */
@@ -224,9 +242,10 @@ public class PlayerService {
 
     /**
      * Sends list of all players to remote admin user.
+     *
      * @param sender XMLSender for current remote admin.
-     * @throws IOException when cannot read saved players from file.
-     * @throws ParserConfigurationException in case of configuration error.
+     * @throws IOException                       when cannot read saved players from file.
+     * @throws ParserConfigurationException      in case of configuration error.
      * @throws TransformerConfigurationException in case of transforming xml data error.
      */
     public static void adminGetPlayers(XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
@@ -240,5 +259,23 @@ public class PlayerService {
             list.add(p.getIpadress());
         }
         sender.send(list);
+    }
+
+    public static void ban(List<String> list, XMLSender sender) {
+        String address = list.get(1);
+        if (isBanned(address)) {
+            ServerMain.bannedIP.remove(address);
+        } else {
+            ServerMain.bannedIP.add(address);
+        }
+        try {
+            XMLsaveLoad.saveBanned();
+        } catch (ParserConfigurationException | TransformerException | FileNotFoundException e) {
+            logger.error("Error saving banned IP to file", e);
+        }
+    }
+
+    public static boolean isBanned(String ip) {
+        return ServerMain.bannedIP.contains(ip);
     }
 }

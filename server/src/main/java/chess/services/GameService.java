@@ -34,7 +34,14 @@ public class GameService {
      * @throws TransformerConfigurationException
      */
     public static void callPlayer(Player playerWhite, String nickName) throws IOException, ParserConfigurationException, TransformerConfigurationException {
+        String ipAddress = String.valueOf(playerWhite.getController().getSocket().getInetAddress());
         List<String> out = new ArrayList<String>();
+        if (PlayerService.isBanned(ipAddress)) {
+            out.add("banned");
+            out.add("byAdmin");
+            playerWhite.getController().getSender().send(out);
+            return;
+        }
         boolean check = false;
         Controller controller = playerWhite.getController();
         XMLSender sender = controller.getSender();

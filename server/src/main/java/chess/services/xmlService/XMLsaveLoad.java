@@ -30,6 +30,7 @@ import java.io.PrintWriter;
  */
 public class XMLsaveLoad {
     private static File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
+    private static File filebannedIP = new File(System.getProperty("user.dir"), "bannedIP.xml");
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private final static Logger logger = Logger.getLogger(XMLsaveLoad.class.getClass());
 
@@ -40,9 +41,7 @@ public class XMLsaveLoad {
         Document doc = db.newDocument();
         Element root = doc.createElement("savedPlayers");
         doc.appendChild(root);
-        for (Player player: ServerMain.allPlayers) {
-            System.out.println("Saving player " + player.getLogin() + " " + player.getRank() + " "
-                    + player.getStatus() + " " + player.getId());
+        for (Player player : ServerMain.allPlayers) {
             Element el = doc.createElement("player");
             el.setAttribute("id", String.valueOf(player.getId()));
             root.appendChild(el);
@@ -72,33 +71,82 @@ public class XMLsaveLoad {
         transformer.transform(source, result);
     }
 
-    public static void loadPlayers() throws ParserConfigurationException, IOException, SAXException {
+    public static void loadPlayers() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        if(!filePlayers.exists()) {
+            savePlayers();
+        }
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(filePlayers);
         doc.getDocumentElement().normalize();
         Element element = doc.getDocumentElement();
         NodeList nodes = element.getChildNodes();
 
-            for (int i = 0; i < nodes.getLength(); i++) {
-                if ("player".equals(nodes.item(i).getNodeName())) {
-                    Element el = (Element) nodes.item(i);
-                    int id=Integer.parseInt(el.getAttribute("id"));
-                    String login = el.getElementsByTagName("login").item(0).getTextContent();
-                    String password = el.getElementsByTagName("password").item(0).getTextContent();
-                    int rank = Integer.parseInt(el.getElementsByTagName("rank").item(0).getTextContent());
-                    Status status = Status.valueOf(el.getElementsByTagName("status").item(0).getTextContent());
-                    String ipadress = el.getElementsByTagName("ipadress").item(0).getTextContent();
-                    Player player = new Player(login, password, status, ipadress);
-                    player.setRank(rank);
-                    player.setId(id);
-                    ServerMain.allPlayers.add(player);
-                }
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if ("player".equals(nodes.item(i).getNodeName())) {
+                Element el = (Element) nodes.item(i);
+                int id = Integer.parseInt(el.getAttribute("id"));
+                String login = el.getElementsByTagName("login").item(0).getTextContent();
+                String password = el.getElementsByTagName("password").item(0).getTextContent();
+                int rank = Integer.parseInt(el.getElementsByTagName("rank").item(0).getTextContent());
+                Status status = Status.valueOf(el.getElementsByTagName("status").item(0).getTextContent());
+                String ipadress = el.getElementsByTagName("ipadress").item(0).getTextContent();
+                Player player = new Player(login, password, status, ipadress);
+                player.setRank(rank);
+                player.setId(id);
+                ServerMain.allPlayers.add(player);
             }
+        }
 
-            if (ServerMain.allPlayers.size() > 0) {
-                ServerMain.setAllPlayers(ServerMain.allPlayers);
-            } else {
-                logger.info("No players read from file");
+        if (ServerMain.allPlayers.size() > 0) {
+            ServerMain.setAllPlayers(ServerMain.allPlayers);
+        } else {
+            logger.info("No players read from file");
+        }
+    }
+
+    public static void saveBanned() throws ParserConfigurationException, FileNotFoundException, TransformerException {
+        PrintWriter pw = new PrintWriter(filebannedIP);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("bannedIP");
+        doc.appendChild(root);
+        for (String s : ServerMain.bannedIP) {
+            Element el = doc.createElement("address");
+            el.setAttribute("ip", s);
+            root.appendChild(el);
+        }
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(filebannedIP);
+        transformer.transform(source, result);
+    }
+
+    public static void loadBanned() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        if(!filebannedIP.exists()) {
+            saveBanned();
+        }
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(filebannedIP);
+        doc.getDocumentElement().normalize();
+        Element element = doc.getDocumentElement();
+        NodeList nodes = element.getChildNodes();
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            if ("address".equals(nodes.item(i).getNodeName())) {
+                Element el = (Element) nodes.item(i);
+                String ip = el.getAttribute("ip");
+                ServerMain.bannedIP.add(ip);
             }
+        }
+
+        if (ServerMain.allPlayers.size() > 0) {
+            ServerMain.setAllPlayers(ServerMain.allPlayers);
+        } else {
+            logger.info("No banned ip read from file");
+        }
     }
 }

@@ -112,6 +112,13 @@ public class RegFrame extends Stage {
                         alert.setHeaderText(null);
                         alert.setContentText("Пользователь с таким логином уже существует");
                         alert.showAndWait();
+                    } else if ("banned".equals(listIn.get(1))) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Бан!");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Ваш IP-адрес в бан-листе. Обратитесь к администратору.");
+                        alert.showAndWait();
                     }
                 } catch (ParserConfigurationException | SAXException | IOException e1) {
                     logger.error("Error on receiving message from server in RegFrame", e1);

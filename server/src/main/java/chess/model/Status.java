@@ -7,5 +7,4 @@ public enum Status {
     OFFLINE,
     FREE,
     INGAME,
-    BANNED
 }
