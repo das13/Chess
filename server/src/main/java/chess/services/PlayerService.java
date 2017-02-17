@@ -255,7 +255,15 @@ public class PlayerService {
         for (Player p : ServerMain.getAllPlayers()) {
             list.add(p.getLogin());
             list.add(String.valueOf(p.getRank()));
-            list.add(String.valueOf(p.getStatus()));
+            if (isBanned(p.getIpadress())) {
+                list.add("banned");
+            } else if (ServerMain.freePlayers.contains(p)) {
+                list.add("free");
+            } else if (ServerMain.inGamePlayers.contains(p)) {
+                list.add("in game");
+            } else {
+                list.add("offline");
+            }
             list.add(p.getIpadress());
         }
         sender.send(list);
