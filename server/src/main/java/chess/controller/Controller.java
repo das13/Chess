@@ -145,75 +145,97 @@ public class Controller extends Thread {
                 } catch (ParserConfigurationException | SAXException | TransformerConfigurationException e) {
                     logger.error("Error getting time from xml", e);
                 } catch (SocketException e) {
+                    logger.error("Error getting data from socket", e);
                     break;
                 }
-                if (str.get(0).equals("exit")) break;
-                if (str.get(0).equals("reg")) {
-                    String ip = socket.getInetAddress().toString();
-                    PlayerService.reg(player, str.get(1), str.get(2), ip, sender);
-                }
-                if (str.get(0).equals("auth")) {
-                    PlayerService.auth(player, str.get(1), str.get(2), sender);
-                }
-                if (str.get(0).equals("refresh")) {
-                    List<String> outList = new ArrayList<String>();
-                    outList.add("refresh");
-                    outList.addAll(PlayerService.refresh(player, sender));
-                    sender.send(outList);
-                }
-                if (str.get(0).equals("logout")) {
-                    synchronized (ServerMain.freePlayers) {
-                        ServerMain.freePlayers.remove(player);
+                switch (str.get(0)) {
+                    case "exit": {
+                        break;
                     }
-                    List<String> outList = new ArrayList<String>();
-                    outList.add("logout");
-                    outList.add("logout");
-                    sender.send(outList);
-                    player = new Player(this);
-                }
-                if ("saveProfile".equals(str.get(0))) {
-                    sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
-                }
-                if (str.get(0).equals("callPlayer")) {
-                    GameService.callPlayer(getPlayer(), str.get(1));
-                }
-                if (str.get(0).equals("confirm")) {
-                    GameService.confirmGame(getPlayer(), str);
-                }
-                if (str.get(0).equals("drag")) {
-                    sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
-                }
-                if (str.get(0).equals("move")) {
-                    GameService.move(getCurrentGame(), str, player);
-                }
-                if ("replacePawn".equals(str.get(0))) {
-                    getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
-                    XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
-                    List<String> out = new ArrayList<String>();
-                    out.add("rivalReplace");
-                    out.add(str.get(1));
-                    out.add(str.get(2));
-                    out.add(str.get(3));
-                    out.add(str.get(4));
-                    out.add(str.get(5));
-                    otherSender.send(out);
-                }
-                if ("admin_getPlayers".equals(str.get(0))) {
-                    PlayerService.adminGetPlayers(sender);
-                }
-                if ("offerDraw".equals(str.get(0))) {
-                    Player otherPlayer = player.getCurrentGame().getOtherPlayer(player);
-                    XMLSender otherSender = otherPlayer.getController().getSender();
-                    otherSender.send(str);
-                }
-                if ("acceptDraw".equals(str.get(0))) {
-                    GameService.draw(player);
-                }
-                if ("resign".equals(str.get(0))) {
-                    GameService.endGame(str.get(0), player, player.getCurrentGame().getOtherPlayer(player));
-                }
-                if ("ban".equals(str.get(0))) {
-                    PlayerService.ban(str, sender);
+                    case "reg": {
+                        String ip = socket.getInetAddress().toString();
+                        PlayerService.reg(player, str.get(1), str.get(2), ip, sender);
+                        break;
+                    }
+                    case "auth": {
+                        PlayerService.auth(player, str.get(1), str.get(2), sender);
+                        break;
+                    }
+                    case "refresh": {
+                        List<String> outList = new ArrayList<String>();
+                        outList.add("refresh");
+                        outList.addAll(PlayerService.refresh(player, sender));
+                        sender.send(outList);
+                        break;
+                    }
+                    case "logout": {
+                        synchronized (ServerMain.freePlayers) {
+                            ServerMain.freePlayers.remove(player);
+                        }
+                        List<String> outList = new ArrayList<String>();
+                        outList.add("logout");
+                        outList.add("logout");
+                        sender.send(outList);
+                        player = new Player(this);
+                        break;
+                    }
+                    case "saveProfile": {
+                        sender.send(PlayerService.saveProfile(str.get(2), str.get(3), Integer.parseInt(str.get(1))));
+                        break;
+                    }
+                    case "callPlayer": {
+                        GameService.callPlayer(getPlayer(), str.get(1));
+                        break;
+                    }
+                    case "confirm": {
+                        GameService.confirmGame(getPlayer(), str);
+                        break;
+                    }
+                    case "drag": {
+                        sender.send(GameService.steps(getCurrentGame(), Integer.parseInt(str.get(1)), Integer.parseInt(str.get(2))));
+                        break;
+                    }
+                    case "move": {
+                        GameService.move(getCurrentGame(), str, player);
+                        break;
+                    }
+                    case "replacePawn": {
+                        getCurrentGame().replacePawn(str.get(5), Integer.parseInt(str.get(4)), Integer.parseInt(str.get(3)));
+                        XMLSender otherSender = getCurrentGame().getOtherPlayer(player).getController().getSender();
+                        List<String> out = new ArrayList<String>();
+                        out.add("rivalReplace");
+                        out.add(str.get(1));
+                        out.add(str.get(2));
+                        out.add(str.get(3));
+                        out.add(str.get(4));
+                        out.add(str.get(5));
+                        otherSender.send(out);
+                        break;
+                    }
+                    case "admin_getPlayers": {
+                        PlayerService.adminGetPlayers(sender);
+                        break;
+                    }
+                    case "offerDraw": {
+                        Player otherPlayer = player.getCurrentGame().getOtherPlayer(player);
+                        XMLSender otherSender = otherPlayer.getController().getSender();
+                        otherSender.send(str);
+                        break;
+                    }
+                    case "acceptDraw": {
+                        GameService.draw(player);
+                        break;
+                    }
+                    case "resign": {
+                        GameService.endGame(str.get(0), player, player.getCurrentGame().getOtherPlayer(player));
+                        break;
+                    }
+                    case "ban": {
+                        PlayerService.ban(str, sender);
+                        break;
+                    }
+                    default:
+                        logger.error("Client sent message that server doesn't understand " + str.get(0));
                 }
             }
 
@@ -278,7 +300,6 @@ public class Controller extends Thread {
     public void setPlayerPassword(String password) {
         player.setPassword(password);
     }
-
 
     public void setPlayerIpadress(String ipadress) {
         player.setIpadress(ipadress);

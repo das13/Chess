@@ -236,120 +236,130 @@ public class ProfileFrame extends Stage {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                if ("confirm".equals(firstConf)) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Приглашение");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Вас приглашает " + secondConf);
-                    List<String> list = new ArrayList<>();
-                    list.add("confirm");
-                    alert.showAndWait();
-                    if (alert.getResult() == ButtonType.OK) {
-                        list.add("Ok");
-                        try {
-                            xmlOut.sendMessage(list);
-                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            logger.error("Error confirming game with " + secondConf + " on ProfileFrame", e1);
+                switch (firstConf) {
+                    case "confirm": {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Приглашение");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Вас приглашает " + secondConf);
+                        List<String> list = new ArrayList<>();
+                        list.add("confirm");
+                        alert.showAndWait();
+                        if (alert.getResult() == ButtonType.OK) {
+                            list.add("Ok");
+                            try {
+                                xmlOut.sendMessage(list);
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                                logger.error("Error confirming game with " + secondConf + " on ProfileFrame", e1);
+                            }
+                            stage.close();
+                            new GameFrame(xmLin, xmlOut, false, freePlayers);
                         }
-                        stage.close();
-                        new GameFrame(xmLin, xmlOut, false, freePlayers);
-                    }
-                    if (alert.getResult() == ButtonType.CANCEL) {
-                        list.add("No");
-                        try {
-                            xmlOut.sendMessage(list);
-                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
-                            logger.error("Error denying game with " + secondConf + " on ProfileFrame", e1);
+                        if (alert.getResult() == ButtonType.CANCEL) {
+                            list.add("No");
+                            try {
+                                xmlOut.sendMessage(list);
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                                logger.error("Error denying game with " + secondConf + " on ProfileFrame", e1);
+                            }
+                            MyTask myTask = new MyTask<Void>();
+                            myTask.setOnSucceeded(new MyHandler());
+                            Thread thread1 = new Thread(myTask);
+                            thread1.setDaemon(true);
+                            thread1.start();
                         }
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
+                        break;
                     }
-
-                }
-                if ("notconfirm".equals(firstConf)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("игрок уже не активен");
-                    alert.setHeaderText(null);
-                    alert.setContentText("игрок уже не активен");
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                }
-                if ("confirmresponse".equals(firstConf)) {
-                    if ("Ok".equals(secondConf)) {
+                    case "notconfirm": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("игрок уже не активен");
+                        alert.setHeaderText(null);
+                        alert.setContentText("игрок уже не активен");
+                        alert.showAndWait();
                         stage.close();
-                        new GameFrame(xmLin, xmlOut, true, freePlayers);
-                    } else {
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
+                    }
+                    case "confirmresponse": {
+                        if ("Ok".equals(secondConf)) {
+                            stage.close();
+                            new GameFrame(xmLin, xmlOut, true, freePlayers);
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.initOwner(stage);
+                            alert.getDialogPane().getStylesheets().add("Skin.css");
+                            alert.setTitle("Отказ");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Вам отказали");
+                            alert.showAndWait();
+                            MyTask myTask = new MyTask<Void>();
+                            myTask.setOnSucceeded(new MyHandler());
+                            Thread thread1 = new Thread(myTask);
+                            thread1.setDaemon(true);
+                            thread1.start();
+                        }
+                        break;
+                    }
+                    case "saveconfirm": {
+                        if ("Ok".equals(secondConf)) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.initOwner(stage);
+                            alert.getDialogPane().getStylesheets().add("Skin.css");
+                            alert.setTitle("Сохранено");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Изменения сохранены");
+                            saveBtn.setDisable(true);
+                            alert.showAndWait();
+                            MyTask myTask = new MyTask<Void>();
+                            myTask.setOnSucceeded(new MyHandler());
+                            Thread thread1 = new Thread(myTask);
+                            thread1.setDaemon(true);
+                            thread1.start();
+                        }
+                        if ("error".equals(secondConf)) {
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.initOwner(stage);
+                            alert.getDialogPane().getStylesheets().add("Skin.css");
+                            alert.setTitle("Ошибка");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Пользователь с таким логином уже существует");
+                            alert.showAndWait();
+                            MyTask myTask = new MyTask<Void>();
+                            myTask.setOnSucceeded(new MyHandler());
+                            Thread thread1 = new Thread(myTask);
+                            thread1.setDaemon(true);
+                            thread1.start();
+                        }
+                        break;
+                    }
+                    case "refresh": {
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
+                    }
+                    case "logout": {
+                        stage.close();
+                        new AuthFrame(xmLin, xmlOut);
+                        break;
+                    }
+                    case "banned": {
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
                         alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Отказ");
+                        alert.setTitle("Бан!");
                         alert.setHeaderText(null);
-                        alert.setContentText("Вам отказали");
+                        alert.setContentText("Ваш IP-адрес в бан-листе. Обратитесь к администратору.");
                         alert.showAndWait();
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
+                        stage.close();
+                        break;
+                    }
+                    default: {
+                        logger.error("Error understanding message from server " + firstConf);
                     }
                 }
-                if ("saveconfirm".equals(firstConf)) {
-                    if ("Ok".equals(secondConf)) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Сохранено");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Изменения сохранены");
-                        saveBtn.setDisable(true);
-                        alert.showAndWait();
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
-                    }
-                    if ("error".equals(secondConf)) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Ошибка");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Пользователь с таким логином уже существует");
-                        alert.showAndWait();
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
-                    }
-                }
-                if ("refresh".equals(firstConf)) {
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                }
-                if ("logout".equals(firstConf)) {
-                    stage.close();
-                    new AuthFrame(xmLin, xmlOut);
-                }
-                if ("banned".equals(firstConf)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Бан!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Ваш IP-адрес в бан-листе. Обратитесь к администратору.");
-                    alert.showAndWait();
-                    stage.close();
-                }
-
             }
         }
         login.textProperty().addListener((observable, oldValue, newValue) -> {

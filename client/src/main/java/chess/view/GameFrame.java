@@ -423,251 +423,276 @@ public class GameFrame extends Stage implements Observer {
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
-                if ("rivalMove".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Ход");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Соперник сделал ход");
-                    alert.showAndWait();
-                    grid.setDisable(false);
-                    count.startTimer();
-                    moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
-                    movesRecord.getItems().add("соперник: " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
-                    opponentTimer.setText(listIn.get(5));
-                } else if ("steps".equals(listIn.get(0))) {
-                    targets.clear();
-                    for (String s : listIn) {
-                        if (!s.equals("steps")) {
-                            targets.add(board.get(s));
+                switch (listIn.get(0)) {
+                    case "rivalMove": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ход");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник сделал ход");
+                        alert.showAndWait();
+                        grid.setDisable(false);
+                        count.startTimer();
+                        moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
+                        movesRecord.getItems().add("соперник: " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
+                        opponentTimer.setText(listIn.get(5));
+                        break;
+                    }
+                    case "steps": {
+                        targets.clear();
+                        for (String s : listIn) {
+                            if (!s.equals("steps")) {
+                                targets.add(board.get(s));
+                            }
                         }
-                    }
-                    for (Pane pane : targets) {
-                        pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
-                        pane.setOnDragOver(new DragOver(pane));
-                        pane.setOnDragDropped(new DragDropped(pane));
-                    }
-                } else if ("cancel".equals(listIn.get(0))) {
-                    grid.setDisable(false);
-                    cancelLastMove();
-                    movesRecord.getItems().remove(movesRecord.getItems().size()-1);
-                } else if ("checkmate".equals(listIn.get(0))) {
-                    String message;
-                    String rank = "";
-                    if (playerInfo.get(3).equals(listIn.get(3))) {
-                        rank = listIn.get(5);
-                        playerInfo.set(5, rank);
-                    }
-                    if (playerInfo.get(3).equals(listIn.get(4))) {
-                        rank = listIn.get(8);
-                        playerInfo.set(5, rank);
-                    }
-                    if ("WHITE".equals(listIn.get(1))) {
-                        message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
-                    } else {
-                        message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
-                    }
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Конец игры");
-                    alert.setHeaderText(null);
-                    alert.setContentText(message);
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                    return;
-                } else if ("replacePawn".equals(listIn.get(0))) {
-                    Stage dialogStage = new Stage();
-                    dialogStage.initModality(Modality.APPLICATION_MODAL);
-                    dialogStage.setTitle("Выберите фигуру для замены");
-                    Button castlebutton = new Button("Тура");
-                    Button knightbutton = new Button("Конь");
-                    Button bishopbutton = new Button("Офицер");
-                    Button queenbutton = new Button("Ферзь");
-                    castlebutton.setOnAction(new ReplaceButtonHandler(castle, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Castle", dialogStage));
-                    knightbutton.setOnAction(new ReplaceButtonHandler(knight, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Knight", dialogStage));
-                    bishopbutton.setOnAction(new ReplaceButtonHandler(bishop, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Bishop", dialogStage));
-                    queenbutton.setOnAction(new ReplaceButtonHandler(queen, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Queen", dialogStage));
-                    VBox vbox1 = new VBox(castle, castlebutton);
-                    VBox vbox2 = new VBox(knight, knightbutton);
-                    VBox vbox3 = new VBox(bishop, bishopbutton);
-                    VBox vbox4 = new VBox(queen, queenbutton);
-                    vbox1.setAlignment(Pos.CENTER);
-                    vbox1.setPadding(new Insets(15));
-                    vbox2.setAlignment(Pos.CENTER);
-                    vbox2.setPadding(new Insets(15));
-                    vbox3.setAlignment(Pos.CENTER);
-                    vbox3.setPadding(new Insets(15));
-                    vbox4.setAlignment(Pos.CENTER);
-                    vbox4.setPadding(new Insets(15));
-                    HBox hbox = new HBox(vbox1, vbox2, vbox3, vbox4);
-                    dialogStage.setScene(new Scene(hbox));
-                    dialogStage.initOwner(stage);
-                    dialogStage.show();
-                } else if ("rivalReplace".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Ход");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Соперник сделал ход");
-                    alert.showAndWait();
-                    grid.setDisable(false);
-                    count.startTimer();
-                    moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(4)), parseInt(listIn.get(3)));
-                    opponentTimer.setText(listIn.get(5));
-                    ImageView figure = null;
-                    if (listIn.get(5).equals("Castle")) figure = rivalcastle;
-                    if (listIn.get(5).equals("Knight")) figure = rivalknight;
-                    if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
-                    if (listIn.get(5).equals("Queen")) figure = rivalqueen;
-                    board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
-                    ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
-                    newFigure.setOnDragDetected(new DragDetected(newFigure));
-                    findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
-                    findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
-                } else if ("4minute".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("время вышло");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Вы бездействуете 4 минут, через 1 минуту вам будет защитан проиграш");
-                    alert.showAndWait();
-                } else if ("5minute".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("время вышло");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Время вышло! Вы проиграли");
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                    return;
-                } else if ("5minuteRival".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("время вышло");
-                    alert.setHeaderText(null);
-                    alert.setContentText("У вашего соперника вышло время! Вы выиграли!");
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                    return;
-                } else if ("offerDraw".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Ничья");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Соперник предлагает ничью, согласны? (Рейтинг -5)");
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK){
-                        List<String> list = new ArrayList<>();
-                        list.add("acceptDraw");
-                        try {
-                            xmlOut.sendMessage(list);
-                        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
-                            logger.error("Failed to send draw accept from GameFrame", e);
+                        for (Pane pane : targets) {
+                            pane.setBorder(new Border(new BorderStroke(Color.RED, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(5))));
+                            pane.setOnDragOver(new DragOver(pane));
+                            pane.setOnDragDropped(new DragDropped(pane));
                         }
-                    } else {
-                        alert.close();
+                        break;
                     }
-                } else if ("draw".equals(listIn.get(0))) {
-                    String message;
-                    String rank = "";
-                    if (playerInfo.get(3).equals(listIn.get(3))) {
-                        rank = listIn.get(5);
-                        playerInfo.set(5, rank);
+                    case "cancel": {
+                        grid.setDisable(false);
+                        cancelLastMove();
+                        movesRecord.getItems().remove(movesRecord.getItems().size()-1);
+                        break;
                     }
-                    if (playerInfo.get(3).equals(listIn.get(6))) {
-                        rank = listIn.get(8);
-                        playerInfo.set(5, rank);
+                    case "checkmate": {
+                        String message;
+                        String rank = "";
+                        if (playerInfo.get(3).equals(listIn.get(3))) {
+                            rank = listIn.get(5);
+                            playerInfo.set(5, rank);
+                        }
+                        if (playerInfo.get(3).equals(listIn.get(4))) {
+                            rank = listIn.get(8);
+                            playerInfo.set(5, rank);
+                        }
+                        if ("WHITE".equals(listIn.get(1))) {
+                            message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
+                        } else {
+                            message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
+                        }
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Конец игры");
+                        alert.setHeaderText(null);
+                        alert.setContentText(message);
+                        alert.showAndWait();
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
                     }
-                    if ("WHITE".equals(listIn.get(1))) {
-                        message = "Ничья, ваш новый рейтинг: " + rank;
-                    } else {
-                        message = "Ничья, ваш новый рейтинг: " + rank;
+                    case "replacePawn": {
+                        Stage dialogStage = new Stage();
+                        dialogStage.initModality(Modality.APPLICATION_MODAL);
+                        dialogStage.setTitle("Выберите фигуру для замены");
+                        Button castlebutton = new Button("Тура");
+                        Button knightbutton = new Button("Конь");
+                        Button bishopbutton = new Button("Офицер");
+                        Button queenbutton = new Button("Ферзь");
+                        castlebutton.setOnAction(new ReplaceButtonHandler(castle, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Castle", dialogStage));
+                        knightbutton.setOnAction(new ReplaceButtonHandler(knight, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Knight", dialogStage));
+                        bishopbutton.setOnAction(new ReplaceButtonHandler(bishop, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Bishop", dialogStage));
+                        queenbutton.setOnAction(new ReplaceButtonHandler(queen, board.get(listIn.get(3)), listIn.get(1), listIn.get(2), "Queen", dialogStage));
+                        VBox vbox1 = new VBox(castle, castlebutton);
+                        VBox vbox2 = new VBox(knight, knightbutton);
+                        VBox vbox3 = new VBox(bishop, bishopbutton);
+                        VBox vbox4 = new VBox(queen, queenbutton);
+                        vbox1.setAlignment(Pos.CENTER);
+                        vbox1.setPadding(new Insets(15));
+                        vbox2.setAlignment(Pos.CENTER);
+                        vbox2.setPadding(new Insets(15));
+                        vbox3.setAlignment(Pos.CENTER);
+                        vbox3.setPadding(new Insets(15));
+                        vbox4.setAlignment(Pos.CENTER);
+                        vbox4.setPadding(new Insets(15));
+                        HBox hbox = new HBox(vbox1, vbox2, vbox3, vbox4);
+                        dialogStage.setScene(new Scene(hbox));
+                        dialogStage.initOwner(stage);
+                        dialogStage.show();
+                        break;
                     }
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Конец игры");
-                    alert.setHeaderText(null);
-                    alert.setContentText(message);
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                    return;
-                } else if ("resign".equals(listIn.get(0))) {
-                    String rank = "";
-                    String message;
-                    int was;
-                    int became = 0;
-                    was = Integer.parseInt(playerInfo.get(5));
-                    if (playerInfo.get(3).equals(listIn.get(3))) {
-                        rank = listIn.get(5);
-                        became = Integer.parseInt(rank);
-                        playerInfo.set(5, rank);
+                    case "rivalReplace": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ход");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник сделал ход");
+                        alert.showAndWait();
+                        grid.setDisable(false);
+                        count.startTimer();
+                        moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(4)), parseInt(listIn.get(3)));
+                        opponentTimer.setText(listIn.get(5));
+                        ImageView figure = null;
+                        if (listIn.get(5).equals("Castle")) figure = rivalcastle;
+                        if (listIn.get(5).equals("Knight")) figure = rivalknight;
+                        if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
+                        if (listIn.get(5).equals("Queen")) figure = rivalqueen;
+                        board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
+                        ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
+                        newFigure.setOnDragDetected(new DragDetected(newFigure));
+                        findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
+                        findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
+                        break;
                     }
-                    if (playerInfo.get(3).equals(listIn.get(6))) {
-                        rank = listIn.get(8);
-                        became = Integer.parseInt(rank);
-                        playerInfo.set(5, rank);
+                    case "4minute": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("время вышло");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Вы бездействуете 4 минут, через 1 минуту вам будет защитан проиграш");
+                        alert.showAndWait();
+                        break;
                     }
-                    if (became < was) {
-                        message = "Вы решили сдаться, ваш новый рейтинг: " + rank;
-                    } else {
-                        message = "Соперник решил сдаться, ваш новый рейтинг: " + rank;
+                    case "5minute": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("время вышло");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Время вышло! Вы проиграли");
+                        alert.showAndWait();
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
                     }
+                    case "5minuteRival": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("время вышло");
+                        alert.setHeaderText(null);
+                        alert.setContentText("У вашего соперника вышло время! Вы выиграли!");
+                        alert.showAndWait();
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
+                    }
+                    case "offerDraw": {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ничья");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник предлагает ничью, согласны? (Рейтинг -5)");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK){
+                            List<String> list = new ArrayList<>();
+                            list.add("acceptDraw");
+                            try {
+                                xmlOut.sendMessage(list);
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+                                logger.error("Failed to send draw accept from GameFrame", e);
+                            }
+                        } else {
+                            alert.close();
+                        }
+                        break;
+                    }
+                    case "draw": {
+                        String message;
+                        String rank = "";
+                        if (playerInfo.get(3).equals(listIn.get(3))) {
+                            rank = listIn.get(5);
+                            playerInfo.set(5, rank);
+                        }
+                        if (playerInfo.get(3).equals(listIn.get(6))) {
+                            rank = listIn.get(8);
+                            playerInfo.set(5, rank);
+                        }
+                        if ("WHITE".equals(listIn.get(1))) {
+                            message = "Ничья, ваш новый рейтинг: " + rank;
+                        } else {
+                            message = "Ничья, ваш новый рейтинг: " + rank;
+                        }
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Конец игры");
+                        alert.setHeaderText(null);
+                        alert.setContentText(message);
+                        alert.showAndWait();
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
+                    }
+                    case "resign": {
+                        String rank = "";
+                        String message;
+                        int was;
+                        int became = 0;
+                        was = Integer.parseInt(playerInfo.get(5));
+                        if (playerInfo.get(3).equals(listIn.get(3))) {
+                            rank = listIn.get(5);
+                            became = Integer.parseInt(rank);
+                            playerInfo.set(5, rank);
+                        }
+                        if (playerInfo.get(3).equals(listIn.get(6))) {
+                            rank = listIn.get(8);
+                            became = Integer.parseInt(rank);
+                            playerInfo.set(5, rank);
+                        }
+                        if (became < was) {
+                            message = "Вы решили сдаться, ваш новый рейтинг: " + rank;
+                        } else {
+                            message = "Соперник решил сдаться, ваш новый рейтинг: " + rank;
+                        }
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Конец игры");
-                    alert.setHeaderText(null);
-                    alert.setContentText(message);
-                    alert.showAndWait();
-                    stage.close();
-                    new ProfileFrame(xmLin, xmlOut, listIn);
-                    return;
-                } else if ("castling".equals(listIn.get(0))) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("Ход");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Соперник выполнил рокировку");
-                    alert.showAndWait();
-                    grid.setDisable(false);
-                    count.startTimer();
-                    if ("white".equals(listIn.get(1))) {
-                        if ("kingside".equals(listIn.get(2))) {
-                            moveFromTo(4, 7, 6, 7);
-                            moveFromTo(7, 7, 5, 7);
-                            movesRecord.getItems().add("соперник: O-O");
-                        } else {
-                            moveFromTo(4, 7, 2, 7);
-                            moveFromTo(0, 7, 3, 7);
-                            movesRecord.getItems().add("соперник: О-O-O");
-                        }
-                    } else {
-                        if ("kingside".equals(listIn.get(2))) {
-                            moveFromTo(4, 0, 6, 0);
-                            moveFromTo(7, 0, 5, 0);
-                            movesRecord.getItems().add("соперник: O-O");
-                        } else {
-                            moveFromTo(4, 0, 2, 0);
-                            moveFromTo(0, 0, 3, 0);
-                            movesRecord.getItems().add("соперник: О-O-O");
-                        }
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Конец игры");
+                        alert.setHeaderText(null);
+                        alert.setContentText(message);
+                        alert.showAndWait();
+                        stage.close();
+                        new ProfileFrame(xmLin, xmlOut, listIn);
+                        break;
                     }
-                    movesRecord.scrollTo(movesRecord.getItems().size() - 1);
-                    opponentTimer.setText(listIn.get(3));
+                    case "castling": {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Ход");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник выполнил рокировку");
+                        alert.showAndWait();
+                        grid.setDisable(false);
+                        count.startTimer();
+                        if ("white".equals(listIn.get(1))) {
+                            if ("kingside".equals(listIn.get(2))) {
+                                moveFromTo(4, 7, 6, 7);
+                                moveFromTo(7, 7, 5, 7);
+                                movesRecord.getItems().add("соперник: O-O");
+                            } else {
+                                moveFromTo(4, 7, 2, 7);
+                                moveFromTo(0, 7, 3, 7);
+                                movesRecord.getItems().add("соперник: О-O-O");
+                            }
+                        } else {
+                            if ("kingside".equals(listIn.get(2))) {
+                                moveFromTo(4, 0, 6, 0);
+                                moveFromTo(7, 0, 5, 0);
+                                movesRecord.getItems().add("соперник: O-O");
+                            } else {
+                                moveFromTo(4, 0, 2, 0);
+                                moveFromTo(0, 0, 3, 0);
+                                movesRecord.getItems().add("соперник: О-O-O");
+                            }
+                        }
+                        movesRecord.scrollTo(movesRecord.getItems().size() - 1);
+                        opponentTimer.setText(listIn.get(3));
+                        break;
+                    }
+                    default: {
+                        logger.error("Error understanding message from server " + listIn.get(0));
+                    }
                 }
                 MyTask myTask = new MyTask<Void>();
                 myTask.setOnSucceeded(new MyHandler());
