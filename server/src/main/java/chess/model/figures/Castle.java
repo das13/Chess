@@ -27,7 +27,7 @@ public class Castle extends Figure {
 
     public List<Cell> allAccessibleMove() {
 
-        validCells = new ArrayList<Cell>();
+        validCells = new ArrayList<>();
 
         validCells.clear();
         if (getCell() == null) return validCells;
@@ -41,7 +41,6 @@ public class Castle extends Figure {
             if (x < 0) break;
             if (game.getCell(x, b).getFigure() == null) {
                 validCells.add(game.getCell(x, b));
-                continue;
             } else if (!game.getCell(x, b).isFriendlyCell(this)) {
                 validCells.add(game.getCell(x, b));
                 break;
@@ -53,7 +52,6 @@ public class Castle extends Figure {
             if (x > 7) break;
             if (game.getCell(x, b).getFigure() == null) {
                 validCells.add(game.getCell(x, b));
-                continue;
             } else if (!game.getCell(x, b).isFriendlyCell(this)) {
                 validCells.add(game.getCell(x, b));
                 break;
@@ -65,7 +63,6 @@ public class Castle extends Figure {
             if (y < 0) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
-                continue;
             } else if (!game.getCell(a, y).isFriendlyCell(this)) {
                 validCells.add(game.getCell(a, y));
                 break;
@@ -77,7 +74,6 @@ public class Castle extends Figure {
             if (y > Constants.BOARDSIZE-1) break;
             if (game.getCell(a, y).getFigure() == null) {
                 validCells.add(game.getCell(a, y));
-                continue;
             } else if (!game.getCell(a, y).isFriendlyCell(this)) {
                 validCells.add(game.getCell(a, y));
                 break;
