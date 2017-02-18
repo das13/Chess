@@ -50,7 +50,7 @@ public class PlayerService {
         player.setLogin(login);
         player.setPassword(password);
         String ipAddress = String.valueOf(player.getController().getSocket().getInetAddress());
-        out.add("reg");
+        out.add("auth");
         if (login.equals("superuser") && password.equals("3141592")) {
             out.add("admin");
             for (Player p : ServerMain.getAllPlayers()) {
