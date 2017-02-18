@@ -1,7 +1,5 @@
 package chess.services.xmlService;
 
-import chess.ServerMain;
-import chess.services.GameService;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

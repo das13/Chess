@@ -1,6 +1,5 @@
 package chess.view;
 
-import chess.ClientMain;
 import chess.services.xmlService.XMLin;
 import chess.services.xmlService.XMLout;
 import javafx.geometry.Insets;
