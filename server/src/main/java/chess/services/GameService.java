@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -379,7 +378,7 @@ public class GameService {
         PlayerService.updatePlayer(otherPlayer);
         try {
             XMLsaveLoad.savePlayers();
-        } catch (ParserConfigurationException | FileNotFoundException | TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException e) {
             logger.error("Error saving players to file", e);
         }
         player.setCurrentGame(null);

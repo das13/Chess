@@ -34,9 +34,8 @@ public class XMLsaveLoad {
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private final static Logger logger = Logger.getLogger(XMLsaveLoad.class.getClass());
 
-    public static void savePlayers() throws ParserConfigurationException, TransformerException, FileNotFoundException {
+    public static void savePlayers() throws ParserConfigurationException, TransformerException {
 
-        PrintWriter pw = new PrintWriter(filePlayers);
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
         Element root = doc.createElement("savedPlayers");
@@ -73,6 +72,7 @@ public class XMLsaveLoad {
 
     public static void loadPlayers() throws ParserConfigurationException, IOException, SAXException, TransformerException {
         if(!filePlayers.exists()) {
+            logger.warn("file with saved players not found. New empty file created");
             savePlayers();
         }
         DocumentBuilder db = dbf.newDocumentBuilder();

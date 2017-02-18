@@ -148,7 +148,7 @@ public class PlayerService {
             }
             try {
                 XMLsaveLoad.savePlayers();
-            } catch (TransformerException | ParserConfigurationException | FileNotFoundException e) {
+            } catch (TransformerException | ParserConfigurationException e) {
                 logger.error("Error saving slayers to file", e);
             }
         } catch (NullPointerException e) {
