@@ -170,7 +170,6 @@ public class PlayerService {
      * @throws TransformerConfigurationException in case of transforming xml data error.
      */
     public static void reg(Player dummy, String login, String password, String ipadress, XMLSender sender) throws IOException, ParserConfigurationException, TransformerConfigurationException {
-        System.out.println("inside reg method");
         Player player;
         List<String> list = new ArrayList<String>();
         String ipAddress = String.valueOf(dummy.getController().getSocket().getInetAddress());

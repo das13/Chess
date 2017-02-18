@@ -37,7 +37,7 @@ public class Timer extends Observable implements Runnable {
                 try {
                     sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.info("Interrupted timer, probably end of game.");
                 }
             }
 

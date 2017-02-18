@@ -133,7 +133,7 @@ public class GameFrame extends Stage implements Observer {
         try {
             root = loader.load();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error loading root pane for playing board", e);
         }
         this.setTitle("Chess board");
         scene = new Scene(root, 700, 600);

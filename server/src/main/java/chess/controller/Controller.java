@@ -53,7 +53,7 @@ public class Controller extends Thread {
             sender = new XMLSender(out);
             receiver = new XMLReceiver(in);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error establishing connection with client", e);
             close();
         }
         Thread thread = new Thread() {
@@ -218,7 +218,6 @@ public class Controller extends Thread {
             }
 
         } catch (IOException e) {
-            System.out.println("close");
             logger.error("Error saving players", e);
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
             logger.error("Error working with xml", e);

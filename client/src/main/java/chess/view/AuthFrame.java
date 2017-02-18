@@ -92,7 +92,6 @@ public class AuthFrame extends Stage {
                 alert.setTitle("Ошибка");
                 alert.setHeaderText(null);
                 alert.setContentText("Заполните поля логин/пароль");
-                System.out.println(alert.getButtonTypes().size());
                 alert.showAndWait();
             } else {
                 List<String> list = new ArrayList<>();

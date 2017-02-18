@@ -39,10 +39,8 @@ public class ServerMain {
             XMLsaveLoad.loadBanned();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             logger.error("Failed loading from file ", e);
-            e.printStackTrace();
         } catch (TransformerException e) {
             logger.error("Failed reading XML from file ", e);
-            e.printStackTrace();
         }
         new Server();
     }
