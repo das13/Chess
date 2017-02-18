@@ -30,7 +30,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import java.io.IOException;
 import java.util.*;
 
-import static java.lang.Integer.*;
+import static java.lang.Integer.parseInt;
 
 /**
  * <code>GameFrame</code> is a chessboard realization, with timer, moves notation and everything needed.
@@ -40,7 +40,7 @@ import static java.lang.Integer.*;
  * are not available to move at any time.
  */
 public class GameFrame extends Stage implements Observer {
-    private final Scene scene;
+    private Scene scene = null;
     private Timer count;
     private final Label opponentTimer;
     private final Label yourTimer;
@@ -126,22 +126,19 @@ public class GameFrame extends Stage implements Observer {
             rivalknight.setId("knightWhite1");
             rivalbishop.setId("bishopWhite1");
         }
-
         Pane root = null;
-
         try {
             root = loader.load();
+            this.setTitle("Chess board");
+            scene = new Scene(root, 700, 600);
+            scene.getStylesheets().add("Skin.css");
+            this.setScene(scene);
+            this.setMinWidth(750);
+            this.setMinHeight(650);
+            this.show();
         } catch (IOException e) {
             logger.error("Error loading root pane for playing board", e);
         }
-        this.setTitle("Chess board");
-        scene = new Scene(root, 700, 600);
-        scene.getStylesheets().add("Skin.css");
-        this.setScene(scene);
-        this.setMinWidth(750);
-        this.setMinHeight(650);
-        this.show();
-
         opponentTimer = (Label) loader.getNamespace().get("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
         grid = (GridPane) scene.lookup("#grid");

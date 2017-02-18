@@ -23,8 +23,7 @@ public class Cell {
     }
 
     public Figure getFigure() {
-        if (this.figure == null) return null;
-        else return figure;
+        return figure;
     }
 
     public void setFigure(Figure figure) {
