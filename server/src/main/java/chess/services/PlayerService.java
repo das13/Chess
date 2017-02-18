@@ -184,7 +184,7 @@ public class PlayerService {
             list.add("exists");
         } else {
             player = new Player(login, password, Status.OFFLINE, ipadress);
-            player.setId(ServerMain.getFreePlayers().size() + 1);
+            player.setId(ServerMain.getAllPlayers().size() + 1);
             ServerMain.getAllPlayers().add(player); // фактически мы добавляем в список не FREE а OFFLINE плеера
             list.add("accepted");
             try {
