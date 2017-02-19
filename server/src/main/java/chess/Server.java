@@ -25,7 +25,7 @@ public class Server {
 
     public Server() {
         try {
-            server = new ServerSocket(Constants.PORT);
+            server = new ServerSocket(ServerMain.serverPort);
             while (true) {
                 Socket socket = server.accept();
                 Controller controller = new Controller(socket);

@@ -1,5 +1,6 @@
 package chess.services.xmlService;
 
+import chess.Constants;
 import chess.ServerMain;
 import chess.model.Player;
 import chess.model.Status;
@@ -21,7 +22,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * <code>XMLsaveLoad</code> class saves players to the file
@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 public class XMLsaveLoad {
     private static File filePlayers = new File(System.getProperty("user.dir"), "savedPlayers.xml");
     private static File filebannedIP = new File(System.getProperty("user.dir"), "bannedIP.xml");
+    private static File filesettings = new File(System.getProperty("user.dir"), "adminsettings.xml");
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
     private final static Logger logger = Logger.getLogger(XMLsaveLoad.class.getClass());
 
@@ -105,7 +106,6 @@ public class XMLsaveLoad {
     }
 
     public static void saveBanned() throws ParserConfigurationException, FileNotFoundException, TransformerException {
-        PrintWriter pw = new PrintWriter(filebannedIP);
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.newDocument();
         Element root = doc.createElement("bannedIP");
@@ -149,4 +149,41 @@ public class XMLsaveLoad {
             logger.info("No banned ip read from file");
         }
     }
+    public static void loadSettings() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        if(!filesettings.exists()) {
+            logger.warn("file with settings not found. New empty file created");
+            saveSettings();
+        }
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.parse(filesettings);
+        doc.getDocumentElement().normalize();
+        Element element = doc.getDocumentElement();
+        NodeList nodes = element.getChildNodes();
+        ServerMain.loginAdmin = element.getElementsByTagName("login").item(0).getTextContent();
+        ServerMain.passwordAdmin = element.getElementsByTagName("password").item(0).getTextContent();
+        ServerMain.serverPort = Integer.parseInt(element.getElementsByTagName("port").item(0).getTextContent());
+    }
+    public static void saveSettings() throws ParserConfigurationException, FileNotFoundException, TransformerException {
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document doc = db.newDocument();
+        Element root = doc.createElement("root");
+        Element login = doc.createElement("login");
+        login.appendChild(doc.createTextNode(Constants.ADMIN_NAME));
+        root.appendChild(login);
+        Element password = doc.createElement("password");
+        password.appendChild(doc.createTextNode(Constants.ADMIN_PASS));
+        root.appendChild(password);
+        Element port = doc.createElement("port");
+        port.appendChild(doc.createTextNode(String.valueOf(Constants.PORT)));
+        root.appendChild(port);
+        doc.appendChild(root);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(filesettings);
+        transformer.transform(source, result);
+    }
+
 }

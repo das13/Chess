@@ -32,11 +32,15 @@ public class ServerMain {
             Collections.synchronizedList(new ArrayList<Game>());
     public static final List<String> bannedIP =
             Collections.synchronizedList(new ArrayList<String>());
+    public static String loginAdmin;
+    public static String passwordAdmin;
+    public static int serverPort;
     public static void main(String[] args) {
         logger.info("Server launched");
         try {
             XMLsaveLoad.loadPlayers();
             XMLsaveLoad.loadBanned();
+            XMLsaveLoad.loadSettings();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             logger.error("Failed loading from file ", e);
         } catch (TransformerException e) {

@@ -4,8 +4,8 @@ package chess;
  * Constants for basic client settings
  */
 public class Constants {
-    static final String HOST = "localhost";
-    static final int PORT = 2544;
+    public static final String HOST = "localhost";
+    public static final int PORT = 2544;
     public static final int BOARDSIZE = 8;
-    static final int TIME = 30;
+    public static final int TIME = 30;
 }
