@@ -19,7 +19,7 @@ public class Timer extends Observable implements Runnable {
     private int minutes;
     private int seconds;
     private String sec;
-    private final static Logger logger = Logger.getLogger(Timer.class.getClass());
+    private final static Logger logger = Logger.getLogger(Timer.class);
 
     /**
      * Creates <code>Timer</code> for a given <code>GameFrame</code>

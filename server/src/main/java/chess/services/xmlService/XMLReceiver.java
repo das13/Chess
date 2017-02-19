@@ -24,7 +24,7 @@ public class XMLReceiver {
 
     private final DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
     private final InputStream input;
-    private final static Logger logger = Logger.getLogger(XMLReceiver.class.getClass());
+    private final static Logger logger = Logger.getLogger(XMLReceiver.class);
 
     /**
      * Creates <code>XMLReceiver</code> with given input, from

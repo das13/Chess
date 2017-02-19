@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class RegFrame extends Stage {
 
-    private final static Logger logger = Logger.getLogger(RegFrame.class.getClass());
+    private final static Logger logger = Logger.getLogger(RegFrame.class);
     /**
      * Creating <code>RegFrame</code> with given XMLin and XMLout
      * for communicating with remote server.

@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class PlayerService {
 
-    private final static Logger logger = Logger.getLogger(PlayerService.class.getClass());
+    private final static Logger logger = Logger.getLogger(PlayerService.class);
 
     public static void reg(Controller controller, String login, String password, String ipadress) {
         controller.setPlayerLogin(login);

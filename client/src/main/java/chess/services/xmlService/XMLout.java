@@ -26,7 +26,7 @@ public class XMLout {
      * DataOutputStream is used to send XML data.
      */
     private final DataOutputStream host;
-    private final static Logger logger = Logger.getLogger(XMLout.class.getClass());
+    private final static Logger logger = Logger.getLogger(XMLout.class);
 
     /**
      * DocumentBuilderFactory is created once the instance of the class

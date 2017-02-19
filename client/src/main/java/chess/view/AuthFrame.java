@@ -32,7 +32,7 @@ import java.util.List;
 
 public class AuthFrame extends Stage {
     private final Stage stage = this;
-    private final static Logger logger = Logger.getLogger(AuthFrame.class.getClass());
+    private final static Logger logger = Logger.getLogger(AuthFrame.class);
 
     /**
      * Creating <code>AuthFrame</code> with given XMLin and XMLout

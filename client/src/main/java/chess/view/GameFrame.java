@@ -62,7 +62,7 @@ public class GameFrame extends Stage implements Observer {
     private final HBox whiteMiniBox;
     private final ArrayList<String> playerInfo;
     private final ListView<String> movesRecord;
-    private final static Logger logger = Logger.getLogger(GameFrame.class.getClass());
+    private final static Logger logger = Logger.getLogger(GameFrame.class);
 
     /**
      * Creates <code>GameFrame</code> with XMLin and XMLout for transfering data from

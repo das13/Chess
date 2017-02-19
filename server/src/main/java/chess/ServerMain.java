@@ -19,7 +19,7 @@ import java.util.List;
  * and starts <code>Server</code> for communicating with players.
  */
 public class ServerMain {
-    private final static Logger logger = Logger.getLogger(ServerMain.class.getClass());
+    private final static Logger logger = Logger.getLogger(ServerMain.class);
     public static final List<Player> freePlayers =
             Collections.synchronizedList(new ArrayList<Player>());
     public static List<Player> allPlayers =

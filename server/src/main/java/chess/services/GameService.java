@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class GameService {
 
-    private final static Logger logger = Logger.getLogger(GameService.class.getClass());
+    private final static Logger logger = Logger.getLogger(GameService.class);
 
     /**
      * <code>callPlayer</code> is method which a call player from a list with free players for a game
@@ -243,6 +243,7 @@ public class GameService {
                     return answer;
                 }
 
+
                 else if (game.isPlayersKingAttacked(otherType)) {
                     isCheckmate = true;
                     for (Figure enemyFigure : game.getFigures(otherType)) {
@@ -310,7 +311,6 @@ public class GameService {
                         return answer;
                     }
                 }
-
                 game.setCurrentStep(otherType);
                 answer.add("moving");
                 out.add("rivalMove");

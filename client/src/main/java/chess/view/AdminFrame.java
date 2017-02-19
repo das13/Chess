@@ -43,7 +43,7 @@ public class AdminFrame extends Stage {
     private final ObservableList<PlayerRow> players;
     private List<String> info;
     private TableView<PlayerRow> table;
-    private final static Logger logger = Logger.getLogger(AdminFrame.class.getClass());
+    private final static Logger logger = Logger.getLogger(AdminFrame.class);
 
     /**
      * Creates <code>AdminFrame</code> with given XMLin and XMLout

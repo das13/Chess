@@ -21,7 +21,7 @@ public class XMLSender {
 
     private final OutputStream output;
     private final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    private final static Logger logger = Logger.getLogger(XMLSender.class.getClass());
+    private final static Logger logger = Logger.getLogger(XMLSender.class);
 
     public XMLSender(OutputStream output) {
         this.output = output;

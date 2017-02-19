@@ -21,7 +21,7 @@ import java.net.Socket;
  */
 public class ClientMain extends Application {
 
-    private final static Logger logger = Logger.getLogger(ClientMain.class.getClass());
+    private final static Logger logger = Logger.getLogger(ClientMain.class);
     private XMLout xmlOut;
     private XMLin xmLin;
     public static String host;

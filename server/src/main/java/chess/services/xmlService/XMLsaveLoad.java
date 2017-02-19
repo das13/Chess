@@ -33,7 +33,7 @@ public class XMLsaveLoad {
     private static File filebannedIP = new File(System.getProperty("user.dir"), "bannedIP.xml");
     private static File filesettings = new File(System.getProperty("user.dir"), "adminsettings.xml");
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    private final static Logger logger = Logger.getLogger(XMLsaveLoad.class.getClass());
+    private final static Logger logger = Logger.getLogger(XMLsaveLoad.class);
 
     public static void savePlayers() throws ParserConfigurationException, TransformerException {
 

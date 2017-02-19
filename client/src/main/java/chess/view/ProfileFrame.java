@@ -38,7 +38,7 @@ public class ProfileFrame extends Stage {
     private String secondConf;
     private List<String> listIn;
     private String opponent;
-    private final static Logger logger = Logger.getLogger(ProfileFrame.class.getClass());
+    private final static Logger logger = Logger.getLogger(ProfileFrame.class);
 
     /**
      * Creates <code>ProfileFrame</code> with given XMLin and XMLout

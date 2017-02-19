@@ -40,7 +40,7 @@ public class Controller extends Thread {
     private XMLSender sender;
     private XMLReceiver receiver;
     private LocalTime timer = LocalTime.now();
-    public final static Logger logger = Logger.getLogger(Controller.class.getClass());
+    public final static Logger logger = Logger.getLogger(Controller.class);
 
     public Controller(Socket socket) {
         this.socket = socket;

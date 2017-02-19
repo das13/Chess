@@ -21,7 +21,7 @@ public class Server {
 
     private static final List<Player> players = Collections.synchronizedList(new ArrayList<Player>());
     private ServerSocket server;
-    private final static Logger logger = Logger.getLogger(Server.class.getClass());
+    private final static Logger logger = Logger.getLogger(Server.class);
 
     public Server() {
         try {

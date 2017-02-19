@@ -23,7 +23,7 @@ public class Game extends Thread {
     private final List<Cell> allWhiteMoves = new ArrayList<Cell>();
     private final List<Cell> allBlackMoves = new ArrayList<Cell>();
     private Type currentStep = Type.WHITE;
-    private final static Logger logger = Logger.getLogger(Game.class.getClass());
+    private final static Logger logger = Logger.getLogger(Game.class);
 
     /**
      * Creates instance of Game with two given players.

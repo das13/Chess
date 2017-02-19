@@ -27,7 +27,7 @@ import java.io.IOException;
 public class XMLSettings {
     private static File filesettings = new File(System.getProperty("user.dir"), "settings.xml");
     private static final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-    private final static Logger logger = Logger.getLogger(XMLSettings.class.getClass());
+    private final static Logger logger = Logger.getLogger(XMLSettings.class);
     public static void loadSettings() throws ParserConfigurationException, IOException, SAXException, TransformerException {
         if(!filesettings.exists()) {
             logger.warn("file with settings not found. New empty file created");
