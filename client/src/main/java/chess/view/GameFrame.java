@@ -42,6 +42,7 @@ import static java.lang.Integer.parseInt;
 public class GameFrame extends Stage implements Observer {
     private Scene scene = null;
     private Timer count;
+    private final Label turnLabel;
     private final Label opponentTimer;
     private final Label yourTimer;
     private final GridPane grid;
@@ -149,6 +150,7 @@ public class GameFrame extends Stage implements Observer {
         } catch (IOException e) {
             logger.error("Error loading root pane for playing board", e);
         }
+
         opponentTimer = (Label) loader.getNamespace().get("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
         grid = (GridPane) scene.lookup("#grid");
@@ -190,11 +192,16 @@ public class GameFrame extends Stage implements Observer {
         clock.setDaemon(true);
         clock.start();
         if (!isWhitePlayer) count.stopTimer();
-
-        if (!isWhitePlayer) grid.setDisable(true);
         whiteMiniBox = (HBox) loader.getNamespace().get("whiteMiniBox");
         blackMiniBox = (HBox) loader.getNamespace().get("blackMiniBox");
+        turnLabel = (Label) scene.lookup("#turn");
         movesRecord = (ListView<String>) scene.lookup("#movesRecord");
+        if (!isWhitePlayer) {
+            grid.setDisable(true);
+            turnLabel.setText("Сейчас ходит: " + opponent);
+        } else {
+            turnLabel.setText("Сейчас ходит: " + playerInfo.get(3));
+        }
 
 
         List<ImageView> sources = new ArrayList<>();
@@ -294,6 +301,7 @@ public class GameFrame extends Stage implements Observer {
                     }
                     success = true;
                     grid.setDisable(true);
+                    turnLabel.setText("Сейчас ходит: " + opponent);
                 }
                 resetSelected();
                 event.setDropCompleted(success);
@@ -443,6 +451,7 @@ public class GameFrame extends Stage implements Observer {
                         moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
                         movesRecord.getItems().add(opponent + ": " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
                         opponentTimer.setText(listIn.get(5));
+                        turnLabel.setText("Сейчас ходит: " + playerInfo.get(3));
                         break;
                     }
                     case "steps": {
