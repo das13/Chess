@@ -150,6 +150,7 @@ public class Controller extends Thread {
                 }
                 switch (str.get(0)) {
                     case "exit": {
+                        System.exit(0);
                         break;
                     }
                     case "reg": {
@@ -238,7 +239,6 @@ public class Controller extends Thread {
                         logger.error("Client sent message that server doesn't understand " + str.get(0));
                 }
             }
-
         } catch (IOException e) {
             logger.error("Error saving players", e);
         } catch (ParserConfigurationException | TransformerConfigurationException e) {

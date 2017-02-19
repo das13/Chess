@@ -83,12 +83,13 @@ public class AdminFrame extends Stage {
         banButton.setOnAction(e -> banButtonClicked());
         Button exitButton = new Button("Выход");
         exitButton.setOnAction(e -> exitButtonClicked());
-
+        Button stopButton = new Button("Остановить сервер");
+        stopButton.setOnAction(e -> stopButtonClicked());
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10, 10, 10, 10));
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().addAll(refreshButton, banButton, exitButton);
+        hBox.getChildren().addAll(refreshButton, banButton, exitButton, stopButton);
 
         table = new TableView<>();
         table.getColumns().addAll(loginColumn, rankColumn, statusColumn, ipColumn);
@@ -255,6 +256,16 @@ public class AdminFrame extends Stage {
     }
 
     private void exitButtonClicked() {
+        this.close();
+    }
+    private void stopButtonClicked() {
+        List<String> list = new ArrayList<>();
+        list.add("exit");
+        try {
+            xmLout.sendMessage(list);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+            logger.error("Error sending stop server", e1);
+        }
         this.close();
     }
 }
