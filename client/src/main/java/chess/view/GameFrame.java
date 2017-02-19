@@ -452,6 +452,11 @@ public class GameFrame extends Stage implements Observer {
                         movesRecord.getItems().add(opponent + ": " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
                         opponentTimer.setText(listIn.get(5));
                         turnLabel.setText("Сейчас ходит: " + playerInfo.get(3));
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "steps": {
@@ -466,12 +471,22 @@ public class GameFrame extends Stage implements Observer {
                             pane.setOnDragOver(new DragOver(pane));
                             pane.setOnDragDropped(new DragDropped(pane));
                         }
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "cancel": {
                         grid.setDisable(false);
                         cancelLastMove();
                         movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "checkmate": {
@@ -532,6 +547,11 @@ public class GameFrame extends Stage implements Observer {
                         dialogStage.setScene(new Scene(hbox));
                         dialogStage.initOwner(stage);
                         dialogStage.show();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "rivalReplace": {
@@ -556,6 +576,11 @@ public class GameFrame extends Stage implements Observer {
                         newFigure.setOnDragDetected(new DragDetected(newFigure));
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "4minute": {
@@ -566,6 +591,11 @@ public class GameFrame extends Stage implements Observer {
                         alert.setHeaderText(null);
                         alert.setContentText("Вы бездействуете 4 минут, через 1 минуту вам будет защитан проиграш");
                         alert.showAndWait();
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "5minute": {
@@ -611,6 +641,11 @@ public class GameFrame extends Stage implements Observer {
                         } else {
                             alert.close();
                         }
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     case "draw": {
@@ -706,17 +741,17 @@ public class GameFrame extends Stage implements Observer {
                         }
                         movesRecord.scrollTo(movesRecord.getItems().size() - 1);
                         opponentTimer.setText(listIn.get(3));
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
                         break;
                     }
                     default: {
                         logger.error("Error understanding message from server " + listIn.get(0));
                     }
                 }
-                MyTask myTask = new MyTask<Void>();
-                myTask.setOnSucceeded(new MyHandler());
-                Thread thread1 = new Thread(myTask);
-                thread1.setDaemon(true);
-                thread1.start();
             }
         }
         task.setOnSucceeded(new MyHandler());
