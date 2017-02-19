@@ -130,36 +130,6 @@ public class AdminFrame extends Stage {
                     thread1.setDaemon(true);
                     thread1.start();
                 }
-                if ("notconfirm".equals(firstConf)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.initOwner(stage);
-                    alert.getDialogPane().getStylesheets().add("Skin.css");
-                    alert.setTitle("игрок уже не активен");
-                    alert.setHeaderText(null);
-                    alert.setContentText("игрок уже не активен");
-                    alert.showAndWait();
-                    stage.close();
-                    new AdminFrame(xmLin, xmlOut, info);
-                }
-                if ("confirmresponse".equals(firstConf)) {
-                    if ("Ok".equals(secondConf)) {
-                        stage.close();
-                        new GameFrame(xmLin, xmlOut, true, info);
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.initOwner(stage);
-                        alert.getDialogPane().getStylesheets().add("Skin.css");
-                        alert.setTitle("Отказ");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Вам отказали");
-                        alert.showAndWait();
-                        MyTask myTask = new MyTask<Void>();
-                        myTask.setOnSucceeded(new MyHandler());
-                        Thread thread1 = new Thread(myTask);
-                        thread1.setDaemon(true);
-                        thread1.start();
-                    }
-                }
                 if ("refresh".equals(firstConf)) {
                     stage.close();
                     new AdminFrame(xmLin, xmlOut, info);

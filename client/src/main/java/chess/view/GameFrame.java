@@ -68,13 +68,16 @@ public class GameFrame extends Stage implements Observer {
      * and to server. Also boolean parameter defines what color of pieces player gets,
      * if he accepted offer to play, pieces will be black, initiator of game gets white
      * pieces.
-     * @param xmLin for receiving messages from server.
-     * @param xmlOut for sending messages to server.
+     *
+     * @param xmLin   for receiving messages from server.
+     * @param xmlOut  for sending messages to server.
      * @param isWhite defines color of player's pieces on current game
-     * @param info player's information, used to display new rank and additional info
-     *             after game is over. Also is used for returning back to <code>ProfileFrame</code>
+     * @param info    player's information, used to display new rank and additional info
+     *                after game is over. Also is used for returning back to <code>ProfileFrame</code>
      */
-    public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info) {
+    public GameFrame(XMLin xmLin, final XMLout xmlOut, boolean isWhite, List<String> info, String opponent) {
+        String white;
+        String black;
         ImageView castle;
         ImageView knight;
         ImageView bishop;
@@ -129,7 +132,14 @@ public class GameFrame extends Stage implements Observer {
         Pane root = null;
         try {
             root = loader.load();
-            this.setTitle("Chess board");
+            if (isWhite) {
+                white = playerInfo.get(3);
+                black = opponent;
+            } else {
+                white = opponent;
+                black = playerInfo.get(3);
+            }
+            this.setTitle("Белые: " + white + ", черные: " + black);
             scene = new Scene(root, 700, 600);
             scene.getStylesheets().add("Skin.css");
             this.setScene(scene);
@@ -162,7 +172,7 @@ public class GameFrame extends Stage implements Observer {
             alert.setHeaderText(null);
             alert.setContentText("Хотите сдаться? (Рейтинг -10)");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 List<String> list = new ArrayList<>();
                 list.add("resign");
                 try {
@@ -426,12 +436,12 @@ public class GameFrame extends Stage implements Observer {
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Ход");
                         alert.setHeaderText(null);
-                        alert.setContentText("Соперник сделал ход");
+                        alert.setContentText(opponent + " сделал ход");
                         alert.showAndWait();
                         grid.setDisable(false);
                         count.startTimer();
                         moveFromTo(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
-                        movesRecord.getItems().add("соперник: " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
+                        movesRecord.getItems().add(opponent + ": " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
                         opponentTimer.setText(listIn.get(5));
                         break;
                     }
@@ -452,7 +462,7 @@ public class GameFrame extends Stage implements Observer {
                     case "cancel": {
                         grid.setDisable(false);
                         cancelLastMove();
-                        movesRecord.getItems().remove(movesRecord.getItems().size()-1);
+                        movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
                         break;
                     }
                     case "checkmate": {
@@ -518,7 +528,7 @@ public class GameFrame extends Stage implements Observer {
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Ход");
                         alert.setHeaderText(null);
-                        alert.setContentText("Соперник сделал ход");
+                        alert.setContentText(opponent + " сделал ход");
                         alert.showAndWait();
                         grid.setDisable(false);
                         count.startTimer();
@@ -564,7 +574,7 @@ public class GameFrame extends Stage implements Observer {
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("время вышло");
                         alert.setHeaderText(null);
-                        alert.setContentText("У вашего соперника вышло время! Вы выиграли!");
+                        alert.setContentText("У " + opponent + " вышло время! Вы выиграли!");
                         alert.showAndWait();
                         stage.close();
                         new ProfileFrame(xmLin, xmlOut, listIn);
@@ -576,9 +586,9 @@ public class GameFrame extends Stage implements Observer {
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Ничья");
                         alert.setHeaderText(null);
-                        alert.setContentText("Соперник предлагает ничью, согласны? (Рейтинг -5)");
+                        alert.setContentText(opponent + " предлагает ничью, согласны? (Рейтинг -5)");
                         Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == ButtonType.OK){
+                        if (result.get() == ButtonType.OK) {
                             List<String> list = new ArrayList<>();
                             list.add("acceptDraw");
                             try {
@@ -637,7 +647,7 @@ public class GameFrame extends Stage implements Observer {
                         if (became < was) {
                             message = "Вы решили сдаться, ваш новый рейтинг: " + rank;
                         } else {
-                            message = "Соперник решил сдаться, ваш новый рейтинг: " + rank;
+                            message = opponent + " решил сдаться, ваш новый рейтинг: " + rank;
                         }
 
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -657,7 +667,7 @@ public class GameFrame extends Stage implements Observer {
                         alert.getDialogPane().getStylesheets().add("Skin.css");
                         alert.setTitle("Ход");
                         alert.setHeaderText(null);
-                        alert.setContentText("Соперник выполнил рокировку");
+                        alert.setContentText(opponent + " выполнил рокировку");
                         alert.showAndWait();
                         grid.setDisable(false);
                         count.startTimer();
@@ -665,21 +675,21 @@ public class GameFrame extends Stage implements Observer {
                             if ("kingside".equals(listIn.get(2))) {
                                 moveFromTo(4, 7, 6, 7);
                                 moveFromTo(7, 7, 5, 7);
-                                movesRecord.getItems().add("соперник: O-O");
+                                movesRecord.getItems().add(opponent + ": O-O");
                             } else {
                                 moveFromTo(4, 7, 2, 7);
                                 moveFromTo(0, 7, 3, 7);
-                                movesRecord.getItems().add("соперник: О-O-O");
+                                movesRecord.getItems().add(opponent + ": О-O-O");
                             }
                         } else {
                             if ("kingside".equals(listIn.get(2))) {
                                 moveFromTo(4, 0, 6, 0);
                                 moveFromTo(7, 0, 5, 0);
-                                movesRecord.getItems().add("соперник: O-O");
+                                movesRecord.getItems().add(opponent + ": O-O");
                             } else {
                                 moveFromTo(4, 0, 2, 0);
                                 moveFromTo(0, 0, 3, 0);
-                                movesRecord.getItems().add("соперник: О-O-O");
+                                movesRecord.getItems().add(opponent + ": О-O-O");
                             }
                         }
                         movesRecord.scrollTo(movesRecord.getItems().size() - 1);

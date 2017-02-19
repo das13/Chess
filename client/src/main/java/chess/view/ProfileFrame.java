@@ -37,6 +37,7 @@ public class ProfileFrame extends Stage {
     private String firstConf;
     private String secondConf;
     private List<String> listIn;
+    private String opponent;
     private final static Logger logger = Logger.getLogger(ProfileFrame.class.getClass());
 
     /**
@@ -165,6 +166,7 @@ public class ProfileFrame extends Stage {
                 List<String> list = new ArrayList<>();
                 list.add("callPlayer");
                 list.add(name);
+                opponent = name;
                 try {
                     xmlOut.sendMessage(list);
                 } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
@@ -255,7 +257,7 @@ public class ProfileFrame extends Stage {
                                 logger.error("Error confirming game with " + secondConf + " on ProfileFrame", e1);
                             }
                             stage.close();
-                            new GameFrame(xmLin, xmlOut, false, freePlayers);
+                            new GameFrame(xmLin, xmlOut, false, freePlayers, secondConf);
                         }
                         if (alert.getResult() == ButtonType.CANCEL) {
                             list.add("No");
@@ -287,7 +289,7 @@ public class ProfileFrame extends Stage {
                     case "confirmresponse": {
                         if ("Ok".equals(secondConf)) {
                             stage.close();
-                            new GameFrame(xmLin, xmlOut, true, freePlayers);
+                            new GameFrame(xmLin, xmlOut, true, freePlayers, opponent);
                         } else {
                             Alert alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.initOwner(stage);
