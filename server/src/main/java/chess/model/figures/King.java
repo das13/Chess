@@ -50,7 +50,6 @@ public class King extends Figure {
                 && !game.getEnemyMoves(this.getType()).contains(game.getCell(5, b))) {
             validCells.add(game.getCell(6, b));
         }
-
         for (int x = a - 1; x <= a + 1; x++) {
             for (int y = b - 1; y <= b + 1; y++) {
                 if (x < 0 || x > 7) {
@@ -77,17 +76,18 @@ public class King extends Figure {
 
     @Override
     public void move(Cell destination) throws ReplacePawnException {
-        if (allAccessibleMove().contains(destination) && castlingKingSideAllowed()) {
+        if (allAccessibleMove().contains(destination) && castlingKingSideAllowed()
+                && (destination.getX() - getCell().getX() == 2)) {
             castlingKingside();
             setFirstMove(false);
-        } else if (allAccessibleMove().contains(destination) && castlingQueenSideAllowed()) {
+        } else if (allAccessibleMove().contains(destination) && castlingQueenSideAllowed()
+                && (getCell().getX() - destination.getX() == 2)) {
             castlingQueenside();
             setFirstMove(false);
         } else {
             this.getCell().setFigure(null);
             this.setCell(destination);
             this.getCell().setFigure(this);
-            getCell().getParentGame().changeCurrentStep();
             setFirstMove(false);
         }
     }
