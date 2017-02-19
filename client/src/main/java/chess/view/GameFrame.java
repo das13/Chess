@@ -477,6 +477,7 @@ public class GameFrame extends Stage implements Observer {
                     case "checkmate": {
                         String message;
                         String rank = "";
+                        String winner;
                         if (playerInfo.get(3).equals(listIn.get(3))) {
                             rank = listIn.get(5);
                             playerInfo.set(5, rank);
@@ -486,9 +487,11 @@ public class GameFrame extends Stage implements Observer {
                             playerInfo.set(5, rank);
                         }
                         if ("WHITE".equals(listIn.get(1))) {
-                            message = "Мат! Игрок белыми победил, ваш новый рейтинг: " + rank;
+                            winner = isWhite ? opponent : playerInfo.get(3);
+                            message = "Мат! "+ winner + " победил, ваш новый рейтинг: " + rank;
                         } else {
-                            message = "Мат! Игрок черными победил, ваш новый рейтинг: " + rank;
+                            winner = isWhite ? playerInfo.get(3) : opponent;
+                            message = "Мат! "+ winner + " победил, ваш новый рейтинг: " + rank;
                         }
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.initOwner(stage);
