@@ -1,5 +1,5 @@
-2017-02-19 15:54:40,377 INFO  [Class] - Server launched
-2017-02-19 15:59:20,219 ERROR [Class] - Error getting data from socket
+2017-02-19 16:36:59,522 INFO  [Class] - Server launched
+2017-02-19 16:39:00,985 ERROR [Class] - Error getting data from socket
 java.net.SocketException: Connection reset
 	at java.net.SocketInputStream.read(SocketInputStream.java:209)
 	at java.net.SocketInputStream.read(SocketInputStream.java:141)
@@ -8,7 +8,7 @@ java.net.SocketException: Connection reset
 	at chess.services.xmlService.XMLReceiver$XMLInputStream.receive(XMLReceiver.java:47)
 	at chess.services.xmlService.XMLReceiver.receive(XMLReceiver.java:62)
 	at chess.controller.Controller.run(Controller.java:143)
-2017-02-19 15:59:22,182 ERROR [Class] - Error getting data from socket
+2017-02-19 16:39:01,267 ERROR [Class] - Error getting data from socket
 java.net.SocketException: Connection reset
 	at java.net.SocketInputStream.read(SocketInputStream.java:209)
 	at java.net.SocketInputStream.read(SocketInputStream.java:141)

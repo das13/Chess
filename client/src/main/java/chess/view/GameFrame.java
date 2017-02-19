@@ -564,14 +564,13 @@ public class GameFrame extends Stage implements Observer {
                         alert.showAndWait();
                         grid.setDisable(false);
                         count.startTimer();
-                        moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(4)), parseInt(listIn.get(3)));
+                        moveFromTo(parseInt(listIn.get(2)), parseInt(listIn.get(1)), parseInt(listIn.get(3)), parseInt(listIn.get(4)));
                         opponentTimer.setText(listIn.get(5));
                         ImageView figure = null;
                         if (listIn.get(5).equals("Castle")) figure = rivalcastle;
                         if (listIn.get(5).equals("Knight")) figure = rivalknight;
                         if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
                         if (listIn.get(5).equals("Queen")) figure = rivalqueen;
-                        board.get(listIn.get(3) + listIn.get(4)).getChildren().clear();
                         ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
                         newFigure.setOnDragDetected(new DragDetected(newFigure));
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
