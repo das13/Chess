@@ -235,6 +235,17 @@ public class Controller extends Thread {
                         PlayerService.ban(str, sender);
                         break;
                     }
+                    case "allowRestoreMove": {
+                        Player otherPlayer = player.getCurrentGame().getOtherPlayer(player);
+                        XMLSender otherSender = otherPlayer.getController().getSender();
+                        otherSender.send(str);
+                        break;
+                    }
+                    case "acceptRestore": {
+                        Player otherPlayer = player.getCurrentGame().getOtherPlayer(player);
+                        GameService.restoreLastMove(player, otherPlayer, getCurrentGame());
+                        break;
+                    }
                     default:
                         logger.error("Client sent message that server doesn't understand " + str.get(0));
                 }

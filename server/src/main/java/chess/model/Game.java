@@ -15,8 +15,16 @@ public class Game extends Thread {
     private Player blackPlayer;
     private final King whiteKing;
     private final King blackKing;
+    private Figure currentFigure;
     private Figure lastFigureMoved;
+    private Figure exLastFigureMoved;
     private Figure lastFigureTaken = null;
+    private Figure exLastFigureTaken;
+    private Cell exFromCell;
+    private Cell exToCell = null;
+    private Cell lastFromCell;
+    private Cell lastToCell = null;
+    private Cell currentCell = null;
     private final Cell[][] board = new Cell[8][8];
     private final List<Figure> whiteFigures = new ArrayList<Figure>();
     private final List<Figure> blackFigures = new ArrayList<Figure>();
@@ -160,6 +168,70 @@ public class Game extends Thread {
 
     public void setLastFigureTaken(Figure lastFigureTaken) {
         this.lastFigureTaken = lastFigureTaken;
+    }
+
+    public Figure getExLastFigureMoved() {
+        return exLastFigureMoved;
+    }
+
+    public void setExLastFigureMoved(Figure exLastFigureMoved) {
+        this.exLastFigureMoved = exLastFigureMoved;
+    }
+
+    public Figure getExLastFigureTaken() {
+        return exLastFigureTaken;
+    }
+
+    public void setExLastFigureTaken(Figure exLastFigureTaken) {
+        this.exLastFigureTaken = exLastFigureTaken;
+    }
+
+    public Cell getExToCell() {
+        return exToCell;
+    }
+
+    public void setExToCell(Cell exToCell) {
+        this.exToCell = exToCell;
+    }
+
+    public Cell getLastToCell() {
+        return lastToCell;
+    }
+
+    public void setLastToCell(Cell lastToCell) {
+        this.lastToCell = lastToCell;
+    }
+
+    public Cell getCurrentCell() {
+        return currentCell;
+    }
+
+    public void setCurrentCell(Cell currentCell) {
+        this.currentCell = currentCell;
+    }
+
+    public Cell getExFromCell() {
+        return exFromCell;
+    }
+
+    public void setExFromCell(Cell exFromCell) {
+        this.exFromCell = exFromCell;
+    }
+
+    public Cell getLastFromCell() {
+        return lastFromCell;
+    }
+
+    public void setLastFromCell(Cell lastFromCell) {
+        this.lastFromCell = lastFromCell;
+    }
+
+    public Figure getCurrentFigure() {
+        return currentFigure;
+    }
+
+    public void setCurrentFigure(Figure currentFigure) {
+        this.currentFigure = currentFigure;
     }
 
     /**

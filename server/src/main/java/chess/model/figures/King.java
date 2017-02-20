@@ -118,6 +118,17 @@ public class King extends Figure {
             game.getCell(5, this.getCell().getY()).setFigure(castle);
             castle.setFirstMove(false);
             this.move(game.getCell(6, this.getCell().getY()));
+
+            game.setExLastFigureTaken(game.getLastFigureTaken());
+            game.setExLastFigureMoved(castle);
+            game.setLastFigureTaken(null);
+            game.setLastFigureMoved(this);
+            game.setExFromCell(game.getCell(7, this.getCell().getY()));
+            game.setExToCell(castle.getCell());
+            game.setLastFromCell(game.getCell(4, this.getCell().getY()));
+            game.setLastToCell(this.getCell());
+
+
         } catch (ReplacePawnException e) {
             //ignore
         }
@@ -131,6 +142,15 @@ public class King extends Figure {
             game.getCell(3, this.getCell().getY()).setFigure(castle);
             castle.setFirstMove(false);
             this.move(game.getCell(2, this.getCell().getY()));
+
+            game.setExLastFigureTaken(game.getLastFigureTaken());
+            game.setExLastFigureMoved(castle);
+            game.setLastFigureTaken(null);
+            game.setLastFigureMoved(this);
+            game.setExFromCell(game.getCell(0, this.getCell().getY()));
+            game.setExToCell(castle.getCell());
+            game.setLastFromCell(game.getCell(4, this.getCell().getY()));
+            game.setLastToCell(this.getCell());
         } catch (ReplacePawnException e) {
             //ignore
         }

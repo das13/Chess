@@ -22,6 +22,8 @@ import java.util.List;
  */
 public class GameService {
 
+    private static boolean wasCastling;
+
     private final static Logger logger = Logger.getLogger(GameService.class);
 
     /**
@@ -197,10 +199,32 @@ public class GameService {
                 return answer;
             }
             else {
+                game.setExLastFigureTaken(game.getLastFigureTaken());
                 game.setLastFigureTaken(game.getBoard()[x2][y2].getFigure());
+                game.setExLastFigureMoved(game.getLastFigureMoved());
+                game.setLastFigureMoved(figure);
+
+                game.setExFromCell(game.getLastFromCell());
+                game.setExToCell(game.getLastToCell());
+                game.setLastFromCell(figure.getCell());
+                game.setLastToCell(game.getBoard()[x2][y2]);
+                game.setCurrentCell(game.getBoard()[x2][y2]);
                 figure.move(game.getBoard()[x2][y2]);
                 game.getBoard()[x2][y2].setFigure(figure);
-                game.setLastFigureMoved(figure);
+
+                String exfrom = game.getExFromCell() == null ? null : game.getExFromCell().getX() + "." + game.getExFromCell().getY();
+                String exto = game.getExToCell() == null ? null : game.getExToCell().getX() + "." + game.getExToCell().getY();
+                String lafrom = game.getLastFromCell() == null ? null : game.getLastFromCell().getX() + "." + game.getLastFromCell().getY();
+                String lato = game.getLastToCell() == null ? null : game.getLastToCell().getX() + "." + game.getLastToCell().getY();
+                System.out.println("Прошлый раз была перемещена фигура " + game.getExLastFigureMoved());
+                System.out.println("С клетки " + exfrom + " на клетку " + exto);
+                System.out.println("Прошлый раз была бита фигура " + game.getExLastFigureTaken());
+                System.out.println("Этот ход была перемещена фигура " + game.getLastFigureMoved());
+                System.out.println("С клетки " + lafrom + " на клетку " + lato);
+                System.out.println("Этот раз была бита фигура " + game.getLastFigureTaken());
+                System.out.println("------");
+
+
                 if (game.getLastFigureTaken() != null) {
                     game.getLastFigureTaken().setCell(null);
                 }
@@ -222,6 +246,7 @@ public class GameService {
                     out.add(answer.get(2));
                     out.add(str.get(5));
                     otherSender.send(out);
+                    wasCastling = true;
                     return answer;
                 }
 
@@ -311,6 +336,7 @@ public class GameService {
                         return answer;
                     }
                 }
+                wasCastling = false;
                 game.setCurrentStep(otherType);
                 answer.add("moving");
                 out.add("rivalMove");
@@ -410,5 +436,58 @@ public class GameService {
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
             logger.error("Error sending endgame message", e);
         }
+    }
+
+    //отменяет последний ход
+    public static void restoreLastMove(Player player, Player otherPlayer, Game game) {
+        List<String> list = new ArrayList<>();
+        list.add("restore");
+        // если была рокировка
+        if (wasCastling) {
+            // указываем цвет фигур
+            list.add(String.valueOf(game.getLastFigureMoved().getType()));
+
+            // возвращаем последнюю перемещенную фигуру на исходную позицию
+            game.getLastFigureMoved().setCell(game.getLastFromCell());
+            game.getLastFromCell().setFigure(game.getLastFigureMoved());
+
+            // если была битая фигура, восстанавливаем ее на клетке
+            game.getLastFigureTaken().setCell(game.getLastToCell());
+            game.getLastToCell().setFigure(game.getLastFigureTaken());
+
+            // возвращаем предпоследнюю перемещенную фигуру на исходную позицию
+            game.getExLastFigureMoved().setCell(game.getExFromCell());
+            game.getExFromCell().setFigure(game.getExLastFigureMoved());
+
+            // если была битая фигура, восстанавливаем ее на клетке
+            game.getExLastFigureTaken().setCell(game.getExToCell());
+            game.getExToCell().setFigure(game.getExLastFigureTaken());
+
+            // по координате короля определяем сторону рокировки
+            if (game.getLastFigureMoved().getCell().getX() == 6) {
+                list.add("kingside");
+            } else {
+                list.add("queenside");
+            }
+        }
+        // если рокировки не было
+        else {
+            // возвращаем последнюю перемещенную фигуру на исходную позицию
+            game.getLastFigureMoved().setCell(game.getLastFromCell());
+            game.getLastFromCell().setFigure(game.getLastFigureMoved());
+            // если была битая фигура, восстанавливаем ее на клетке
+            game.getLastFigureTaken().setCell(game.getLastToCell());
+            game.getLastToCell().setFigure(game.getLastFigureTaken());
+        }
+
+        // отправляем игрокам сообщение
+        try {
+            player.getController().getSender().send(list);
+            otherPlayer.getController().getSender().send(list);
+        } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
+            logger.error("Error sending message to one or both players ", e);
+        }
+
+
     }
 }
