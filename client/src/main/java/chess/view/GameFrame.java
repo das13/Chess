@@ -502,7 +502,7 @@ public class GameFrame extends Stage implements Observer {
                     }
                     case "cancel": {
                         grid.setDisable(false);
-                        cancelLastMove();
+                        lastMove.revertMove();
                         movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());

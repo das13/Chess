@@ -212,18 +212,6 @@ public class GameService {
                 figure.move(game.getBoard()[x2][y2]);
                 game.getBoard()[x2][y2].setFigure(figure);
 
-                String exfrom = game.getExFromCell() == null ? null : game.getExFromCell().getX() + "." + game.getExFromCell().getY();
-                String exto = game.getExToCell() == null ? null : game.getExToCell().getX() + "." + game.getExToCell().getY();
-                String lafrom = game.getLastFromCell() == null ? null : game.getLastFromCell().getX() + "." + game.getLastFromCell().getY();
-                String lato = game.getLastToCell() == null ? null : game.getLastToCell().getX() + "." + game.getLastToCell().getY();
-                System.out.println("Прошлый раз была перемещена фигура " + game.getExLastFigureMoved());
-                System.out.println("С клетки " + exfrom + " на клетку " + exto);
-                System.out.println("Прошлый раз была бита фигура " + game.getExLastFigureTaken());
-                System.out.println("Этот ход была перемещена фигура " + game.getLastFigureMoved());
-                System.out.println("С клетки " + lafrom + " на клетку " + lato);
-                System.out.println("Этот раз была бита фигура " + game.getLastFigureTaken());
-                System.out.println("------");
-
 
                 if (game.getLastFigureTaken() != null) {
                     game.getLastFigureTaken().setCell(null);
@@ -291,7 +279,9 @@ public class GameService {
 
                                 if (game.getEnemyMoves(otherType).contains(kingAccessibleCell)) {
                                     kingAccessibleCell.setFigure(tempFig);
-                                    tempFig.setCell(kingAccessibleCell);
+                                    if (tempFig != null) {
+                                        tempFig.setCell(kingAccessibleCell);
+                                    }
                                     game.getKing(otherType).allAccessibleMove().remove(kingAccessibleCell);
                                 }
                                 else {
@@ -300,7 +290,9 @@ public class GameService {
                                 }
                             }
                         } else {
+                            // исходная клетка каждой фигуры игрока под шахом
                             Cell startCell = enemyFigure.getCell();
+                            // для каждого возможного хода
                             for (Cell cell : enemyFigure.allAccessibleMove()) {
                                 Figure tempFigure = null;
                                 if (cell.isFigure()) {
@@ -315,16 +307,16 @@ public class GameService {
                                     enemyFigure.setCell(startCell);
                                     startCell.setFigure(enemyFigure);
                                     cell.setFigure(tempFigure);
-
+                                    if (tempFigure != null) {
+                                        tempFigure.setCell(cell);
+                                    }
                                 }
                                 else {
                                     enemyFigure.setCell(startCell);
                                     startCell.setFigure(enemyFigure);
-
                                     cell.setFigure(tempFigure);
                                     if (tempFigure != null) tempFigure.setCell(cell);
                                     cell.setFigure(tempFigure);
-
                                     isCheckmate = false;
                                     break;
                                 }
@@ -467,7 +459,6 @@ public class GameService {
             game.getExToCell().setFigure(game.getExLastFigureTaken());
 
             // по координате короля определяем сторону рокировки
-            System.out.println(game.getLastToCell().getX() + "." + game.getLastToCell().getY());
             if (game.getLastToCell().getX() == 6) {
                 list.add("kingside");
             } else {
@@ -476,7 +467,6 @@ public class GameService {
         }
         // если рокировки не было
         else {
-            System.out.println("No castling");
             // возвращаем последнюю перемещенную фигуру на исходную позицию
             game.getLastFigureMoved().setCell(game.getLastFromCell());
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
