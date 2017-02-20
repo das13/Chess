@@ -452,7 +452,9 @@ public class GameService {
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
 
             // если была битая фигура, восстанавливаем ее на клетке
-            game.getLastFigureTaken().setCell(game.getLastToCell());
+            if (game.getLastFigureTaken() != null) {
+                game.getLastFigureTaken().setCell(game.getLastToCell());
+            }
             game.getLastToCell().setFigure(game.getLastFigureTaken());
 
             // возвращаем предпоследнюю перемещенную фигуру на исходную позицию
@@ -460,7 +462,9 @@ public class GameService {
             game.getExFromCell().setFigure(game.getExLastFigureMoved());
 
             // если была битая фигура, восстанавливаем ее на клетке
-            game.getExLastFigureTaken().setCell(game.getExToCell());
+            if (game.getExLastFigureTaken() != null) {
+                game.getExLastFigureTaken().setCell(game.getExToCell());
+            }
             game.getExToCell().setFigure(game.getExLastFigureTaken());
 
             // по координате короля определяем сторону рокировки
