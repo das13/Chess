@@ -88,6 +88,7 @@ public class King extends Figure {
             this.getCell().setFigure(null);
             this.setCell(destination);
             this.getCell().setFigure(this);
+            getCell().getParentGame().changeCurrentStep();
             setFirstMove(false);
         }
     }
