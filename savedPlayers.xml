@@ -3,7 +3,7 @@
 <player id="1">
 <login>slava</login>
 <password>111</password>
-<rank>60</rank>
+<rank>70</rank>
 <status>FREE</status>
 <ipadress>/127.0.0.1</ipadress>
 </player>
@@ -24,7 +24,7 @@
 <player id="4">
 <login>dima</login>
 <password>111</password>
-<rank>40</rank>
+<rank>30</rank>
 <status>FREE</status>
 <ipadress>/127.0.0.1</ipadress>
 </player>
