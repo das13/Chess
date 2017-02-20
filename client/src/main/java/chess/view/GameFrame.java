@@ -63,6 +63,7 @@ public class GameFrame extends Stage implements Observer {
     private final ArrayList<String> playerInfo;
     private final ListView<String> movesRecord;
     private final static Logger logger = Logger.getLogger(GameFrame.class);
+    private LastMove lastMove;
 
     /**
      * Creates <code>GameFrame</code> with XMLin and XMLout for transfering data from
@@ -153,6 +154,7 @@ public class GameFrame extends Stage implements Observer {
 
         opponentTimer = (Label) loader.getNamespace().get("opponentTimer");
         yourTimer = (Label) scene.lookup("#yourTimer");
+
         grid = (GridPane) scene.lookup("#grid");
         Button offerDrawButton = (Button) scene.lookup("#offerDrawButton");
         offerDrawButton.setOnMouseClicked(e -> {
@@ -164,7 +166,19 @@ public class GameFrame extends Stage implements Observer {
                 logger.error("Failed to send draw offer from GameFrame", e1);
             }
         });
-
+        Button undoMove = (Button) scene.lookup("#requestMoveCancel");
+        undoMove.setOnMouseClicked(e-> {
+            if(lastMove!=null) {
+                List<String> list = new ArrayList<>();
+                list.add("allowRestoreMove");
+                try {
+                    xmlOut.sendMessage(list);
+                } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                    logger.error("Failed to send resign from GameFrame", e1);
+                }
+            }
+        });
+        undoMove.setDisable(true);
         Button resignButton = (Button) scene.lookup("#resignButton");
         resignButton.setOnMouseClicked(e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -254,22 +268,6 @@ public class GameFrame extends Stage implements Observer {
                     movesRecord.getItems().add(movesRecord(lastMoveFromX, lastMoveFromY, lastMoveToX, lastMoveToY));
                     movesRecord.scrollTo(movesRecord.getItems().size() - 1);
 
-                    /*if king is making castling, castle automatically moves to the appropriate position*/
-                    if (lastMovedFigure.getId().contains("king") && lastMoveFromY == lastMoveToY
-                            && (lastMoveToX - lastMoveFromX == 2 || lastMoveFromX - lastMoveToX == 2)) {
-                        String where = "";
-                        if (lastMoveToX == 6) {
-                            moveFromTo(7, lastMoveToY, 5, lastMoveToY);
-                        }
-                        if (lastMoveToX == 2) {
-                            moveFromTo(0, lastMoveToY, 3, lastMoveToY);
-                            where = "-O";
-                        }
-                        movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
-                        movesRecord.getItems().add("O-O" + where);
-                        movesRecord.scrollTo(movesRecord.getItems().size() - 1);
-                    }
-
                     list.add(String.valueOf(x));
                     list.add(String.valueOf(y));
                     list.add(String.valueOf(x1));
@@ -280,27 +278,50 @@ public class GameFrame extends Stage implements Observer {
                     } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
                         logger.error("Failed to send move message from GameFrame", e1);
                     }
-                    Label label = null;
-                    lastTakenFigure = null;
+                    moveFromTo(lastMoveFromX, lastMoveFromY, lastMoveToX, lastMoveToY);
+                     /*if king is making castling, castle automatically moves to the appropriate position*/
+                    if (lastMovedFigure.getId().contains("king") && lastMoveFromY == lastMoveToY
+                            && (lastMoveToX - lastMoveFromX == 2 || lastMoveFromX - lastMoveToX == 2)) {
+                        String where = "";
+                        Pane targetTemp = lastMove.getTarget();
+                        ImageView figureTemp = lastMove.getFigure();
 
-                    for (Node node : target.getChildren()) {
-                        if (node instanceof Label) {
-                            label = (Label) node;
-                        } else if (node instanceof ImageView) {
-                            lastTakenFigure = (ImageView) node;
+                        if (lastMoveToX == 6) {
+                            moveFromTo(7, lastMoveToY, 5, lastMoveToY);
+                            lastMove.setTarget1(findPane(7, lastMoveToY));
+                            lastMove.setSource1(findPane(5, lastMoveToY));
+                            lastMove.setTarget(targetTemp);
+                            lastMove.setFigure(figureTemp);
+                            lastMove.setCastling(true);
+                            for (Node node : findPane(5, lastMoveToY).getChildren()) {
+                                if (node instanceof ImageView) {
+                                    lastMove.setFigure1((ImageView) node);
+                                }
+                            }
                         }
-                    }
-                    target.getChildren().clear();
-                    if (label != null) target.getChildren().add(label);
-                    for (int i = 0; i < pane.getChildren().size(); i++) {
-                        if (pane.getChildren().get(i).getClass().getSimpleName().equals("ImageView")) {
-                            target.getChildren().add(pane.getChildren().get(i));
-                            sendToMiniBox(lastTakenFigure);
-                            count.stopTimer();
+                        if (lastMoveToX == 2) {
+                            moveFromTo(0, lastMoveToY, 3, lastMoveToY);
+                            lastMove.setTarget1(findPane(0, lastMoveToY));
+                            lastMove.setSource1(findPane(3, lastMoveToY));
+                            lastMove.setTarget(targetTemp);
+                            lastMove.setFigure(figureTemp);
+                            lastMove.setCastling(true);
+                            for (Node node : findPane(3, lastMoveToY).getChildren()) {
+                                if (node instanceof ImageView) {
+                                    lastMove.setFigure1((ImageView) node);
+                                }
+                            }
+                            where = "-O";
                         }
+                        movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
+                        movesRecord.getItems().add("O-O" + where);
+                        movesRecord.scrollTo(movesRecord.getItems().size() - 1);
+
                     }
+                    count.stopTimer();
+                    undoMove.setDisable(false);
                     success = true;
-                    grid.setDisable(true);
+                    grid.setDisable(false);
                     turnLabel.setText("Сейчас ходит: " + opponent);
                 }
                 resetSelected();
@@ -452,6 +473,7 @@ public class GameFrame extends Stage implements Observer {
                         movesRecord.getItems().add(opponent + ": " + movesRecord(parseInt(listIn.get(1)), parseInt(listIn.get(2)), parseInt(listIn.get(3)), parseInt(listIn.get(4))));
                         opponentTimer.setText(listIn.get(5));
                         turnLabel.setText("Сейчас ходит: " + playerInfo.get(3));
+                        undoMove.setDisable(true);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());
                         Thread thread1 = new Thread(myTask);
@@ -547,6 +569,8 @@ public class GameFrame extends Stage implements Observer {
                         dialogStage.setScene(new Scene(hbox));
                         dialogStage.initOwner(stage);
                         dialogStage.show();
+                        lastMove.setReplace(true);
+                        undoMove.setDisable(false);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());
                         Thread thread1 = new Thread(myTask);
@@ -571,10 +595,12 @@ public class GameFrame extends Stage implements Observer {
                         if (listIn.get(5).equals("Knight")) figure = rivalknight;
                         if (listIn.get(5).equals("Bishop")) figure = rivalbishop;
                         if (listIn.get(5).equals("Queen")) figure = rivalqueen;
+                        lastMove.setReplace(true);
                         ImageView newFigure = new ImageView(figure != null ? figure.getImage() : null);
                         newFigure.setOnDragDetected(new DragDetected(newFigure));
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().clear();
                         findPane(parseInt(listIn.get(3)), parseInt(listIn.get(4))).getChildren().add(newFigure);
+                        undoMove.setDisable(true);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());
                         Thread thread1 = new Thread(myTask);
@@ -721,25 +747,102 @@ public class GameFrame extends Stage implements Observer {
                             if ("kingside".equals(listIn.get(2))) {
                                 moveFromTo(4, 7, 6, 7);
                                 moveFromTo(7, 7, 5, 7);
+                                lastMove.setTarget(findPane(4, 7));
+                                lastMove.setTarget1(findPane(7, 7));
+                                lastMove.setSource(findPane(6, 7));
+                                lastMove.setSource1(findPane(5, 7));
+                                lastMove.setFigure((ImageView)findPane(6, 7).getChildren().get(0));
+                                lastMove.setFigure1((ImageView)findPane(5, 7).getChildren().get(0));
                                 movesRecord.getItems().add(opponent + ": O-O");
                             } else {
                                 moveFromTo(4, 7, 2, 7);
                                 moveFromTo(0, 7, 3, 7);
+                                lastMove.setTarget(findPane(4, 7));
+                                lastMove.setTarget1(findPane(0, 7));
+                                lastMove.setSource(findPane(2, 7));
+                                lastMove.setSource1(findPane(3, 7));
+                                lastMove.setFigure((ImageView)findPane(2, 7).getChildren().get(0));
+                                lastMove.setFigure1((ImageView)findPane(3, 7).getChildren().get(0));
                                 movesRecord.getItems().add(opponent + ": О-O-O");
                             }
                         } else {
                             if ("kingside".equals(listIn.get(2))) {
                                 moveFromTo(4, 0, 6, 0);
                                 moveFromTo(7, 0, 5, 0);
+                                lastMove.setTarget(findPane(4, 0));
+                                lastMove.setTarget1(findPane(7, 0));
+                                lastMove.setSource(findPane(6, 0));
+                                lastMove.setSource1(findPane(5, 0));
+                                lastMove.setFigure((ImageView)findPane(5, 0).getChildren().get(0));
+                                lastMove.setFigure1((ImageView)findPane(6, 0).getChildren().get(0));
                                 movesRecord.getItems().add(opponent + ": O-O");
                             } else {
                                 moveFromTo(4, 0, 2, 0);
                                 moveFromTo(0, 0, 3, 0);
+                                lastMove.setTarget(findPane(4, 0));
+                                lastMove.setTarget1(findPane(0, 0));
+                                lastMove.setSource(findPane(2, 0));
+                                lastMove.setSource1(findPane(3, 0));
+                                lastMove.setFigure((ImageView)findPane(2, 0).getChildren().get(0));
+                                lastMove.setFigure1((ImageView)findPane(3, 0).getChildren().get(0));
                                 movesRecord.getItems().add(opponent + ": О-O-O");
                             }
                         }
+                        lastMove.setTake(false);
+                        lastMove.setCastling(true);
                         movesRecord.scrollTo(movesRecord.getItems().size() - 1);
                         opponentTimer.setText(listIn.get(3));
+                        undoMove.setDisable(true);
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                        break;
+                    }
+                    case "allowRestoreMove": {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.initOwner(stage);
+                        alert.getDialogPane().getStylesheets().add("Skin.css");
+                        alert.setTitle("Запрос на отмену хода");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Соперник просит отменить последний ход");
+                        List<String> list = new ArrayList<>();
+                        alert.showAndWait();
+                        if (alert.getResult() == ButtonType.OK) {
+                            list.add("acceptRestore");
+                            try {
+                                xmlOut.sendMessage(list);
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                                logger.error("Error confirming cancel move", e1);
+                            }
+                            grid.setDisable(false);
+                            count.stopTimer();
+                        }
+                        if (alert.getResult() == ButtonType.CANCEL) {
+                            list.add("cancelRestore");
+                            try {
+                                xmlOut.sendMessage(list);
+                            } catch (ParserConfigurationException | TransformerConfigurationException | IOException e1) {
+                                logger.error("Error confirming cancel move", e1);
+                            }
+                        }
+                        MyTask myTask = new MyTask<Void>();
+                        myTask.setOnSucceeded(new MyHandler());
+                        Thread thread1 = new Thread(myTask);
+                        thread1.setDaemon(true);
+                        thread1.start();
+                        break;
+                    }
+                    case "restore": {
+                        lastMove.revertMove();
+                        lastMove=null;
+                        if(!undoMove.isDisable()) {
+                            grid.setDisable(false);
+                            undoMove.setDisable(true);
+                            count.startTimer();
+                        }
+                        movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());
                         Thread thread1 = new Thread(myTask);
@@ -851,16 +954,19 @@ public class GameFrame extends Stage implements Observer {
     private void moveFromTo(int fromX, int fromY, int toX, int toY) {
         Pane source = findPane(fromX, fromY);
         Pane target = findPane(toX, toY);
-
+        lastMove = new LastMove();
         ImageView mini = null;
         ImageView image = new ImageView();
         Label label = null;
-
+        lastMove.setTarget(source);
+        lastMove.setSource(target);
         for (Node node : target.getChildren()) {
             if (node instanceof Label) {
                 label = (Label) node;
             } else if (node instanceof ImageView) {
+                lastMove.setTake(true);
                 mini = (ImageView) node;
+                lastMove.setFigure1(mini);
             }
         }
         target.getChildren().clear();
@@ -870,6 +976,7 @@ public class GameFrame extends Stage implements Observer {
         for (Node node : source.getChildren()) {
             if (node instanceof ImageView) {
                 image = (ImageView) node;
+                lastMove.setFigure(image);
             }
         }
         target.getChildren().add(image);

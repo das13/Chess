@@ -1,3 +1,23 @@
-2017-02-19 16:37:26,000 INFO  [Class] - Authentication window build successfully.
-2017-02-19 16:37:26,001 INFO  [Class] - Client launched
-2017-02-19 16:37:33,710 INFO  [Class] - Player profile window build successfully.
+2017-02-20 20:51:34,818 INFO  [AuthFrame] - Authentication window build successfully.
+2017-02-20 20:51:34,829 INFO  [ClientMain] - Client launched
+2017-02-20 20:51:39,807 INFO  [ProfileFrame] - Player profile window build successfully.
+2017-02-20 21:22:52,527 INFO  [ProfileFrame] - Player profile window build successfully.
+meFrame
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at chess.services.xmlService.XMLin$XMLInputStream.receive(XMLin.java:74)
+	at chess.services.xmlService.XMLin.receive(XMLin.java:97)
+	at chess.view.GameFrame$1MyTask.call(GameFrame.java:447)
+	at javafx.concurrent.Task$TaskCallable.call(Task.java:1423)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.lang.Thread.run(Thread.java:745)
+2017-02-20 20:53:01,913 ERROR [GameFrame] - Failed to receive a message from server on GameFrame
+java.io.EOFException
+	at java.io.DataInputStream.readInt(DataInputStream.java:392)
+	at chess.services.xmlService.XMLin$XMLInputStream.receive(XMLin.java:74)
+	at chess.services.xmlService.XMLin.receive(XMLin.java:97)
+	at chess.view.GameFrame$1MyTask.call(GameFrame.java:447)
+	at javafx.concurrent.Task$TaskCallable.call(Task.java:1423)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.lang.Thread.run(Thread.java:745)
+2017-02-20 21:22:23,566 INFO  [Timer] - Time is up

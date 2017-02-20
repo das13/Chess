@@ -442,11 +442,10 @@ public class GameService {
     public static void restoreLastMove(Player player, Player otherPlayer, Game game) {
         List<String> list = new ArrayList<>();
         list.add("restore");
+        // указываем цвет фигур
+        list.add(String.valueOf(game.getLastFigureMoved().getType()));
         // если была рокировка
         if (wasCastling) {
-            // указываем цвет фигур
-            list.add(String.valueOf(game.getLastFigureMoved().getType()));
-
             // возвращаем последнюю перемещенную фигуру на исходную позицию
             game.getLastFigureMoved().setCell(game.getLastFromCell());
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
@@ -468,7 +467,8 @@ public class GameService {
             game.getExToCell().setFigure(game.getExLastFigureTaken());
 
             // по координате короля определяем сторону рокировки
-            if (game.getLastFigureMoved().getCell().getX() == 6) {
+            System.out.println(game.getLastToCell().getX() + "." + game.getLastToCell().getY());
+            if (game.getLastToCell().getX() == 6) {
                 list.add("kingside");
             } else {
                 list.add("queenside");
@@ -476,14 +476,16 @@ public class GameService {
         }
         // если рокировки не было
         else {
+            System.out.println("No castling");
             // возвращаем последнюю перемещенную фигуру на исходную позицию
             game.getLastFigureMoved().setCell(game.getLastFromCell());
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
-            // если была битая фигура, восстанавливаем ее на клетке
-            game.getLastFigureTaken().setCell(game.getLastToCell());
             game.getLastToCell().setFigure(game.getLastFigureTaken());
+            // если была битая фигура, восстанавливаем ее на клетке
+            if (game.getLastFigureTaken() != null) {
+                game.getLastFigureTaken().setCell(game.getLastToCell());
+            }
         }
-
         // отправляем игрокам сообщение
         try {
             player.getController().getSender().send(list);
@@ -491,6 +493,7 @@ public class GameService {
         } catch (ParserConfigurationException | TransformerConfigurationException | IOException e) {
             logger.error("Error sending message to one or both players ", e);
         }
+        game.changeCurrentStep();
 
 
     }
