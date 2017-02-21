@@ -285,6 +285,10 @@ public class GameService {
                                     game.getKing(otherType).allAccessibleMove().remove(kingAccessibleCell);
                                 }
                                 else {
+                                    if (tempFig != null) {
+                                        tempFig.setCell(kingAccessibleCell);
+                                        kingAccessibleCell.setFigure(tempFig);
+                                    }
                                     isCheckmate = false;
                                     break;
                                 }
@@ -318,6 +322,8 @@ public class GameService {
                                     if (tempFigure != null) tempFigure.setCell(cell);
                                     cell.setFigure(tempFigure);
                                     isCheckmate = false;
+                                    game.setAllBlackMoves();
+                                    game.setAllWhiteMoves();
                                     break;
                                 }
                             }
