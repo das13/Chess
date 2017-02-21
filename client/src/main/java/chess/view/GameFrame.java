@@ -64,7 +64,7 @@ public class GameFrame extends Stage implements Observer {
     private final ListView<String> movesRecord;
     private final static Logger logger = Logger.getLogger(GameFrame.class);
     private LastMove lastMove;
-
+    private LastMove lastMoveTemp;
     /**
      * Creates <code>GameFrame</code> with XMLin and XMLout for transfering data from
      * and to server. Also boolean parameter defines what color of pieces player gets,
@@ -252,6 +252,7 @@ public class GameFrame extends Stage implements Observer {
                     for (Pane pane : targets) {
                         pane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
                     }
+                    lastMoveTemp = lastMove;
                     Pane pane = board.get(db.getString());
                     List<String> list = new ArrayList<>();
                     list.add("move");
@@ -503,6 +504,8 @@ public class GameFrame extends Stage implements Observer {
                     case "cancel": {
                         grid.setDisable(false);
                         lastMove.revertMove();
+                        lastMove = lastMoveTemp;
+                        undoMove.setDisable(true);
                         movesRecord.getItems().remove(movesRecord.getItems().size() - 1);
                         MyTask myTask = new MyTask<Void>();
                         myTask.setOnSucceeded(new MyHandler());
