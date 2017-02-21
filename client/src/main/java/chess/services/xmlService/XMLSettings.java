@@ -22,7 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * Created by Admin on 19.02.2017.
+ * <code>XMLSettings</code> is service class for saving
+ * and loading settings for server.
  */
 public class XMLSettings {
     private static File filesettings = new File(System.getProperty("user.dir"), "settings.xml");

@@ -30,9 +30,9 @@ public class GameService {
      * <code>callPlayer</code> is method which a call player from a list with free players for a game
      * @param playerWhite is calling players object
      * @param nickName is called players name
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws TransformerConfigurationException
+     * @throws IOException when server cannot read from saved players.
+     * @throws ParserConfigurationException in case of configuration error.
+     * @throws TransformerConfigurationException in case of transforming xml data error.
      */
     public static void callPlayer(Player playerWhite, String nickName) throws IOException, ParserConfigurationException, TransformerConfigurationException {
         String ipAddress = String.valueOf(playerWhite.getController().getSocket().getInetAddress());
@@ -64,7 +64,7 @@ public class GameService {
         if(!check){
             List<String> outList = new ArrayList<String>();
             outList.add("notconfirm");
-            outList.addAll(PlayerService.refresh(playerWhite,  sender));
+            outList.addAll(PlayerService.refresh(playerWhite, sender));
             sender.send(outList);
         }
     }
@@ -149,7 +149,6 @@ public class GameService {
         } else {
             logger.error("Cannot find a figure on this cell");
             throw new NullPointerException();
-
         }
     }
 
@@ -212,7 +211,6 @@ public class GameService {
                 figure.move(game.getBoard()[x2][y2]);
                 game.getBoard()[x2][y2].setFigure(figure);
 
-
                 if (game.getLastFigureTaken() != null) {
                     game.getLastFigureTaken().setCell(null);
                 }
@@ -256,7 +254,6 @@ public class GameService {
                     return answer;
                 }
 
-
                 else if (game.isPlayersKingAttacked(otherType)) {
                     isCheckmate = true;
                     for (Figure enemyFigure : game.getFigures(otherType)) {
@@ -294,9 +291,7 @@ public class GameService {
                                 }
                             }
                         } else {
-                            // исходная клетка каждой фигуры игрока под шахом
                             Cell startCell = enemyFigure.getCell();
-                            // для каждого возможного хода
                             for (Cell cell : enemyFigure.allAccessibleMove()) {
                                 Figure tempFigure = null;
                                 if (cell.isFigure()) {
@@ -436,53 +431,40 @@ public class GameService {
         }
     }
 
-    //отменяет последний ход
     public static void restoreLastMove(Player player, Player otherPlayer, Game game) {
         List<String> list = new ArrayList<>();
         list.add("restore");
-        // указываем цвет фигур
         list.add(String.valueOf(game.getLastFigureMoved().getType()));
-        // если была рокировка
+
         if (wasCastling) {
-            // возвращаем последнюю перемещенную фигуру на исходную позицию
             game.getLastFigureMoved().setCell(game.getLastFromCell());
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
 
-            // если была битая фигура, восстанавливаем ее на клетке
             if (game.getLastFigureTaken() != null) {
                 game.getLastFigureTaken().setCell(game.getLastToCell());
             }
             game.getLastToCell().setFigure(game.getLastFigureTaken());
-
-            // возвращаем предпоследнюю перемещенную фигуру на исходную позицию
             game.getExLastFigureMoved().setCell(game.getExFromCell());
             game.getExFromCell().setFigure(game.getExLastFigureMoved());
 
-            // если была битая фигура, восстанавливаем ее на клетке
             if (game.getExLastFigureTaken() != null) {
                 game.getExLastFigureTaken().setCell(game.getExToCell());
             }
             game.getExToCell().setFigure(game.getExLastFigureTaken());
 
-            // по координате короля определяем сторону рокировки
             if (game.getLastToCell().getX() == 6) {
                 list.add("kingside");
             } else {
                 list.add("queenside");
             }
-        }
-        // если рокировки не было
-        else {
-            // возвращаем последнюю перемещенную фигуру на исходную позицию
+        } else {
             game.getLastFigureMoved().setCell(game.getLastFromCell());
             game.getLastFromCell().setFigure(game.getLastFigureMoved());
             game.getLastToCell().setFigure(game.getLastFigureTaken());
-            // если была битая фигура, восстанавливаем ее на клетке
             if (game.getLastFigureTaken() != null) {
                 game.getLastFigureTaken().setCell(game.getLastToCell());
             }
         }
-        // отправляем игрокам сообщение
         try {
             player.getController().getSender().send(list);
             otherPlayer.getController().getSender().send(list);
@@ -490,7 +472,5 @@ public class GameService {
             logger.error("Error sending message to one or both players ", e);
         }
         game.changeCurrentStep();
-
-
     }
 }

@@ -4,7 +4,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 /**
- * Created by slava on 20.02.17.
+ * <code>LastMove</code> is service class for restoring start positions
+ * of last move made by any of players. It is used for user requested cancel
+ * of last made move, castling, move with pawn replace and incorrect move
+ * that was cancelled by server.
  */
 public class LastMove {
     private Pane source;
@@ -39,7 +42,6 @@ public class LastMove {
         if(!castling && !take){
             target.getChildren().add(figure);
         }
-
         if(castling && !take){
             target1.getChildren().add(figure1);
             target.getChildren().add(figure);

@@ -1036,22 +1036,6 @@ public class GameFrame extends Stage implements Observer {
     }
 
     /**
-     * Cancels last made move and returns pieces on their positions
-     */
-    private void cancelLastMove() {
-        moveFromTo(lastMoveToX, lastMoveToY, lastMoveFromX, lastMoveFromY);
-        if (lastTakenFigure != null) {
-            lastTakenFigure.fitHeightProperty().unbind();
-            lastTakenFigure.setFitHeight(60);
-            lastTakenFigure.setFitWidth(60);
-            findPane(lastMoveToX, lastMoveToY).getChildren().add(lastTakenFigure);
-            lastTakenFigure.setLayoutY(1);
-            lastTakenFigure.setLayoutX(1);
-        }
-        grid.setDisable(false);
-    }
-
-    /**
      * Puts record notes of both players moves on the list.
      *
      * @param fromX int column number of a cell from where the piece moved

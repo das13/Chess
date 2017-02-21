@@ -107,7 +107,7 @@ public class AdminFrame extends Stage {
 
         MyTask<Void> task = new MyTask<>();
 
-        /**In case of different possible answers from server*/
+        /*In case of different possible answers from server*/
         class MyHandler implements EventHandler {
             @Override
             public void handle(Event event) {
