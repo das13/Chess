@@ -56,13 +56,13 @@ public class XMLReceiver {
 
     // method returns Document that is built from InputStream
     public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
-
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.receive();
         Document doc = docBuilder.parse(xmlin);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Result output = new StreamResult(new File("input.xml"));
+        Result output = new StreamResult(outputStream);
         Source input = new DOMSource(doc);
         try {
             transformer.transform(input, output);
