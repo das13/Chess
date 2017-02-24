@@ -9,9 +9,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,28 +54,16 @@ public class XMLReceiver {
 
     // method returns Document that is built from InputStream
     public List<String> receive() throws ParserConfigurationException, TransformerConfigurationException, IOException, SAXException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
         XMLInputStream xmlin = new XMLInputStream();
         xmlin.receive();
         Document doc = docBuilder.parse(xmlin);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Result output = new StreamResult(outputStream);
-        Source input = new DOMSource(doc);
-        try {
-            transformer.transform(input, output);
-        } catch (TransformerException e) {
-            logger.error("Error transforming xml data", e);
-        }
         doc.getDocumentElement().normalize();
         List<String> list = new ArrayList<String>();
-
         Element element = doc.getDocumentElement();
         String root = element.getAttribute("function");
         list.add(root);
-
         NodeList nodes = element.getChildNodes();
-
         for (int i = 0; i < nodes.getLength(); i++) {
             if ("args".equals(nodes.item(i).getNodeName())) {
                 Element el = (Element) nodes.item(i);
